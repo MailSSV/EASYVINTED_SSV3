@@ -306,7 +306,7 @@ export function PhotoUpload({ photos, onPhotosChange, maxPhotos = 8, onAnalyzeCl
               ) : (
                 <>
                   <Sparkles className="w-5 h-5" />
-                  Analyser et créer votre fiche avec l'IA
+                  Analyser avec l'IA
                 </>
               )}
             </button>
