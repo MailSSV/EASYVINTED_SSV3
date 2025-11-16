@@ -134,23 +134,11 @@ Deno.serve(async (req: Request) => {
 
     const publishResult = {
       success: true,
-      message: 'Article publication request received. Processing with Playwright automation.',
+      message: 'Article ready for publication. Use the terminal command to publish to Vinted.',
       articleId: article.id,
-      status: 'processing',
+      status: 'ready',
       vintedUrl: null,
     };
-
-    const { error: updateError } = await supabase
-      .from('articles')
-      .update({
-        status: 'published',
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', articleId);
-
-    if (updateError) {
-      console.error('Failed to update article status:', updateError);
-    }
 
     return new Response(
       JSON.stringify(publishResult),

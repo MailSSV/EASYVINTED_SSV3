@@ -5,16 +5,23 @@ import { Button } from '../components/ui/Button';
 import { supabase } from '../lib/supabase';
 import { Article } from '../types/article';
 import { Modal } from '../components/ui/Modal';
+import { PublishInstructionsModal } from '../components/PublishInstructionsModal';
+import { Toast } from '../components/ui/Toast';
+import { useAuth } from '../contexts/AuthContext';
 
 export function PreviewPage() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { user } = useAuth();
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
+  const [publishing, setPublishing] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [modalState, setModalState] = useState<{ isOpen: boolean; title: string; message: string; type: 'info' | 'error' }>(
     { isOpen: false, title: '', message: '', type: 'info' }
   );
+  const [publishInstructionsModal, setPublishInstructionsModal] = useState<{ isOpen: boolean; articleId: string }>({ isOpen: false, articleId: '' });
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -55,14 +62,44 @@ export function PreviewPage() {
   }
 
   async function handleValidateAndSend() {
-    console.log('TODO: Future API call to automation service');
-    console.log('Article ID:', id);
-    setModalState({
-      isOpen: true,
-      title: 'Paramètres Vinted enregistrés (simulation)',
-      message: 'L\'annonce serait envoyée à Vinted via automatisation (Puppeteer/Playwright).',
-      type: 'info'
-    });
+    if (!id) return;
+
+    try {
+      setPublishing(true);
+
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/publish-to-vinted`;
+      const { data: session } = await supabase.auth.getSession();
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.session?.access_token}`,
+          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+        },
+        body: JSON.stringify({ articleId: id }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Erreur inconnue' }));
+        throw new Error(errorData.error || 'Erreur lors de la publication sur Vinted');
+      }
+
+      const result = await response.json();
+
+      setPublishInstructionsModal({
+        isOpen: true,
+        articleId: id
+      });
+    } catch (error) {
+      console.error('Error publishing to Vinted:', error);
+      setToast({
+        type: 'error',
+        text: error instanceof Error ? error.message : 'Erreur lors de la publication sur Vinted'
+      });
+    } finally {
+      setPublishing(false);
+    }
   }
 
   const CONDITION_LABELS: Record<string, string> = {
@@ -89,12 +126,24 @@ export function PreviewPage() {
 
   return (
     <>
+      {toast && (
+        <Toast
+          message={toast.text}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
       <Modal
         isOpen={modalState.isOpen}
         onClose={() => setModalState({ ...modalState, isOpen: false })}
         title={modalState.title}
         message={modalState.message}
         type={modalState.type}
+      />
+      <PublishInstructionsModal
+        isOpen={publishInstructionsModal.isOpen}
+        onClose={() => setPublishInstructionsModal({ isOpen: false, articleId: '' })}
+        articleId={publishInstructionsModal.articleId}
       />
       <div className="max-w-5xl mx-auto">
         <div className="mb-8">
@@ -375,9 +424,9 @@ export function PreviewPage() {
                 <Edit className="w-4 h-4 mr-2" />
                 Modifier
               </Button>
-              <Button onClick={handleValidateAndSend} className="px-6 w-full md:w-auto">
+              <Button onClick={handleValidateAndSend} disabled={publishing} className="px-6 w-full md:w-auto">
                 <Send className="w-4 h-4 mr-2" />
-                Valider et envoyer à Vinted
+                {publishing ? 'Préparation...' : 'Valider et envoyer à Vinted'}
               </Button>
             </div>
           </>
