@@ -52,6 +52,15 @@ DELAY_BETWEEN_POSTS_MS=60000
 
 ## 📤 Publication d'articles
 
+### ✨ WORKFLOW RECOMMANDÉ (Interface Web + Script)
+
+1. **Créez votre article dans l'interface web**
+2. **Cliquez sur "Prêt à publier"** → Une modal s'affiche avec la commande
+3. **Copiez et exécutez la commande** dans votre terminal
+4. **Le navigateur s'ouvre automatiquement** et publie sur Vinted
+5. **La base de données est mise à jour automatiquement**
+6. **Rafraîchissez la page web** → Votre article est marqué "Publié" avec le lien Vinted
+
 ### Option 1 : Vérifier les articles prêts
 
 ```bash
@@ -60,13 +69,27 @@ npm run vinted:check
 
 Affiche la liste des articles prêts à être publiés.
 
-### Option 2 : Publication manuelle
+### Option 2 : Publier un article spécifique
+
+Depuis l'interface web, lorsque vous cliquez sur "Prêt à publier", une modal s'affiche avec la commande exacte :
+
+```bash
+npm run vinted:publish:single <article-id>
+```
+
+Ce script :
+1. Récupère l'article depuis Supabase
+2. Ouvre un navigateur et publie automatiquement sur Vinted
+3. **Met à jour automatiquement la base de données** avec l'URL Vinted et le statut "published"
+4. Votre article apparaîtra comme publié dans l'interface web (rafraîchissez la page)
+
+### Option 3 : Publication manuelle de tous les articles prêts
 
 ```bash
 npm run vinted:publish
 ```
 
-### Option 3 : Publication automatique (recommandé)
+### Option 4 : Publication automatique (recommandé)
 
 ```bash
 npm run vinted:auto
