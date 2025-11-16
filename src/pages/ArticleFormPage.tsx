@@ -9,6 +9,7 @@ import { PhotoUpload } from '../components/PhotoUpload';
 import { useAuth } from '../contexts/AuthContext';
 import { Modal } from '../components/ui/Modal';
 import { ConfirmModal } from '../components/ui/ConfirmModal';
+import { PublishInstructionsModal } from '../components/PublishInstructionsModal';
 import { VINTED_CATEGORIES } from '../constants/categories';
 import { COLORS, MATERIALS } from '../constants/articleAttributes';
 
@@ -45,6 +46,7 @@ export function ArticleFormPage() {
   const [userProfile, setUserProfile] = useState<{ clothing_size: string; shoe_size: string } | null>(null);
   const [deleteModal, setDeleteModal] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [publishInstructionsModal, setPublishInstructionsModal] = useState<{ isOpen: boolean; articleId: string }>({ isOpen: false, articleId: '' });
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -491,17 +493,9 @@ export function ArticleFormPage() {
 
       const result = await response.json();
 
-      setModalState({
+      setPublishInstructionsModal({
         isOpen: true,
-        title: 'Paramètres Vinted enregistrés (simulation)',
-        message: `L'annonce sera envoyée à Vinted via automatisation (Puppeteer/Playwright).
-
-Pour publier réellement l'article sur Vinted, ouvrez un terminal et exécutez:
-
-npm run vinted:publish:single ${articleIdToPublish}
-
-Cela ouvrira un navigateur automatisé qui publiera votre article sur Vinted.`,
-        type: 'info'
+        articleId: articleIdToPublish
       });
     } catch (error) {
       console.error('Error publishing to Vinted:', error);
@@ -529,6 +523,11 @@ Cela ouvrira un navigateur automatisé qui publiera votre article sur Vinted.`,
         title={modalState.title}
         message={modalState.message}
         type={modalState.type}
+      />
+      <PublishInstructionsModal
+        isOpen={publishInstructionsModal.isOpen}
+        onClose={() => setPublishInstructionsModal({ isOpen: false, articleId: '' })}
+        articleId={publishInstructionsModal.articleId}
       />
       <div className="max-w-5xl mx-auto">
       <div className="mb-6">
