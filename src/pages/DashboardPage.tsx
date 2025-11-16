@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Eye, Edit, MoreVertical, Plus, Image as ImageIcon, Search, Copy, Trash2, DollarSign, Calendar } from 'lucide-react';
+import { Eye, Edit, MoreVertical, Plus, Image as ImageIcon, Search, Copy, Trash2, DollarSign, Calendar, Rocket } from 'lucide-react';
 import { Article, ArticleStatus, Season } from '../types/article';
 import { Button } from '../components/ui/Button';
 import { supabase } from '../lib/supabase';
@@ -8,6 +8,7 @@ import { Modal } from '../components/ui/Modal';
 import { ConfirmModal } from '../components/ui/ConfirmModal';
 import { ScheduleModal } from '../components/ScheduleModal';
 import { ArticleSoldModal } from '../components/ArticleSoldModal';
+import { PublishModal } from '../components/PublishModal';
 import { useAuth } from '../contexts/AuthContext';
 
 
@@ -51,6 +52,7 @@ export function DashboardPage() {
   const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; article: Article | null }>({ isOpen: false, article: null });
   const [scheduleModal, setScheduleModal] = useState<{ isOpen: boolean; article: Article | null }>({ isOpen: false, article: null });
   const [soldModal, setSoldModal] = useState<{ isOpen: boolean; article: Article | null }>({ isOpen: false, article: null });
+  const [publishModal, setPublishModal] = useState<{ isOpen: boolean; article: Article | null }>({ isOpen: false, article: null });
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -303,6 +305,42 @@ export function DashboardPage() {
     setOpenMenuId(null);
   };
 
+  const handlePublishNow = async () => {
+    if (!publishModal.article) return;
+
+    try {
+      const { error } = await supabase.from('publication_jobs').insert({
+        article_id: publishModal.article.id,
+        status: 'pending',
+        run_at: new Date().toISOString(),
+      });
+
+      if (error) throw error;
+
+      await supabase
+        .from('articles')
+        .update({ status: 'scheduled' })
+        .eq('id', publishModal.article.id);
+
+      setModalState({
+        isOpen: true,
+        title: 'Publication programmée',
+        message: 'Votre article a été ajouté à la file de publication. Le worker le publiera automatiquement dans les prochaines minutes.',
+        type: 'success'
+      });
+      fetchArticles();
+    } catch (error) {
+      console.error('Error creating publication job:', error);
+      setModalState({
+        isOpen: true,
+        title: 'Erreur',
+        message: 'Erreur lors de la création du job de publication',
+        type: 'error'
+      });
+    }
+    setOpenMenuId(null);
+  };
+
   return (
     <>
       <Modal
@@ -500,6 +538,16 @@ export function DashboardPage() {
                                 </button>
                                 <button
                                   onClick={() => {
+                                    setPublishModal({ isOpen: true, article });
+                                    setOpenMenuId(null);
+                                  }}
+                                  className="w-full px-4 py-2 text-left text-sm text-emerald-700 hover:bg-emerald-50 flex items-center gap-2"
+                                >
+                                  <Rocket className="w-4 h-4" />
+                                  Publier maintenant
+                                </button>
+                                <button
+                                  onClick={() => {
                                     setScheduleModal({ isOpen: true, article });
                                     setOpenMenuId(null);
                                   }}
@@ -571,6 +619,16 @@ export function DashboardPage() {
                                 >
                                   <Copy className="w-4 h-4" />
                                   Dupliquer l'article
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setPublishModal({ isOpen: true, article });
+                                    setOpenMenuId(null);
+                                  }}
+                                  className="w-full px-4 py-2 text-left text-sm text-emerald-700 hover:bg-emerald-50 flex items-center gap-2"
+                                >
+                                  <Rocket className="w-4 h-4" />
+                                  Publier maintenant
                                 </button>
                                 <button
                                   onClick={() => {
@@ -649,6 +707,15 @@ export function DashboardPage() {
           onClose={() => setSoldModal({ isOpen: false, article: null })}
           onConfirm={handleMarkAsSold}
           article={soldModal.article}
+        />
+      )}
+
+      {publishModal.article && (
+        <PublishModal
+          isOpen={publishModal.isOpen}
+          onClose={() => setPublishModal({ isOpen: false, article: null })}
+          onConfirm={handlePublishNow}
+          articleTitle={publishModal.article.title}
         />
       )}
     </div>
