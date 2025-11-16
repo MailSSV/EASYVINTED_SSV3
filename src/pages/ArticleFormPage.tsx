@@ -473,35 +473,15 @@ export function ArticleFormPage() {
         articleIdToPublish = newArticle.id;
       }
 
-      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/publish-to-vinted`;
-      const { data: session } = await supabase.auth.getSession();
-
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.session?.access_token}`,
-          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-        },
-        body: JSON.stringify({ articleId: articleIdToPublish }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Erreur inconnue' }));
-        throw new Error(errorData.error || 'Erreur lors de la publication sur Vinted');
-      }
-
-      const result = await response.json();
-
       setPublishInstructionsModal({
         isOpen: true,
         articleId: articleIdToPublish
       });
     } catch (error) {
-      console.error('Error publishing to Vinted:', error);
+      console.error('Error preparing article:', error);
       setToast({
         type: 'error',
-        text: error instanceof Error ? error.message : 'Erreur lors de la publication sur Vinted'
+        text: error instanceof Error ? error.message : 'Erreur lors de la préparation de l\'article'
       });
     } finally {
       setPublishing(false);
