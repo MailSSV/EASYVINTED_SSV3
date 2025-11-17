@@ -464,7 +464,8 @@ export function DashboardPage() {
                         </span>
                       </div>
 
-                    {/* Actions mobile regroupées à droite */}
+                    
+{/* Actions mobile regroupées à droite */}
 <div className="mt-3 flex items-center justify-end gap-3">
   <button
     onClick={() => navigate(`/articles/${article.id}/preview`)}
@@ -505,24 +506,8 @@ export function DashboardPage() {
   </div>
 </div>
 
-
-                        <div
-                          className="relative flex-shrink-0"
-                          ref={openMenuId === article.id ? mobileMenuRef : null}
-                        >
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setOpenMenuId(openMenuId === article.id ? null : article.id);
-                            }}
-                            className="p-1 text-gray-600 hover:text-emerald-600 transition-colors"
-                            title="Plus d'actions"
-                          >
-                            <MoreVertical className="w-4 h-4" />
-                          </button>
-                          {openMenuId === article.id && (
-                            <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
-                              <div className="py-1">
+                       
+                            
                                 <button
                                   onClick={() => handleDuplicate(article)}
                                   className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
