@@ -809,6 +809,21 @@ export function ArticleFormPage() {
                   <span className="hidden sm:inline">{publishing ? 'Publication en cours...' : 'Valider et envoyer à Vinted'}</span>
                   <span className="sm:hidden">{publishing ? 'Envoi...' : 'Envoyer'}</span>
                 </Button>
+
+{id && (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setDeleteModal(true)}
+                  disabled={loading || publishing}
+                  className="w-full sm:w-auto justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Supprimer
+                </Button>
+              )}
+
+                
               </div>
             </div>
           </div>
