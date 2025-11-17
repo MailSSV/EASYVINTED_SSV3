@@ -795,7 +795,7 @@ export function ArticleFormPage() {
                   className="w-full sm:w-auto justify-center"
                 >
                   <CheckCircle className="w-4 h-4" />
-                  <span className="hidden sm:inline">Prêt pour Vinted</span>
+                  <span className="hidden sm:inline">Marquer comme Prêt pour Vinted</span>
                   <span className="sm:hidden">Prêt</span>
                 </Button>
 
