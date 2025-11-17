@@ -49,11 +49,13 @@ const SEASON_LABELS: Record<string, string> = {
 export function DashboardPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+
   const [statusFilter, setStatusFilter] = useState<ArticleStatus | 'all'>('all');
   const [seasonFilter, setSeasonFilter] = useState<Season | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
     title: string;
@@ -65,15 +67,19 @@ export function DashboardPage() {
     message: '',
     type: 'error',
   });
+
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+
   const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; article: Article | null }>({
     isOpen: false,
     article: null,
   });
+
   const [scheduleModal, setScheduleModal] = useState<{ isOpen: boolean; article: Article | null }>({
     isOpen: false,
     article: null,
   });
+
   const [soldModal, setSoldModal] = useState<{ isOpen: boolean; article: Article | null }>({
     isOpen: false,
     article: null,
@@ -91,7 +97,6 @@ export function DashboardPage() {
     function handleClickOutside(event: MouseEvent) {
       const target = event.target as Node;
 
-      // Si on clique dans l'un des menus, on ne ferme pas
       if (
         (desktopMenuRef.current && desktopMenuRef.current.contains(target)) ||
         (mobileMenuRef.current && mobileMenuRef.current.contains(target))
@@ -117,7 +122,7 @@ export function DashboardPage() {
 
       if (error) throw error;
 
-      const formattedArticles: Article[] = (data || []).map((article) => ({
+      const formattedArticles: Article[] = (data || []).map((article: any) => ({
         ...article,
         price: parseFloat(article.price),
       }));
@@ -224,7 +229,7 @@ export function DashboardPage() {
         .from('articles')
         .update({
           status: 'scheduled',
-          scheduled_for: date.toISOString(),
+          scheduled_for: date.toISOString(), // champ de programmation
           updated_at: new Date().toISOString(),
         })
         .eq('id', scheduleModal.article.id);
@@ -347,6 +352,7 @@ export function DashboardPage() {
         message={modalState.message}
         type={modalState.type}
       />
+
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Mes articles en Stock</h1>
@@ -372,6 +378,7 @@ export function DashboardPage() {
                   />
                 </div>
               </div>
+
               <div className="w-full lg:w-48">
                 <label className="block text-xs font-medium text-gray-700 mb-2">
                   Filtrer par saison
@@ -389,6 +396,7 @@ export function DashboardPage() {
                   <option value="all-seasons">Toutes saisons</option>
                 </select>
               </div>
+
               <div className="w-full lg:w-48">
                 <label className="block text-xs font-medium text-gray-700 mb-2">
                   Filtrer par statut
@@ -408,7 +416,7 @@ export function DashboardPage() {
             </div>
           </div>
 
-          {/* LISTE MOBILE (cartes, pas de scroll horizontal) */}
+          {/* LISTE MOBILE (cartes) */}
           <div className="block md:hidden">
             {loading ? (
               <div className="px-4 py-8 text-center text-sm text-gray-500">Chargement...</div>
@@ -464,24 +472,23 @@ export function DashboardPage() {
                         </span>
                       </div>
 
-                      {/* Actions mobile */}
-                      <div className="mt-3 flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-1">
-                          <button
-                            onClick={() => navigate(`/articles/${article.id}/preview`)}
-                            className="p-1 text-gray-600 hover:text-emerald-600 transition-colors"
-                            title="Voir"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => navigate(`/articles/${article.id}/edit`)}
-                            className="p-1 text-gray-600 hover:text-emerald-600 transition-colors"
-                            title="Modifier"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </button>
-                        </div>
+                      {/* Actions mobile : œil + crayon + ... alignés à droite */}
+                      <div className="mt-3 flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => navigate(`/articles/${article.id}/preview`)}
+                          className="p-1.5 text-gray-600 hover:text-emerald-600 transition-colors"
+                          title="Voir"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+
+                        <button
+                          onClick={() => navigate(`/articles/${article.id}/edit`)}
+                          className="p-1.5 text-gray-600 hover:text-emerald-600 transition-colors"
+                          title="Modifier"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
 
                         <div
                           className="relative flex-shrink-0"
@@ -492,11 +499,12 @@ export function DashboardPage() {
                               e.stopPropagation();
                               setOpenMenuId(openMenuId === article.id ? null : article.id);
                             }}
-                            className="p-1 text-gray-600 hover:text-emerald-600 transition-colors"
+                            className="p-1.5 text-gray-600 hover:text-emerald-600 transition-colors"
                             title="Plus d'actions"
                           >
                             <MoreVertical className="w-4 h-4" />
                           </button>
+
                           {openMenuId === article.id && (
                             <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
                               <div className="py-1">
@@ -550,7 +558,7 @@ export function DashboardPage() {
             )}
           </div>
 
-          {/* TABLEAU DESKTOP (>= md) */}
+          {/* TABLEAU DESKTOP */}
           <div className="hidden md:block overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
