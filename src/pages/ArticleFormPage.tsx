@@ -806,7 +806,7 @@ export function ArticleFormPage() {
                   className="w-full sm:w-auto justify-center bg-emerald-600 hover:bg-emerald-700 text-white"
                 >
                   <Send className="w-4 h-4" />
-                  <span className="hidden sm:inline">{publishing ? 'Publication en cours...' : 'Valider et envoyer à Vinted'}</span>
+                  <span className="hidden sm:inline">{publishing ? 'Publication en cours...' : 'Envoyer à Vinted'}</span>
                   <span className="sm:hidden">{publishing ? 'Envoi...' : 'Envoyer'}</span>
                 </Button>
 
