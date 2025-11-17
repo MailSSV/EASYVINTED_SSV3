@@ -771,18 +771,7 @@ export function ArticleFormPage() {
           </div>
 
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-              {id && (
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => setDeleteModal(true)}
-                  disabled={loading || publishing}
-                  className="w-full sm:w-auto justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200" >
-                  <Trash2 className="w-4 h-4" />
-                  Supprimer
-                </Button>
-              )}
+            
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:ml-auto">
                 <Button
