@@ -810,7 +810,7 @@ export function ArticleFormPage() {
                   <span className="sm:hidden">{publishing ? 'Envoi...' : 'Envoyer'}</span>
                 </Button>
 
-{id && (
+
                 <Button
                   type="button"
                   variant="secondary"
@@ -821,7 +821,7 @@ export function ArticleFormPage() {
                   <Trash2 className="w-4 h-4" />
                   Supprimer
                 </Button>
-              )}
+            
 
                 
               </div>
