@@ -779,8 +779,7 @@ export function ArticleFormPage() {
                   variant="secondary"
                   onClick={(e) => handleSubmit(e as any, 'draft')}
                   disabled={loading || publishing}
-                  className="w-full sm:w-auto justify-center"
-                >
+                  className="w-full sm:w-auto justify-center">
                   <Save className="w-4 h-4" />
                   <span className="hidden sm:inline">Enregistrer comme brouillon</span>
                   <span className="sm:hidden">Brouillon</span>
