@@ -783,7 +783,7 @@ export function ArticleFormPage() {
                   className="w-full sm:w-auto justify-center"
                 >
                   <Save className="w-4 h-4" />
-                  <span className="hidden sm:inline">Enregistrer comme brouillon</span>
+                  <span className="hidden sm:inline">Enregistrer en brouillon</span>
                   <span className="sm:hidden">Brouillon</span>
                 </Button>
 
@@ -795,7 +795,7 @@ export function ArticleFormPage() {
                   className="w-full sm:w-auto justify-center"
                 >
                   <CheckCircle className="w-4 h-4" />
-                  <span className="hidden sm:inline">Marquer comme prêt pour Vinted</span>
+                  <span className="hidden sm:inline">Marquer: Prêt pour Vinted</span>
                   <span className="sm:hidden">Prêt</span>
                 </Button>
 
