@@ -301,12 +301,12 @@ export function PhotoUpload({ photos, onPhotosChange, maxPhotos = 8, onAnalyzeCl
               {analyzing ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  Analyse en cours...
+                  Analyse et Extraction des données en cours...
                 </>
               ) : (
                 <>
                   <Sparkles className="w-5 h-5" />
-                  Analyse et Création - IA
+                  Analyser l'article
                 </>
               )}
             </button>
