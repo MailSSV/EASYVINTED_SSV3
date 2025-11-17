@@ -771,60 +771,18 @@ export function ArticleFormPage() {
           </div>
 
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-           
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3">
-
-  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-    <Button
-      type="button"
-      variant="secondary"
-      onClick={(e) => handleSubmit(e as any, 'draft')}
-      disabled={loading || publishing}
-      className="w-full sm:w-auto justify-center"
-    >
-      <Save className="w-4 h-4" />
-      <span className="hidden sm:inline">Enregistrer comme brouillon</span>
-      <span className="sm:hidden">Brouillon</span>
-    </Button>
-
-    <Button
-      type="button"
-      variant="secondary"
-      onClick={(e) => handleSubmit(e as any, 'ready')}
-      disabled={loading || publishing}
-      className="w-full sm:w-auto justify-center"
-    >
-      <CheckCircle className="w-4 h-4" />
-      <span className="hidden sm:inline">Marquer comme prêt pour Vinted</span>
-      <span className="sm:hidden">Prêt</span>
-    </Button>
-
-    <Button
-      type="button"
-      onClick={handlePublishToVinted}
-      disabled={loading || publishing}
-      className="w-full sm:w-auto justify-center bg-emerald-600 hover:bg-emerald-700 text-white"
-    >
-      <Send className="w-4 h-4" />
-      <span className="hidden sm:inline">{publishing ? 'Publication en cours...' : 'Valider et envoyer à Vinted'}</span>
-      <span className="sm:hidden">{publishing ? 'Envoi...' : 'Envoyer'}</span>
-    </Button>
-  </div>
-
-  {id && (
-    <Button
-      type="button"
-      variant="secondary"
-      onClick={() => setDeleteModal(true)}
-      disabled={loading || publishing}
-      className="w-full sm:w-auto justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
-    >
-      <Trash2 className="w-4 h-4" />
-      Supprimer
-    </Button>
-  )}
-</div>
-
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+              {id && (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setDeleteModal(true)}
+                  disabled={loading || publishing}
+                  className="w-full sm:w-auto justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200" >
+                  <Trash2 className="w-4 h-4" />
+                  Supprimer
+                </Button>
+              )}
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:ml-auto">
                 <Button
