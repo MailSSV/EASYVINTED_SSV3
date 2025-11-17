@@ -809,7 +809,7 @@ export function ArticleFormPage() {
                   <span className="hidden sm:inline">{publishing ? 'Publication en cours...' : 'Valider et envoyer à Vinted'}</span>
                   <span className="sm:hidden">{publishing ? 'Envoi...' : 'Envoyer'}</span>
                 </Button>
-<p>
+<br>
 
                 <Button
                   type="button"
@@ -821,7 +821,7 @@ export function ArticleFormPage() {
                   <Trash2 className="w-4 h-4" />
                   Supprimer
                 </Button>
-          </p>  
+          </br>  
 
                 
               </div>
