@@ -1,6 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Eye, Edit, MoreVertical, Plus, Image as ImageIcon, Search, Copy, Trash2, DollarSign, Calendar, Rocket } from 'lucide-react';
+import {
+  Eye,
+  Edit,
+  MoreVertical,
+  Plus,
+  Image as ImageIcon,
+  Search,
+  Copy,
+  Trash2,
+  DollarSign,
+  Calendar,
+} from 'lucide-react';
 import { Article, ArticleStatus, Season } from '../types/article';
 import { Button } from '../components/ui/Button';
 import { supabase } from '../lib/supabase';
@@ -8,9 +19,7 @@ import { Modal } from '../components/ui/Modal';
 import { ConfirmModal } from '../components/ui/ConfirmModal';
 import { ScheduleModal } from '../components/ScheduleModal';
 import { ArticleSoldModal } from '../components/ArticleSoldModal';
-import { PublishModal } from '../components/PublishModal';
 import { useAuth } from '../contexts/AuthContext';
-
 
 const STATUS_LABELS: Record<ArticleStatus, string> = {
   draft: 'Brouillon',
@@ -45,15 +54,34 @@ export function DashboardPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
-  const [modalState, setModalState] = useState<{ isOpen: boolean; title: string; message: string; type: 'error' | 'success' }>(
-    { isOpen: false, title: '', message: '', type: 'error' }
-  );
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: 'error' | 'success';
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'error',
+  });
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
-  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; article: Article | null }>({ isOpen: false, article: null });
-  const [scheduleModal, setScheduleModal] = useState<{ isOpen: boolean; article: Article | null }>({ isOpen: false, article: null });
-  const [soldModal, setSoldModal] = useState<{ isOpen: boolean; article: Article | null }>({ isOpen: false, article: null });
-  const [publishModal, setPublishModal] = useState<{ isOpen: boolean; article: Article | null }>({ isOpen: false, article: null });
-  const menuRef = useRef<HTMLDivElement>(null);
+  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; article: Article | null }>({
+    isOpen: false,
+    article: null,
+  });
+  const [scheduleModal, setScheduleModal] = useState<{ isOpen: boolean; article: Article | null }>({
+    isOpen: false,
+    article: null,
+  });
+  const [soldModal, setSoldModal] = useState<{ isOpen: boolean; article: Article | null }>({
+    isOpen: false,
+    article: null,
+  });
+
+  // Deux refs séparées : une pour le menu desktop, une pour le menu mobile
+  const desktopMenuRef = useRef<HTMLDivElement | null>(null);
+  const mobileMenuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     fetchArticles();
@@ -61,10 +89,19 @@ export function DashboardPage() {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setOpenMenuId(null);
+      const target = event.target as Node;
+
+      // Si on clique dans l'un des menus, on ne ferme pas
+      if (
+        (desktopMenuRef.current && desktopMenuRef.current.contains(target)) ||
+        (mobileMenuRef.current && mobileMenuRef.current.contains(target))
+      ) {
+        return;
       }
+
+      setOpenMenuId(null);
     }
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
@@ -80,7 +117,7 @@ export function DashboardPage() {
 
       if (error) throw error;
 
-      const formattedArticles: Article[] = (data || []).map(article => ({
+      const formattedArticles: Article[] = (data || []).map((article) => ({
         ...article,
         price: parseFloat(article.price),
       }));
@@ -92,7 +129,7 @@ export function DashboardPage() {
         isOpen: true,
         title: 'Erreur',
         message: 'Erreur lors du chargement des articles',
-        type: 'error'
+        type: 'error',
       });
     } finally {
       setLoading(false);
@@ -100,9 +137,9 @@ export function DashboardPage() {
   }
 
   const filteredArticles = articles
-    .filter(article => statusFilter === 'all' || article.status === statusFilter)
-    .filter(article => seasonFilter === 'all' || article.season === seasonFilter)
-    .filter(article => {
+    .filter((article) => statusFilter === 'all' || article.status === statusFilter)
+    .filter((article) => seasonFilter === 'all' || article.season === seasonFilter)
+    .filter((article) => {
       if (!searchQuery.trim()) return true;
       const query = searchQuery.toLowerCase();
       return (
@@ -137,8 +174,8 @@ export function DashboardPage() {
       setModalState({
         isOpen: true,
         title: 'Article dupliqué',
-        message: 'L\'article a été dupliqué avec succès',
-        type: 'success'
+        message: "L'article a été dupliqué avec succès",
+        type: 'success',
       });
       fetchArticles();
     } catch (error) {
@@ -146,8 +183,8 @@ export function DashboardPage() {
       setModalState({
         isOpen: true,
         title: 'Erreur',
-        message: 'Erreur lors de la duplication de l\'article',
-        type: 'error'
+        message: "Erreur lors de la duplication de l'article",
+        type: 'error',
       });
     }
     setOpenMenuId(null);
@@ -157,18 +194,15 @@ export function DashboardPage() {
     if (!deleteModal.article) return;
 
     try {
-      const { error } = await supabase
-        .from('articles')
-        .delete()
-        .eq('id', deleteModal.article.id);
+      const { error } = await supabase.from('articles').delete().eq('id', deleteModal.article.id);
 
       if (error) throw error;
 
       setModalState({
         isOpen: true,
         title: 'Article supprimé',
-        message: 'L\'article a été supprimé avec succès',
-        type: 'success'
+        message: "L'article a été supprimé avec succès",
+        type: 'success',
       });
       fetchArticles();
     } catch (error) {
@@ -176,8 +210,8 @@ export function DashboardPage() {
       setModalState({
         isOpen: true,
         title: 'Erreur',
-        message: 'Erreur lors de la suppression de l\'article',
-        type: 'error'
+        message: "Erreur lors de la suppression de l'article",
+        type: 'error',
       });
     }
   };
@@ -200,8 +234,8 @@ export function DashboardPage() {
       setModalState({
         isOpen: true,
         title: 'Publication programmée',
-        message: `L\'article sera publié le ${formatDate(date.toISOString())}`,
-        type: 'success'
+        message: `L'article sera publié le ${formatDate(date.toISOString())}`,
+        type: 'success',
       });
       fetchArticles();
     } catch (error) {
@@ -210,7 +244,7 @@ export function DashboardPage() {
         isOpen: true,
         title: 'Erreur',
         message: 'Erreur lors de la programmation',
-        type: 'error'
+        type: 'error',
       });
     }
     setOpenMenuId(null);
@@ -252,8 +286,10 @@ export function DashboardPage() {
       setModalState({
         isOpen: true,
         title: 'Vente enregistrée',
-        message: `L'article a été marqué comme vendu pour ${saleData.soldPrice.toFixed(2)} € (bénéfice net : ${netProfit.toFixed(2)} €)`,
-        type: 'success'
+        message: `L'article a été marqué comme vendu pour ${saleData.soldPrice.toFixed(
+          2
+        )} € (bénéfice net : ${netProfit.toFixed(2)} €)`,
+        type: 'success',
       });
       fetchArticles();
     } catch (error) {
@@ -261,8 +297,8 @@ export function DashboardPage() {
       setModalState({
         isOpen: true,
         title: 'Erreur',
-        message: 'Erreur lors de l\'enregistrement de la vente',
-        type: 'error'
+        message: "Erreur lors de l'enregistrement de la vente",
+        type: 'error',
       });
     }
     setOpenMenuId(null);
@@ -279,10 +315,7 @@ export function DashboardPage() {
         updateData.scheduled_for = null;
       }
 
-      const { error } = await supabase
-        .from('articles')
-        .update(updateData)
-        .eq('id', article.id);
+      const { error } = await supabase.from('articles').update(updateData).eq('id', article.id);
 
       if (error) throw error;
 
@@ -290,7 +323,7 @@ export function DashboardPage() {
         isOpen: true,
         title: 'Statut modifié',
         message: `Le statut a été changé en "${STATUS_LABELS[newStatus]}"`,
-        type: 'success'
+        type: 'success',
       });
       fetchArticles();
     } catch (error) {
@@ -299,43 +332,7 @@ export function DashboardPage() {
         isOpen: true,
         title: 'Erreur',
         message: 'Erreur lors du changement de statut',
-        type: 'error'
-      });
-    }
-    setOpenMenuId(null);
-  };
-
-  const handlePublishNow = async () => {
-    if (!publishModal.article) return;
-
-    try {
-      const { error } = await supabase.from('publication_jobs').insert({
-        article_id: publishModal.article.id,
-        status: 'pending',
-        run_at: new Date().toISOString(),
-      });
-
-      if (error) throw error;
-
-      await supabase
-        .from('articles')
-        .update({ status: 'scheduled' })
-        .eq('id', publishModal.article.id);
-
-      setModalState({
-        isOpen: true,
-        title: 'Publication programmée',
-        message: 'Votre article a été ajouté à la file de publication. Le worker le publiera automatiquement dans les prochaines minutes.',
-        type: 'success'
-      });
-      fetchArticles();
-    } catch (error) {
-      console.error('Error creating publication job:', error);
-      setModalState({
-        isOpen: true,
-        title: 'Erreur',
-        message: 'Erreur lors de la création du job de publication',
-        type: 'error'
+        type: 'error',
       });
     }
     setOpenMenuId(null);
@@ -351,122 +348,81 @@ export function DashboardPage() {
         type={modalState.type}
       />
       <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Mes articles en Stock</h1>
-        <p className="text-sm text-gray-600 mt-1">
-          Gérez vos articles Vinted et planifiez leur publication automatique
-        </p>
-      </div>
-
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-4 border-b border-gray-200">
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1">
-              <label className="block text-xs font-medium text-gray-700 mb-2">
-                Rechercher
-              </label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Rechercher par titre, marque..."
-                  className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                />
-              </div>
-            </div>
-            <div className="w-full lg:w-48">
-              <label className="block text-xs font-medium text-gray-700 mb-2">
-                Filtrer par saison
-              </label>
-              <select
-                value={seasonFilter}
-                onChange={(e) => setSeasonFilter(e.target.value as Season | 'all')}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              >
-                <option value="all">Toutes les saisons</option>
-                <option value="spring">Printemps</option>
-                <option value="summer">Été</option>
-                <option value="autumn">Automne</option>
-                <option value="winter">Hiver</option>
-                <option value="all-seasons">Toutes saisons</option>
-                <option value="undefined">Non défini</option>
-              </select>
-            </div>
-            <div className="w-full lg:w-48">
-              <label className="block text-xs font-medium text-gray-700 mb-2">
-                Filtrer par statut
-              </label>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as ArticleStatus | 'all')}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              >
-                <option value="all">Tous les articles</option>
-                <option value="draft">Brouillon</option>
-                <option value="ready">Prêt</option>
-                <option value="scheduled">Planifié</option>
-                <option value="published">Publié</option>
-              </select>
-            </div>
-          </div>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Mes articles en Stock</h1>
+          <p className="text-sm text-gray-600 mt-1">
+            Gérez vos articles Vinted et planifiez leur publication automatique
+          </p>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full table-fixed md:table-auto">
-            <colgroup>
-              <col className="w-20" />
-              <col className="md:w-auto" />
-              <col className="hidden md:table-column" />
-              <col className="hidden lg:table-column" />
-              <col className="w-32" />
-              <col className="hidden md:table-column" />
-            </colgroup>
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-2 md:px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                  Photo
-                </th>
-                <th className="px-2 md:px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                  Titre
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider hidden md:table-cell">
-                  Saison
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider hidden lg:table-cell">
-                  Planification
-                </th>
-                <th className="px-2 md:px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                  Statut
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider hidden md:table-cell">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {loading ? (
-                <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-500">
-                    Chargement...
-                  </td>
-                </tr>
-              ) : filteredArticles.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-500">
-                    Aucun article trouvé
-                  </td>
-                </tr>
-              ) : (
-                filteredArticles.map((article) => (
-                  <tr
-                    key={article.id}
-                    className="hover:bg-gray-50 cursor-pointer"
-                    onDoubleClick={() => navigate(`/articles/${article.id}/preview`)}
-                  >
-                    <td className="px-2 md:px-4 py-3 whitespace-nowrap">
-                      <div className="w-12 h-12 md:w-16 md:h-16 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+        {/* Filtres */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+          <div className="p-4 border-b border-gray-200">
+            <div className="flex flex-col lg:flex-row gap-4">
+              <div className="flex-1">
+                <label className="block text-xs font-medium text-gray-700 mb-2">Rechercher</label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Rechercher par titre, marque."
+                    className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+              <div className="w-full lg:w-48">
+                <label className="block text-xs font-medium text-gray-700 mb-2">
+                  Filtrer par saison
+                </label>
+                <select
+                  value={seasonFilter}
+                  onChange={(e) => setSeasonFilter(e.target.value as Season | 'all')}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                >
+                  <option value="all">Toutes</option>
+                  <option value="spring">Printemps</option>
+                  <option value="summer">Été</option>
+                  <option value="autumn">Automne</option>
+                  <option value="winter">Hiver</option>
+                  <option value="all-seasons">Toutes saisons</option>
+                </select>
+              </div>
+              <div className="w-full lg:w-48">
+                <label className="block text-xs font-medium text-gray-700 mb-2">
+                  Filtrer par statut
+                </label>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value as ArticleStatus | 'all')}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                >
+                  <option value="all">Tous</option>
+                  <option value="draft">Brouillon</option>
+                  <option value="ready">Prêt</option>
+                  <option value="scheduled">Planifié</option>
+                  <option value="published">Publié</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* LISTE MOBILE (cartes, pas de scroll horizontal) */}
+          <div className="block md:hidden">
+            {loading ? (
+              <div className="px-4 py-8 text-center text-sm text-gray-500">Chargement...</div>
+            ) : filteredArticles.length === 0 ? (
+              <div className="px-4 py-8 text-center text-sm text-gray-500">
+                Aucun article trouvé
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-100">
+                {filteredArticles.map((article) => (
+                  <div key={article.id} className="px-4 py-3 flex gap-3">
+                    {/* Photo */}
+                    <div className="flex-shrink-0">
+                      <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
                         {article.photos && article.photos.length > 0 ? (
                           <img
                             src={article.photos[0]}
@@ -474,132 +430,63 @@ export function DashboardPage() {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <ImageIcon className="w-4 h-4 md:w-6 md:h-6 text-gray-400" />
+                          <ImageIcon className="w-6 h-6 text-gray-400" />
                         )}
                       </div>
-                    </td>
-                    <td className="px-2 md:px-4 py-3">
-                      <div className="text-sm font-medium text-gray-900 truncate">{article.title}</div>
-                      <div className="text-xs text-gray-500 truncate">{article.brand} • {article.price}€</div>
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap hidden md:table-cell">
-                      <span className="text-sm text-gray-700">{SEASON_LABELS[article.season]}</span>
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap hidden lg:table-cell">
-                      <span className="text-sm text-gray-700">
-                        {article.status === 'scheduled' && article.scheduled_at ? formatDate(article.scheduled_at) : 'Non planifié'}
-                      </span>
-                    </td>
-                    <td className="px-2 md:px-4 py-3 whitespace-nowrap">
-                      <div className="flex items-center gap-1 md:gap-2">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${STATUS_COLORS[article.status]}`}>
+                    </div>
+
+                    {/* Contenu */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium text-gray-900 truncate">
+                            {article.title}
+                          </div>
+                          <div className="text-xs text-gray-500 truncate">
+                            {article.brand || 'Non spécifié'} • {article.price}€
+                          </div>
+                        </div>
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium whitespace-nowrap ${STATUS_COLORS[article.status]}`}
+                        >
                           {STATUS_LABELS[article.status]}
                         </span>
-                        <div className="md:hidden relative flex-shrink-0" ref={openMenuId === article.id ? menuRef : null}>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setOpenMenuId(openMenuId === article.id ? null : article.id);
-                            }}
-                            className="p-1 text-gray-600 hover:text-emerald-600 transition-colors"
-                            title="Actions"
-                          >
-                            <MoreVertical className="w-4 h-4" />
-                          </button>
-                          {openMenuId === article.id && (
-                            <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
-                              <div className="py-1">
-                                <button
-                                  onClick={() => {
-                                    navigate(`/articles/${article.id}/preview`);
-                                    setOpenMenuId(null);
-                                  }}
-                                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
-                                >
-                                  <Eye className="w-4 h-4" />
-                                  Voir l'article
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    navigate(`/articles/${article.id}/edit`);
-                                    setOpenMenuId(null);
-                                  }}
-                                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
-                                >
-                                  <Edit className="w-4 h-4" />
-                                  Modifier l'article
-                                </button>
-                                <button
-                                  onClick={() => handleDuplicate(article)}
-                                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
-                                >
-                                  <Copy className="w-4 h-4" />
-                                  Dupliquer l'article
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    setPublishModal({ isOpen: true, article });
-                                    setOpenMenuId(null);
-                                  }}
-                                  className="w-full px-4 py-2 text-left text-sm text-emerald-700 hover:bg-emerald-50 flex items-center gap-2"
-                                >
-                                  <Rocket className="w-4 h-4" />
-                                  Publier maintenant
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    setScheduleModal({ isOpen: true, article });
-                                    setOpenMenuId(null);
-                                  }}
-                                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
-                                >
-                                  <Calendar className="w-4 h-4" />
-                                  Programmer la publication
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    setSoldModal({ isOpen: true, article });
-                                    setOpenMenuId(null);
-                                  }}
-                                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
-                                >
-                                  <DollarSign className="w-4 h-4" />
-                                  Marquer comme vendu
-                                </button>
-                                <div className="border-t border-gray-100 my-1"></div>
-                                <button
-                                  onClick={() => {
-                                    setDeleteModal({ isOpen: true, article });
-                                    setOpenMenuId(null);
-                                  }}
-                                  className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                  Supprimer l'article
-                                </button>
-                              </div>
-                            </div>
-                          )}
-                        </div>
                       </div>
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap hidden md:table-cell">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => navigate(`/articles/${article.id}/preview`)}
-                          className="p-1 text-gray-600 hover:text-emerald-600 transition-colors"
-                          title="Voir"
+
+                      <div className="mt-2 flex items-center justify-between gap-2">
+                        <span className="text-[11px] text-gray-500">
+                          Saison : {SEASON_LABELS[article.season]}
+                        </span>
+                        <span className="text-[11px] text-gray-500">
+                          {article.status === 'scheduled' && article.scheduled_at
+                            ? `Planifié le ${formatDate(article.scheduled_at)}`
+                            : 'Non planifié'}
+                        </span>
+                      </div>
+
+                      {/* Actions mobile */}
+                      <div className="mt-3 flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => navigate(`/articles/${article.id}/preview`)}
+                            className="p-1 text-gray-600 hover:text-emerald-600 transition-colors"
+                            title="Voir"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => navigate(`/articles/${article.id}/edit`)}
+                            className="p-1 text-gray-600 hover:text-emerald-600 transition-colors"
+                            title="Modifier"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <div
+                          className="relative flex-shrink-0"
+                          ref={openMenuId === article.id ? mobileMenuRef : null}
                         >
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => navigate(`/articles/${article.id}/edit`)}
-                          className="p-1 text-gray-600 hover:text-emerald-600 transition-colors"
-                          title="Modifier"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <div className="relative" ref={openMenuId === article.id ? menuRef : null}>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -622,16 +509,6 @@ export function DashboardPage() {
                                 </button>
                                 <button
                                   onClick={() => {
-                                    setPublishModal({ isOpen: true, article });
-                                    setOpenMenuId(null);
-                                  }}
-                                  className="w-full px-4 py-2 text-left text-sm text-emerald-700 hover:bg-emerald-50 flex items-center gap-2"
-                                >
-                                  <Rocket className="w-4 h-4" />
-                                  Publier maintenant
-                                </button>
-                                <button
-                                  onClick={() => {
                                     setScheduleModal({ isOpen: true, article });
                                     setOpenMenuId(null);
                                   }}
@@ -666,59 +543,218 @@ export function DashboardPage() {
                           )}
                         </div>
                       </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* TABLEAU DESKTOP (>= md) */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                    Photo
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                    Titre
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                    Saison
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                    Planification
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                    Statut
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {loading ? (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-500">
+                      Chargement...
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : filteredArticles.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-500">
+                      Aucun article trouvé
+                    </td>
+                  </tr>
+                ) : (
+                  filteredArticles.map((article) => (
+                    <tr
+                      key={article.id}
+                      className="hover:bg-gray-50 cursor-pointer"
+                      onDoubleClick={() => navigate(`/articles/${article.id}/preview`)}
+                    >
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                          {article.photos && article.photos.length > 0 ? (
+                            <img
+                              src={article.photos[0]}
+                              alt={article.title}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <ImageIcon className="w-6 h-6 text-gray-400" />
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="text-sm font-medium text-gray-900 truncate">
+                          {article.title}
+                        </div>
+                        <div className="text-xs text-gray-500 truncate">
+                          {article.brand} • {article.price}€
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <span className="text-sm text-gray-700">
+                          {SEASON_LABELS[article.season]}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <span className="text-sm text-gray-700">
+                          {article.status === 'scheduled' && article.scheduled_at
+                            ? formatDate(article.scheduled_at)
+                            : 'Non planifié'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[article.status]}`}
+                        >
+                          {STATUS_LABELS[article.status]}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => navigate(`/articles/${article.id}/preview`)}
+                            className="p-1 text-gray-600 hover:text-emerald-600 transition-colors"
+                            title="Voir"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => navigate(`/articles/${article.id}/edit`)}
+                            className="p-1 text-gray-600 hover:text-emerald-600 transition-colors"
+                            title="Modifier"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <div
+                            className="relative"
+                            ref={openMenuId === article.id ? desktopMenuRef : null}
+                          >
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setOpenMenuId(openMenuId === article.id ? null : article.id);
+                              }}
+                              className="p-1 text-gray-600 hover:text-emerald-600 transition-colors"
+                              title="Plus d'actions"
+                            >
+                              <MoreVertical className="w-4 h-4" />
+                            </button>
+                            {openMenuId === article.id && (
+                              <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                                <div className="py-1">
+                                  <button
+                                    onClick={() => handleDuplicate(article)}
+                                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                  >
+                                    <Copy className="w-4 h-4" />
+                                    Dupliquer l'article
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setScheduleModal({ isOpen: true, article });
+                                      setOpenMenuId(null);
+                                    }}
+                                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                  >
+                                    <Calendar className="w-4 h-4" />
+                                    Programmer la publication
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setSoldModal({ isOpen: true, article });
+                                      setOpenMenuId(null);
+                                    }}
+                                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                  >
+                                    <DollarSign className="w-4 h-4" />
+                                    Marquer comme vendu
+                                  </button>
+                                  <div className="border-t border-gray-100 my-1"></div>
+                                  <button
+                                    onClick={() => {
+                                      setDeleteModal({ isOpen: true, article });
+                                      setOpenMenuId(null);
+                                    }}
+                                    className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                    Supprimer l'article
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
+
+        <div className="flex justify-center md:justify-end">
+          <Button onClick={() => navigate('/articles/new')} className="w-full sm:w-auto">
+            <Plus className="w-4 h-4" />
+            Nouvel article
+          </Button>
+        </div>
+
+        <ConfirmModal
+          isOpen={deleteModal.isOpen}
+          onClose={() => setDeleteModal({ isOpen: false, article: null })}
+          onConfirm={handleDelete}
+          title="Supprimer l'article"
+          message="Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible."
+          confirmLabel="Supprimer"
+          variant="danger"
+        />
+
+        {scheduleModal.article && (
+          <ScheduleModal
+            isOpen={scheduleModal.isOpen}
+            onClose={() => setScheduleModal({ isOpen: false, article: null })}
+            onSchedule={handleSchedule}
+            articleTitle={scheduleModal.article.title}
+          />
+        )}
+
+        {soldModal.article && (
+          <ArticleSoldModal
+            isOpen={soldModal.isOpen}
+            onClose={() => setSoldModal({ isOpen: false, article: null })}
+            onConfirm={handleMarkAsSold}
+            article={soldModal.article}
+          />
+        )}
       </div>
-
-      <div className="flex justify-center md:justify-end">
-        <Button onClick={() => navigate('/articles/new')} className="w-full sm:w-auto">
-          <Plus className="w-4 h-4" />
-          Nouvel article
-        </Button>
-      </div>
-
-      <ConfirmModal
-        isOpen={deleteModal.isOpen}
-        onClose={() => setDeleteModal({ isOpen: false, article: null })}
-        onConfirm={handleDelete}
-        title="Supprimer l'article"
-        message="Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible."
-        confirmLabel="Supprimer"
-        variant="danger"
-      />
-
-      {scheduleModal.article && (
-        <ScheduleModal
-          isOpen={scheduleModal.isOpen}
-          onClose={() => setScheduleModal({ isOpen: false, article: null })}
-          onSchedule={handleSchedule}
-          articleTitle={scheduleModal.article.title}
-        />
-      )}
-
-      {soldModal.article && (
-        <ArticleSoldModal
-          isOpen={soldModal.isOpen}
-          onClose={() => setSoldModal({ isOpen: false, article: null })}
-          onConfirm={handleMarkAsSold}
-          article={soldModal.article}
-        />
-      )}
-
-      {publishModal.article && (
-        <PublishModal
-          isOpen={publishModal.isOpen}
-          onClose={() => setPublishModal({ isOpen: false, article: null })}
-          onConfirm={handlePublishNow}
-          articleTitle={publishModal.article.title}
-        />
-      )}
-    </div>
     </>
   );
 }
