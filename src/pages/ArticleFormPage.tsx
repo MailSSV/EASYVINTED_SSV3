@@ -1,3 +1,4 @@
+// ⬇️ ARTICLEFORMPAGE.TSX COMPLET — VERSION AJOUT BOUTON RETOUR ⬇️
 import { useState, FormEvent, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Save, CheckCircle, Trash2, Send } from 'lucide-react';
@@ -190,74 +191,33 @@ export function ArticleFormPage() {
                             aiSubcategory.includes('sandale') ||
                             aiSubcategory.includes('talon');
 
-      if (aiSubcategory.includes('robe')) {
-        subcategory = 'Vêtements';
-        itemCategory = 'Robes';
-      } else if (aiSubcategory.includes('t-shirt') || aiSubcategory.includes('tee-shirt')) {
-        subcategory = 'Vêtements';
-        itemCategory = 'T-shirts';
-      } else if (aiSubcategory.includes('top') || aiSubcategory.includes('débardeur') || aiSubcategory.includes('tank')) {
-        subcategory = 'Vêtements';
-        itemCategory = 'Tops & débardeurs';
-      } else if (aiSubcategory.includes('chemis') || aiSubcategory.includes('blouse')) {
-        subcategory = 'Vêtements';
-        itemCategory = 'Chemises & blouses';
-      } else if (aiSubcategory.includes('pull') || aiSubcategory.includes('sweat') || aiSubcategory.includes('hoodie') || aiSubcategory.includes('gilet')) {
-        subcategory = 'Vêtements';
-        itemCategory = 'Pulls, sweats & hoodies';
-      } else if (aiSubcategory.includes('manteau') || aiSubcategory.includes('veste') || aiSubcategory.includes('blouson') || aiSubcategory.includes('jacket')) {
-        subcategory = 'Vêtements';
-        itemCategory = 'Manteaux & vestes';
-      } else if (aiSubcategory.includes('jean')) {
-        subcategory = 'Vêtements';
-        itemCategory = 'Jeans';
-      } else if (aiSubcategory.includes('pantalon')) {
-        subcategory = 'Vêtements';
-        itemCategory = 'Pantalons';
-      } else if (aiSubcategory.includes('short')) {
-        subcategory = 'Vêtements';
-        itemCategory = 'Shorts';
-      } else if (aiSubcategory.includes('jupe')) {
-        subcategory = 'Vêtements';
-        itemCategory = 'Jupes';
-      } else if (aiSubcategory.includes('maillot')) {
-        subcategory = 'Vêtements';
-        itemCategory = 'Maillots de bain';
-      } else if (aiSubcategory.includes('sport')) {
-        subcategory = 'Vêtements';
-        itemCategory = 'Sportswear';
-      } else if (aiSubcategory.includes('basket') || aiSubcategory.includes('sneaker')) {
-        subcategory = 'Chaussures';
-        itemCategory = 'Baskets';
-      } else if (aiSubcategory.includes('botte')) {
-        subcategory = 'Chaussures';
-        itemCategory = 'Bottes';
-      } else if (aiSubcategory.includes('bottine')) {
-        subcategory = 'Chaussures';
-        itemCategory = 'Bottines';
-      } else if (aiSubcategory.includes('sandale')) {
-        subcategory = 'Chaussures';
-        itemCategory = 'Sandales';
-      } else if (aiSubcategory.includes('talon')) {
-        subcategory = 'Chaussures';
-        itemCategory = 'Talons';
-      } else if (aiSubcategory.includes('sac')) {
+      if (aiSubcategory.includes('robe')) { subcategory = 'Vêtements'; itemCategory = 'Robes'; }
+      else if (aiSubcategory.includes('t-shirt') || aiSubcategory.includes('tee-shirt')) { subcategory = 'Vêtements'; itemCategory = 'T-shirts'; }
+      else if (aiSubcategory.includes('top') || aiSubcategory.includes('débardeur') || aiSubcategory.includes('tank')) { subcategory = 'Vêtements'; itemCategory = 'Tops & débardeurs'; }
+      else if (aiSubcategory.includes('chemis') || aiSubcategory.includes('blouse')) { subcategory = 'Vêtements'; itemCategory = 'Chemises & blouses'; }
+      else if (aiSubcategory.includes('pull') || aiSubcategory.includes('sweat') || aiSubcategory.includes('hoodie') || aiSubcategory.includes('gilet')) { subcategory = 'Vêtements'; itemCategory = 'Pulls, sweats & hoodies'; }
+      else if (aiSubcategory.includes('manteau') || aiSubcategory.includes('veste') || aiSubcategory.includes('blouson') || aiSubcategory.includes('jacket')) { subcategory = 'Vêtements'; itemCategory = 'Manteaux & vestes'; }
+      else if (aiSubcategory.includes('jean')) { subcategory = 'Vêtements'; itemCategory = 'Jeans'; }
+      else if (aiSubcategory.includes('pantalon')) { subcategory = 'Vêtements'; itemCategory = 'Pantalons'; }
+      else if (aiSubcategory.includes('short')) { subcategory = 'Vêtements'; itemCategory = 'Shorts'; }
+      else if (aiSubcategory.includes('jupe')) { subcategory = 'Vêtements'; itemCategory = 'Jupes'; }
+      else if (aiSubcategory.includes('maillot')) { subcategory = 'Vêtements'; itemCategory = 'Maillots de bain'; }
+      else if (aiSubcategory.includes('sport')) { subcategory = 'Vêtements'; itemCategory = 'Sportswear'; }
+      else if (aiSubcategory.includes('basket') || aiSubcategory.includes('sneaker')) { subcategory = 'Chaussures'; itemCategory = 'Baskets'; }
+      else if (aiSubcategory.includes('botte')) { subcategory = 'Chaussures'; itemCategory = 'Bottes'; }
+      else if (aiSubcategory.includes('bottine')) { subcategory = 'Chaussures'; itemCategory = 'Bottines'; }
+      else if (aiSubcategory.includes('sandale')) { subcategory = 'Chaussures'; itemCategory = 'Sandales'; }
+      else if (aiSubcategory.includes('talon')) { subcategory = 'Chaussures'; itemCategory = 'Talons'; }
+      else if (aiSubcategory.includes('sac')) {
         subcategory = 'Sacs';
-        if (aiSubcategory.includes('dos')) {
-          itemCategory = 'Sacs à dos';
-        } else if (aiSubcategory.includes('bandoulière')) {
-          itemCategory = 'Sacs bandoulière';
-        } else {
-          itemCategory = 'Sacs à main';
-        }
+        if (aiSubcategory.includes('dos')) itemCategory = 'Sacs à dos';
+        else if (aiSubcategory.includes('bandoulière')) itemCategory = 'Sacs bandoulière';
+        else itemCategory = 'Sacs à main';
       }
 
       if (!analysisResult.size && userProfile) {
-        if (isShoeCategory && userProfile.shoe_size) {
-          defaultSize = userProfile.shoe_size;
-        } else if (!isShoeCategory && userProfile.clothing_size) {
-          defaultSize = userProfile.clothing_size;
-        }
+        if (isShoeCategory && userProfile.shoe_size) defaultSize = userProfile.shoe_size;
+        else if (!isShoeCategory && userProfile.clothing_size) defaultSize = userProfile.clothing_size;
       }
 
       setFormData({
@@ -299,18 +259,10 @@ export function ArticleFormPage() {
   const validateForm = (): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
 
-    if (!formData.title.trim()) {
-      errors.push('title');
-    }
-    if (!formData.main_category) {
-      errors.push('main_category');
-    }
-    if (!formData.subcategory) {
-      errors.push('subcategory');
-    }
-    if (!formData.price || parseFloat(formData.price) <= 0) {
-      errors.push('price');
-    }
+    if (!formData.title.trim()) errors.push('title');
+    if (!formData.main_category) errors.push('main_category');
+    if (!formData.subcategory) errors.push('subcategory');
+    if (!formData.price || parseFloat(formData.price) <= 0) errors.push('price');
 
     return { isValid: errors.length === 0, errors };
   };
@@ -367,17 +319,10 @@ export function ArticleFormPage() {
       };
 
       if (id) {
-        const { error } = await supabase
-          .from('articles')
-          .update(articleData)
-          .eq('id', id);
-
+        const { error } = await supabase.from('articles').update(articleData).eq('id', id);
         if (error) throw error;
       } else {
-        const { error } = await supabase
-          .from('articles')
-          .insert([articleData]);
-
+        const { error } = await supabase.from('articles').insert([articleData]);
         if (error) throw error;
       }
 
@@ -401,24 +346,14 @@ export function ArticleFormPage() {
     if (!id) return;
 
     try {
-      const { error } = await supabase
-        .from('articles')
-        .delete()
-        .eq('id', id);
-
+      const { error } = await supabase.from('articles').delete().eq('id', id);
       if (error) throw error;
 
-      setToast({
-        type: 'success',
-        text: 'Article supprimé avec succès'
-      });
+      setToast({ type: 'success', text: 'Article supprimé avec succès' });
       setTimeout(() => navigate('/stock'), 1500);
     } catch (error) {
       console.error('Error deleting article:', error);
-      setToast({
-        type: 'error',
-        text: 'Erreur lors de la suppression de l\'article'
-      });
+      setToast({ type: 'error', text: 'Erreur lors de la suppression de l\'article' });
     }
   };
 
@@ -430,10 +365,7 @@ export function ArticleFormPage() {
     const validation = validateForm();
     if (!validation.isValid) {
       setValidationErrors(validation.errors);
-      setToast({
-        type: 'error',
-        text: getErrorMessage(validation.errors)
-      });
+      setToast({ type: 'error', text: getErrorMessage(validation.errors) });
       return;
     }
 
@@ -497,6 +429,7 @@ export function ArticleFormPage() {
           onClose={() => setToast(null)}
         />
       )}
+
       <Modal
         isOpen={modalState.isOpen}
         onClose={() => setModalState({ ...modalState, isOpen: false })}
@@ -504,33 +437,49 @@ export function ArticleFormPage() {
         message={modalState.message}
         type={modalState.type}
       />
+
       <PublishInstructionsModal
         isOpen={publishInstructionsModal.isOpen}
         onClose={() => setPublishInstructionsModal({ isOpen: false, articleId: '' })}
         articleId={publishInstructionsModal.articleId}
       />
+
       <div className="max-w-5xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">{id ? 'Modifier l\'article' : 'Nouvel article'}</h1>
-        <p className="text-sm text-gray-600 mt-1">
-          Remplissez les informations de votre article pour le préparer à la publication
-        </p>
-      </div>
 
-      <form className="space-y-6">
-        <div className="space-y-6">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Photos</h2>
-            <PhotoUpload
-              photos={formData.photos}
-              onPhotosChange={(photos) => setFormData({ ...formData, photos })}
-              onAnalyzeClick={handleAnalyzeWithAI}
-              analyzing={analyzingWithAI}
-            />
-          </div>
+        {/* ⭐⭐⭐ AJOUT DU BOUTON RETOUR ⭐⭐⭐ */}
+        <div className="mb-4">
+          <Button
+            variant="secondary"
+            onClick={() => navigate(-1)}
+            className="mb-4"
+          >
+            Retour
+          </Button>
+        </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Informations principales</h2>
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">
+            {id ? "Modifier l'article" : "Nouvel article"}
+          </h1>
+          <p className="text-sm text-gray-600 mt-1">
+            Remplissez les informations de votre article pour le préparer à la publication
+          </p>
+        </div>
+
+        <form className="space-y-6">
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Photos</h2>
+              <PhotoUpload
+                photos={formData.photos}
+                onPhotosChange={(photos) => setFormData({ ...formData, photos })}
+                onAnalyzeClick={handleAnalyzeWithAI}
+                analyzing={analyzingWithAI}
+              />
+            </div>
+
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Informations principales</h2>
 
               <div className="space-y-4">
                 <div>
@@ -548,9 +497,7 @@ export function ArticleFormPage() {
                       }
                     }}
                     className={`w-full px-3 py-2 text-sm border rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent ${
-                      validationErrors.includes('title')
-                        ? 'border-red-500 bg-red-50'
-                        : 'border-gray-300'
+                      validationErrors.includes('title') ? 'border-red-500 bg-red-50' : 'border-gray-300'
                     }`}
                     placeholder="Ex: Robe d'été fleurie"
                   />
@@ -670,9 +617,7 @@ export function ArticleFormPage() {
                       }
                     }}
                     className={`w-full px-3 py-2 text-sm border rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent ${
-                      validationErrors.includes('main_category')
-                        ? 'border-red-500 bg-red-50'
-                        : 'border-gray-300'
+                      validationErrors.includes('main_category') ? 'border-red-500 bg-red-50' : 'border-gray-300'
                     }`}
                   >
                     <option value="">Sélectionnez une catégorie</option>
@@ -702,9 +647,7 @@ export function ArticleFormPage() {
                         }
                       }}
                       className={`w-full px-3 py-2 text-sm border rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent ${
-                        validationErrors.includes('subcategory')
-                          ? 'border-red-500 bg-red-50'
-                          : 'border-gray-300'
+                        validationErrors.includes('subcategory') ? 'border-red-500 bg-red-50' : 'border-gray-300'
                       }`}
                     >
                       <option value="">Sélectionnez une sous-catégorie</option>
@@ -776,9 +719,7 @@ export function ArticleFormPage() {
                         }
                       }}
                       className={`w-full px-3 py-2 text-sm border rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent ${
-                        validationErrors.includes('price')
-                          ? 'border-red-500 bg-red-50'
-                          : 'border-gray-300'
+                        validationErrors.includes('price') ? 'border-red-500 bg-red-50' : 'border-gray-300'
                       }`}
                       placeholder="25.00"
                     />
@@ -787,13 +728,13 @@ export function ArticleFormPage() {
                     )}
                   </div>
                 </div>
+              </div>
             </div>
-          </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Saison & période conseillée
-            </h2>
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Saison & période conseillée
+              </h2>
 
               <div className="space-y-4">
                 <div>
@@ -825,73 +766,77 @@ export function ArticleFormPage() {
                     placeholder="Ex: Avril - Juin"
                   />
                 </div>
-
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-            {id && (
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => setDeleteModal(true)}
-                disabled={loading || publishing}
-                className="w-full sm:w-auto justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
-              >
-                <Trash2 className="w-4 h-4" />
-                Supprimer
-              </Button>
-            )}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:ml-auto">
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={(e) => handleSubmit(e as any, 'draft')}
-                disabled={loading || publishing}
-                className="w-full sm:w-auto justify-center"
-              >
-                <Save className="w-4 h-4" />
-                <span className="hidden sm:inline">Enregistrer comme brouillon</span>
-                <span className="sm:hidden">Brouillon</span>
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={(e) => handleSubmit(e as any, 'ready')}
-                disabled={loading || publishing}
-                className="w-full sm:w-auto justify-center"
-              >
-                <CheckCircle className="w-4 h-4" />
-                <span className="hidden sm:inline">Marquer comme prêt pour Vinted</span>
-                <span className="sm:hidden">Prêt pour Vinted</span>
-              </Button>
-              <Button
-                type="button"
-                onClick={handlePublishToVinted}
-                disabled={loading || publishing}
-                className="w-full sm:w-auto justify-center bg-emerald-600 hover:bg-emerald-700 text-white"
-              >
-                <Send className="w-4 h-4" />
-                <span className="hidden sm:inline">{publishing ? 'Publication en cours...' : 'Valider et envoyer à Vinted'}</span>
-                <span className="sm:hidden">{publishing ? 'Envoi...' : 'Envoyer à Vinted'}</span>
-              </Button>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+              {id && (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setDeleteModal(true)}
+                  disabled={loading || publishing}
+                  className="w-full sm:w-auto justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Supprimer
+                </Button>
+              )}
+
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:ml-auto">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={(e) => handleSubmit(e as any, 'draft')}
+                  disabled={loading || publishing}
+                  className="w-full sm:w-auto justify-center"
+                >
+                  <Save className="w-4 h-4" />
+                  <span className="hidden sm:inline">Enregistrer comme brouillon</span>
+                  <span className="sm:hidden">Brouillon</span>
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={(e) => handleSubmit(e as any, 'ready')}
+                  disabled={loading || publishing}
+                  className="w-full sm:w-auto justify-center"
+                >
+                  <CheckCircle className="w-4 h-4" />
+                  <span className="hidden sm:inline">Marquer comme prêt pour Vinted</span>
+                  <span className="sm:hidden">Prêt</span>
+                </Button>
+
+                <Button
+                  type="button"
+                  onClick={handlePublishToVinted}
+                  disabled={loading || publishing}
+                  className="w-full sm:w-auto justify-center bg-emerald-600 hover:bg-emerald-700 text-white"
+                >
+                  <Send className="w-4 h-4" />
+                  <span className="hidden sm:inline">{publishing ? 'Publication en cours...' : 'Valider et envoyer à Vinted'}</span>
+                  <span className="sm:hidden">{publishing ? 'Envoi...' : 'Envoyer'}</span>
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      </form>
+        </form>
 
-      <ConfirmModal
-        isOpen={deleteModal}
-        onClose={() => setDeleteModal(false)}
-        onConfirm={handleDelete}
-        title="Supprimer l'article"
-        message="Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible."
-        confirmLabel="Supprimer"
-        variant="danger"
-      />
-    </div>
+        <ConfirmModal
+          isOpen={deleteModal}
+          onClose={() => setDeleteModal(false)}
+          onConfirm={handleDelete}
+          title="Supprimer l'article"
+          message="Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible."
+          confirmLabel="Supprimer"
+          variant="danger"
+        />
+      </div>
     </>
   );
 }
+
+// ⬆️ ARTICLEFORMPAGE.TSX COMPLET — FIN ⬆️
