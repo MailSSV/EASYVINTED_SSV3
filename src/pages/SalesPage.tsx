@@ -9,7 +9,6 @@ interface SaleRecord {
   title: string;
   brand: string;
   price: number;
-  actual_value?: number;
   sold_price: number;
   sold_at: string;
   platform: string;
@@ -56,7 +55,6 @@ export function SalesPage() {
             title: a.title,
             brand: a.brand || 'Sans marque',
             price: parseFloat(a.price),
-            actual_value: a.actual_value ? parseFloat(a.actual_value) : undefined,
             sold_price: parseFloat(a.sold_price) || 0,
             sold_at: a.sold_at,
             platform: a.platform || 'Vinted',
@@ -123,9 +121,6 @@ export function SalesPage() {
                       Date de vente
                     </th>
                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Valeur
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Prix vendu
                     </th>
                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -164,9 +159,6 @@ export function SalesPage() {
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900">
                         {formatDate(sale.sold_at)}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-right text-gray-900">
-                        {(sale.actual_value || 0).toFixed(2)} €
                       </td>
                       <td className="px-6 py-4 text-sm text-right font-medium text-gray-900">
                         {sale.sold_price.toFixed(2)} €

@@ -279,7 +279,6 @@ export function DashboardPage() {
     try {
       // Calculate net profit
       const netProfit = saleData.soldPrice -
-        (soldModal.article.actual_value || 0) -
         saleData.fees -
         saleData.shippingCost;
 

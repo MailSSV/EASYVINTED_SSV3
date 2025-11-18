@@ -1,4 +1,4 @@
-import { X, Package, Calendar, User, FileText, ShoppingBag, Truck, CreditCard, ArrowDownRight, ArrowUpRight, BadgeCheck } from 'lucide-react';
+import { X, Package, Calendar, User, FileText, ShoppingBag, Truck, CreditCard, ArrowUpRight, BadgeCheck } from 'lucide-react';
 
 interface SaleDetailModalProps {
   sale: {
@@ -6,7 +6,6 @@ interface SaleDetailModalProps {
     title: string;
     brand: string;
     price: number;
-    actual_value?: number;
     sold_price: number;
     sold_at: string;
     platform: string;
@@ -31,7 +30,7 @@ export function SaleDetailModal({ sale, onClose }: SaleDetailModalProps) {
     });
   };
 
-  const totalCosts = (sale.actual_value || 0) + sale.fees + sale.shipping_cost;
+  const totalCosts = sale.fees + sale.shipping_cost;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
@@ -92,22 +91,20 @@ export function SaleDetailModal({ sale, onClose }: SaleDetailModalProps) {
               </div>
 
               <div className="lg:col-span-2 space-y-6">
-                {sale.actual_value !== undefined && (
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                      <p className="text-xs font-medium text-gray-500 mb-1">COÛTS TOTAUX</p>
-                      <p className="text-xl font-bold text-gray-900">{totalCosts.toFixed(2)} €</p>
-                    </div>
-                    <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                      <p className="text-xs font-medium text-blue-700 mb-1">REVENU BRUT</p>
-                      <p className="text-xl font-bold text-blue-900">{sale.sold_price.toFixed(2)} €</p>
-                    </div>
-                    <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
-                      <p className="text-xs font-medium text-emerald-700 mb-1">BÉNÉFICE NET</p>
-                      <p className="text-xl font-bold text-emerald-900">{sale.net_profit.toFixed(2)} €</p>
-                    </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                    <p className="text-xs font-medium text-gray-500 mb-1">FRAIS TOTAUX</p>
+                    <p className="text-xl font-bold text-gray-900">{totalCosts.toFixed(2)} €</p>
                   </div>
-                )}
+                  <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                    <p className="text-xs font-medium text-blue-700 mb-1">REVENU BRUT</p>
+                    <p className="text-xl font-bold text-blue-900">{sale.sold_price.toFixed(2)} €</p>
+                  </div>
+                  <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
+                    <p className="text-xs font-medium text-emerald-700 mb-1">BÉNÉFICE NET</p>
+                    <p className="text-xl font-bold text-emerald-900">{sale.net_profit.toFixed(2)} €</p>
+                  </div>
+                </div>
 
                 <div className="bg-white border border-gray-200 rounded-xl p-6">
                   <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Détail de la transaction</h4>
@@ -125,21 +122,6 @@ export function SaleDetailModal({ sale, onClose }: SaleDetailModalProps) {
                       </div>
                       <p className="text-lg font-bold text-gray-900">{sale.sold_price.toFixed(2)} €</p>
                     </div>
-
-                    {sale.actual_value !== undefined && (
-                      <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                            <ArrowDownRight className="w-5 h-5 text-gray-600" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-gray-900">Coût d'acquisition</p>
-                            <p className="text-xs text-gray-500">Prix d'achat initial</p>
-                          </div>
-                        </div>
-                        <p className="text-base font-semibold text-gray-600">- {sale.actual_value.toFixed(2)} €</p>
-                      </div>
-                    )}
 
                     <div className="flex items-center justify-between py-3 border-b border-gray-100">
                       <div className="flex items-center gap-3">

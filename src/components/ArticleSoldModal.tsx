@@ -211,20 +211,15 @@ export function ArticleSoldModal({ isOpen, onClose, onConfirm, article }: Articl
                 <p>
                   {soldPrice && !isNaN(parseFloat(soldPrice)) ? (
                     <>
-                      {(parseFloat(soldPrice) - (article.actual_value || 0) - parseFloat(fees || '0') - parseFloat(shippingCost || '0')).toFixed(2)} €
+                      {(parseFloat(soldPrice) - parseFloat(fees || '0') - parseFloat(shippingCost || '0')).toFixed(2)} €
                       <span className="text-emerald-600 ml-1">
-                        (Prix de vente - Valeur estimée - Frais)
+                        (Prix de vente - Frais)
                       </span>
                     </>
                   ) : (
                     'Entrez le prix de vente pour voir le calcul'
                   )}
                 </p>
-                {!article.actual_value && (
-                  <p className="text-amber-600 mt-1">
-                    ⚠️ Valeur estimée non définie. Modifiez l'article pour l'ajouter.
-                  </p>
-                )}
               </div>
             </div>
           </div>

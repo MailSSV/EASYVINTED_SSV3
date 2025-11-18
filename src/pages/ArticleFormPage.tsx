@@ -84,7 +84,6 @@ export function ArticleFormPage() {
     subcategory: '',
     item_category: '',
     price: '',
-    actual_value: '',
     season: 'undefined' as Season,
     suggested_period: '',
     photos: [] as string[],
@@ -161,7 +160,6 @@ export function ArticleFormPage() {
           subcategory: data.subcategory || '',
           item_category: data.item_category || '',
           price: data.price.toString(),
-          actual_value: data.actual_value ? data.actual_value.toString() : '',
           season: normalizedSeason as Season,
           suggested_period: data.suggested_period || '',
           photos: data.photos || [],
@@ -398,7 +396,6 @@ export function ArticleFormPage() {
         subcategory: formData.subcategory,
         item_category: formData.item_category,
         price: parseFloat(formData.price),
-        actual_value: formData.actual_value ? parseFloat(formData.actual_value) : null,
         season: formData.season,
         suggested_period: formData.suggested_period,
         photos: formData.photos,
@@ -647,7 +644,6 @@ export function ArticleFormPage() {
           subcategory: formData.subcategory,
           item_category: formData.item_category,
           price: parseFloat(formData.price),
-          actual_value: formData.actual_value ? parseFloat(formData.actual_value) : null,
           season: formData.season,
           suggested_period: formData.suggested_period,
           photos: formData.photos,
@@ -977,29 +973,6 @@ export function ArticleFormPage() {
                 )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      Valeur estimée (€)
-                    </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={formData.actual_value}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          actual_value: e.target.value,
-                        })
-                      }
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                      placeholder="10.00"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Valeur d'occasion ou coût d'acquisition de l'article
-                    </p>
-                  </div>
-
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       Prix de vente (€) *

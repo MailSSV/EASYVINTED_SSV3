@@ -16,7 +16,6 @@ export interface Article {
   item_category: string;
   price: number;
   purchase_price?: number;
-  actual_value?: number;
   photos: string[];
   season: Season;
   suggested_period: string;
