@@ -568,94 +568,134 @@ export function DashboardPage() {
                       </div>
                     </div>
 
-                    {openMenuId === article.id && (
-                      <>
-                        <div
-                          className="fixed inset-0 z-10"
+                  </div>
+
+                  {openMenuId === article.id && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-10"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenMenuId(null);
+                        }}
+                      />
+                      <div className="absolute right-3 bottom-12 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-1 z-20 text-[13px]">
+                        <button
+                          className="w-full text-left px-3 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-2"
+                          onTouchEnd={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setOpenMenuId(null);
+                            handleDuplicate(article);
+                          }}
                           onClick={(e) => {
                             e.stopPropagation();
                             setOpenMenuId(null);
+                            handleDuplicate(article);
                           }}
-                        />
-                        <div className="absolute right-3 top-full mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20 text-[13px]">
+                        >
+                          <Copy className="w-4 h-4" />
+                          Dupliquer
+                        </button>
+                        <button
+                          className="w-full text-left px-3 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-2"
+                          onTouchEnd={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setOpenMenuId(null);
+                            handlePlanification(article);
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenMenuId(null);
+                            handlePlanification(article);
+                          }}
+                        >
+                          <Calendar className="w-4 h-4" />
+                          Programmer
+                        </button>
+                        {article.status !== 'ready' && (
                           <button
                             className="w-full text-left px-3 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-2"
+                            onTouchEnd={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setOpenMenuId(null);
+                              handleMarkReady(article);
+                            }}
                             onClick={(e) => {
                               e.stopPropagation();
                               setOpenMenuId(null);
-                              handleDuplicate(article);
+                              handleMarkReady(article);
                             }}
                           >
-                            <Copy className="w-4 h-4" />
-                            Dupliquer
+                            <CheckCircle2 className="w-4 h-4" />
+                            Marquer comme prêt
                           </button>
+                        )}
+                        {article.status !== 'published' && (
                           <button
                             className="w-full text-left px-3 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-2"
+                            onTouchEnd={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setOpenMenuId(null);
+                              handleMarkPublished(article);
+                            }}
                             onClick={(e) => {
                               e.stopPropagation();
                               setOpenMenuId(null);
-                              handlePlanification(article);
+                              handleMarkPublished(article);
                             }}
                           >
-                            <Calendar className="w-4 h-4" />
-                            Programmer
+                            <Send className="w-4 h-4" />
+                            Marquer comme publié
                           </button>
-                          {article.status !== 'ready' && (
-                            <button
-                              className="w-full text-left px-3 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-2"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setOpenMenuId(null);
-                                handleMarkReady(article);
-                              }}
-                            >
-                              <CheckCircle2 className="w-4 h-4" />
-                              Marquer comme prêt
-                            </button>
-                          )}
-                          {article.status !== 'published' && (
-                            <button
-                              className="w-full text-left px-3 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-2"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setOpenMenuId(null);
-                                handleMarkPublished(article);
-                              }}
-                            >
-                              <Send className="w-4 h-4" />
-                              Marquer comme publié
-                            </button>
-                          )}
-                          <div className="border-t border-gray-200 my-1"></div>
-                          <button
-                            className="w-full text-left px-3 py-2 text-red-600 hover:bg-red-50 flex items-center gap-2"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setOpenMenuId(null);
-                              setSoldModal({ isOpen: true, article });
-                            }}
-                          >
-                            <DollarSign className="w-4 h-4" />
-                            Marquer comme vendu
-                          </button>
-                          <button
-                            className="w-full text-left px-3 py-2 text-red-600 hover:bg-red-50 flex items-center gap-2"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setOpenMenuId(null);
-                              setDeleteModal({
-                                isOpen: true,
-                                articleId: article.id,
-                              });
-                            }}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                            Supprimer
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </div>
+                        )}
+                        <div className="border-t border-gray-200 my-1"></div>
+                        <button
+                          className="w-full text-left px-3 py-2 text-red-600 hover:bg-red-50 flex items-center gap-2"
+                          onTouchEnd={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setOpenMenuId(null);
+                            setSoldModal({ isOpen: true, article });
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenMenuId(null);
+                            setSoldModal({ isOpen: true, article });
+                          }}
+                        >
+                          <DollarSign className="w-4 h-4" />
+                          Marquer comme vendu
+                        </button>
+                        <button
+                          className="w-full text-left px-3 py-2 text-red-600 hover:bg-red-50 flex items-center gap-2"
+                          onTouchEnd={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setOpenMenuId(null);
+                            setDeleteModal({
+                              isOpen: true,
+                              articleId: article.id,
+                            });
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenMenuId(null);
+                            setDeleteModal({
+                              isOpen: true,
+                              articleId: article.id,
+                            });
+                          }}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          Supprimer
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               ))}
             </div>
