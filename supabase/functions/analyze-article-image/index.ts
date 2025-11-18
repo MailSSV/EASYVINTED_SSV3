@@ -6,7 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const OPENAI_API_KEY = "ssk-proj-aRVEReLO6bHJG4-8LWu4rr6oy9to7Sh6jNikODzAyDV8ThS9UBIJVxDgElnMZyEYv_RaUEcOjnT3BlbkFJQzB9qA8EfH0jZ9vWkvCrdJzrqZl1BNBSet1qrM_He6t2SUZIXhqWf5nZZkspT7Ml1DkiIk3zgA";
+const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
 
 interface AnalysisResult {
   title: string;
@@ -32,6 +32,19 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    if (!OPENAI_API_KEY) {
+      console.error("OPENAI_API_KEY is not configured");
+      return new Response(
+        JSON.stringify({
+          error: "La clé API OpenAI n'est pas configurée. Veuillez configurer OPENAI_API_KEY dans les secrets de votre projet Supabase."
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
     const { imageUrls } = await req.json();
     console.log("Received imageUrls:", imageUrls);
 
