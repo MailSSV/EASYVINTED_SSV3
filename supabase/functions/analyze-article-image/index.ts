@@ -6,7 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const OPENAI_API_KEY = "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";
+const OPENAI_API_KEY = "ssk-proj-aRVEReLO6bHJG4-8LWu4rr6oy9to7Sh6jNikODzAyDV8ThS9UBIJVxDgElnMZyEYv_RaUEcOjnT3BlbkFJQzB9qA8EfH0jZ9vWkvCrdJzrqZl1BNBSet1qrM_He6t2SUZIXhqWf5nZZkspT7Ml1DkiIk3zgA";
 
 interface AnalysisResult {
   title: string;
