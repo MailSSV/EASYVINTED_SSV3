@@ -74,7 +74,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                   }`}
                 >
                   <Package className="w-4 h-4" />
-                  Mon Stock
+                  Mes articles
                 </Link>
                 <Link
                   to="/sales"
