@@ -311,65 +311,88 @@ export function PlannerPage() {
                     <p className="text-sm text-gray-500">Cliquez sur "Générer suggestions" pour obtenir des recommandations</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {pendingSuggestions.map((suggestion) => (
                       <div
                         key={suggestion.id}
-                        className={`relative border-2 rounded-xl p-4 sm:p-6 transition-all hover:shadow-lg ${PRIORITY_COLORS[suggestion.priority]}`}
+                        className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-gray-300"
                       >
-                        <div className="flex flex-col gap-4">
-                          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-gray-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                        <div className="relative p-6">
+                          <div className="flex items-start gap-4 mb-4">
+                            {suggestion.article?.photos?.[0] ? (
+                              <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 shadow-md ring-1 ring-gray-200">
+                                <img
+                                  src={suggestion.article.photos[0]}
+                                  alt={suggestion.article.title}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            ) : (
+                              <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0 shadow-md">
+                                <Calendar className="w-8 h-8 text-gray-400" />
+                              </div>
+                            )}
+
                             <div className="flex-1 min-w-0">
-                              <div className="flex flex-wrap items-center gap-2 mb-3">
-                                <h3 className="font-bold text-lg truncate">
-                                  {suggestion.article?.title || 'Article inconnu'}
-                                </h3>
-                                <span className="inline-flex items-center text-xs font-semibold px-3 py-1 rounded-full bg-white shadow-sm whitespace-nowrap">
+                              <h3 className="font-semibold text-gray-900 text-base mb-1 truncate">
+                                {suggestion.article?.title || 'Article inconnu'}
+                              </h3>
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className={`inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full ${
+                                  suggestion.priority === 'high'
+                                    ? 'bg-red-50 text-red-700 ring-1 ring-red-200'
+                                    : suggestion.priority === 'medium'
+                                    ? 'bg-amber-50 text-amber-700 ring-1 ring-amber-200'
+                                    : 'bg-blue-50 text-blue-700 ring-1 ring-blue-200'
+                                }`}>
                                   {PRIORITY_LABELS[suggestion.priority]}
                                 </span>
-                              </div>
-                              <p className="text-sm leading-relaxed mb-3">{suggestion.reason}</p>
-                              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                                <div className="flex items-center gap-1.5">
-                                  <Calendar className="w-4 h-4 opacity-70" />
-                                  <span className="font-semibold">
-                                    {new Date(suggestion.suggested_date).toLocaleDateString('fr-FR', {
-                                      day: '2-digit',
-                                      month: 'short',
-                                      year: 'numeric',
-                                    })}
+                                {suggestion.article?.season && (
+                                  <span className="text-xs text-gray-500 font-medium">
+                                    {SEASON_LABELS[suggestion.article.season] || suggestion.article.season}
                                   </span>
-                                </div>
-                                {suggestion.article && (
-                                  <>
-                                    <div className="flex items-center gap-1.5">
-                                      <span className="font-medium">Prix:</span>
-                                      <span className="font-semibold">{suggestion.article.price}€</span>
-                                    </div>
-                                    {suggestion.article.season && (
-                                      <div className="flex items-center gap-1.5">
-                                        <span className="font-medium">Saison:</span>
-                                        <span className="font-semibold">{SEASON_LABELS[suggestion.article.season] || suggestion.article.season}</span>
-                                      </div>
-                                    )}
-                                  </>
                                 )}
                               </div>
+                              {suggestion.article && (
+                                <div className="text-sm font-semibold text-gray-900">
+                                  {suggestion.article.price}€
+                                </div>
+                              )}
                             </div>
-                            <div className="flex sm:flex-col gap-2 flex-shrink-0">
-                              <button
-                                onClick={() => acceptSuggestion(suggestion.id, suggestion.article_id, suggestion.suggested_date)}
-                                className="flex-1 sm:flex-none p-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 active:scale-95 transition-all shadow-md hover:shadow-lg"
-                                title="Accepter"
-                              >
-                                <CheckCircle className="w-5 h-5 mx-auto" />
-                              </button>
+                          </div>
+
+                          <p className="text-sm text-gray-600 leading-relaxed mb-4 line-clamp-2">
+                            {suggestion.reason}
+                          </p>
+
+                          <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                              <Calendar className="w-4 h-4" />
+                              <span className="font-medium">
+                                {new Date(suggestion.suggested_date).toLocaleDateString('fr-FR', {
+                                  day: 'numeric',
+                                  month: 'short',
+                                })}
+                              </span>
+                            </div>
+
+                            <div className="flex gap-2">
                               <button
                                 onClick={() => rejectSuggestion(suggestion.id)}
-                                className="flex-1 sm:flex-none p-3 bg-red-600 text-white rounded-xl hover:bg-red-700 active:scale-95 transition-all shadow-md hover:shadow-lg"
+                                className="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 active:scale-95 transition-all"
                                 title="Rejeter"
                               >
-                                <X className="w-5 h-5 mx-auto" />
+                                <X className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => acceptSuggestion(suggestion.id, suggestion.article_id, suggestion.suggested_date)}
+                                className="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-sm font-medium hover:from-emerald-600 hover:to-emerald-700 active:scale-95 transition-all shadow-sm hover:shadow-md flex items-center gap-1.5"
+                                title="Accepter"
+                              >
+                                <CheckCircle className="w-4 h-4" />
+                                <span>Accepter</span>
                               </button>
                             </div>
                           </div>
