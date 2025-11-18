@@ -161,7 +161,7 @@ export function PreviewPage() {
           <>
             {article.status === 'ready' && (
               <div className="bg-emerald-50 border-l-4 border-emerald-500 rounded-lg p-4 mb-6 flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <h3 className="font-semibold text-blue-900 mb-1">Statut : Prêt pour Vinted</h3>
                   <p className="text-sm text-blue-800">Tous les champs requis sont remplis. Vous pouvez maintenant envoyer cette annonce sur la plateforme Vinted.</p>
