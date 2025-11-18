@@ -25,6 +25,7 @@ import { ScheduleModal } from '../components/ScheduleModal';
 import { ArticleSoldModal } from '../components/ArticleSoldModal';
 import { Toast } from '../components/ui/Toast';
 import { useAuth } from '../contexts/AuthContext';
+import { ArticlePreviewModal } from '../components/ArticlePreviewModal';
 
 const STATUS_LABELS: Record<ArticleStatus, string> = {
   draft: 'Brouillon',
@@ -89,6 +90,14 @@ export function DashboardPage() {
   });
 
   const [soldModal, setSoldModal] = useState<{
+    isOpen: boolean;
+    article: Article | null;
+  }>({
+    isOpen: false,
+    article: null,
+  });
+
+  const [previewModal, setPreviewModal] = useState<{
     isOpen: boolean;
     article: Article | null;
   }>({
@@ -539,7 +548,7 @@ export function DashboardPage() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigate(`/articles/${article.id}/preview`);
+                            setPreviewModal({ isOpen: true, article });
                           }}
                           className="p-1.5 rounded-full hover:bg-gray-100 text-gray-600"
                         >
@@ -617,7 +626,7 @@ export function DashboardPage() {
                     key={article.id}
                     className="hover:bg-gray-50 cursor-pointer"
                     onDoubleClick={() =>
-                      navigate(`/articles/${article.id}/preview`)
+                      setPreviewModal({ isOpen: true, article })
                     }
                   >
                     <td className="px-4 py-3">
@@ -670,9 +679,10 @@ export function DashboardPage() {
                     <td className="px-4 py-3 whitespace-nowrap relative">
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() =>
-                            navigate(`/articles/${article.id}/preview`)
-                          }
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPreviewModal({ isOpen: true, article });
+                          }}
                           className="p-1 text-gray-600 hover:text-emerald-600 transition-colors"
                           title="Voir"
                         >
@@ -812,6 +822,13 @@ export function DashboardPage() {
             onClose={() => setSoldModal({ isOpen: false, article: null })}
             onConfirm={handleMarkAsSold}
             article={soldModal.article}
+          />
+        )}
+
+        {previewModal.isOpen && previewModal.article && (
+          <ArticlePreviewModal
+            article={previewModal.article}
+            onClose={() => setPreviewModal({ isOpen: false, article: null })}
           />
         )}
       </div>
