@@ -1141,7 +1141,7 @@ export function ArticleFormPage() {
                         </span>
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <Button
                         type="button"
                         variant="secondary"
@@ -1151,17 +1151,6 @@ export function ArticleFormPage() {
                       >
                         <Calendar className="w-4 h-4" />
                         <span>Programmer</span>
-                      </Button>
-
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={handleMarkAsPublished}
-                        disabled={loading || publishing}
-                        className="justify-center bg-white text-indigo-700 hover:bg-indigo-50 border-indigo-300 hover:border-indigo-400"
-                      >
-                        <CheckSquare className="w-4 h-4" />
-                        <span>Marquer publié</span>
                       </Button>
 
                       <Button
