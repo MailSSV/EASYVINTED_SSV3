@@ -469,10 +469,12 @@ export function DashboardPage() {
               {filteredArticles.map((article) => (
                 <div
                   key={article.id}
-                  className="bg-white rounded-xl shadow-sm border border-gray-100 px-3 py-3 flex gap-3 cursor-pointer relative"
-                  onClick={() => navigate(`/articles/${article.id}/preview`)}
+                  className="bg-white rounded-xl shadow-sm border border-gray-100 px-3 py-3 flex gap-3 relative"
                 >
-                  <div className="w-20 h-20 rounded-lg bg-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0">
+                  <div
+                    className="w-20 h-20 rounded-lg bg-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0 cursor-pointer"
+                    onClick={() => navigate(`/articles/${article.id}/preview`)}
+                  >
                     {article.photos && article.photos.length > 0 ? (
                       <img
                         src={article.photos[0]}
