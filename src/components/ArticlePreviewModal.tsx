@@ -351,7 +351,7 @@ export function ArticlePreviewModal({ article, onClose }: ArticlePreviewModalPro
                 className="w-full sm:w-auto"
               >
                 <Send className="w-4 h-4 mr-2" />
-                {publishing ? 'Préparation...' : 'Valider et envoyer à Vinted'}
+                {publishing ? 'Préparation...' : 'Envoyer à Vinted'}
               </Button>
             </div>
           </div>
