@@ -416,30 +416,56 @@ export function PlannerPage() {
                   </h2>
                 </div>
                 <div className="p-4 sm:p-6">
-                  <div className="space-y-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {acceptedSuggestions.map((suggestion) => (
                       <div
                         key={suggestion.id}
-                        className="border-2 border-green-300 bg-white rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all"
+                        className="group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-emerald-200 hover:border-emerald-300"
                       >
-                        <div className="flex items-start sm:items-center justify-between gap-3">
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-bold text-gray-900 text-base mb-1 truncate">
-                              {suggestion.article?.title || 'Article inconnu'}
-                            </h3>
-                            <div className="flex items-center gap-1.5 text-sm text-gray-600">
-                              <Calendar className="w-4 h-4 flex-shrink-0" />
-                              <span>
+                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                        <div className="relative p-4">
+                          <div className="flex items-start gap-3 mb-3">
+                            {suggestion.article?.photos?.[0] ? (
+                              <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 shadow-sm ring-1 ring-emerald-100">
+                                <img
+                                  src={suggestion.article.photos[0]}
+                                  alt={suggestion.article.title}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            ) : (
+                              <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-emerald-50 to-emerald-100 flex items-center justify-center flex-shrink-0 shadow-sm">
+                                <Calendar className="w-6 h-6 text-emerald-600" />
+                              </div>
+                            )}
+
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2 leading-tight">
+                                {suggestion.article?.title || 'Article inconnu'}
+                              </h3>
+                              {suggestion.article && (
+                                <div className="text-sm font-semibold text-emerald-600">
+                                  {suggestion.article.price}€
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                            <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                              <Calendar className="w-3.5 h-3.5" />
+                              <span className="font-medium">
                                 Planifié le {new Date(suggestion.suggested_date).toLocaleDateString('fr-FR', {
-                                  day: '2-digit',
+                                  day: 'numeric',
                                   month: 'short',
                                   year: 'numeric',
                                 })}
                               </span>
                             </div>
-                          </div>
-                          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                            <CheckCircle className="w-6 h-6 text-green-600" />
+                            <div className="flex-shrink-0 w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center">
+                              <CheckCircle className="w-4 h-4 text-emerald-600" />
+                            </div>
                           </div>
                         </div>
                       </div>
