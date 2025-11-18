@@ -84,10 +84,10 @@ export function ArticlePreviewModal({ article, onClose }: ArticlePreviewModalPro
 
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
         <div
-          className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+          className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
+          <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10 rounded-t-2xl">
             <h2 className="text-xl font-bold text-gray-900">Prévisualisation de l'annonce</h2>
             <button
               onClick={onClose}
@@ -97,7 +97,7 @@ export function ArticlePreviewModal({ article, onClose }: ArticlePreviewModalPro
             </button>
           </div>
 
-          <div className="p-6">
+          <div className="flex-1 overflow-y-auto p-6">
             {article.status === 'ready' && (
               <div className="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 mb-6 flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
@@ -333,8 +333,10 @@ export function ArticlePreviewModal({ article, onClose }: ArticlePreviewModalPro
                 )}
               </div>
             </div>
+          </div>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-4 border-t border-gray-200">
+          <div className="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4 rounded-b-2xl">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3">
               <Button
                 variant="secondary"
                 onClick={handleEdit}
