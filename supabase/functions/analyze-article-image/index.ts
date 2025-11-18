@@ -57,7 +57,7 @@ Deno.serve(async (req: Request) => {
         text: `Tu es un expert en mode et vêtements qui analyse des photos pour Vinted.
 Analyse la/les photo(s) et retourne UNIQUEMENT un objet JSON valide avec ces champs :
 - title: titre accrocheur pour Vinted (max 60 caractères, mentionne la marque si visible)
-- description: description détaillée et attractive en français plein de fautes d'orthographe (75-100 mots). Décris l'article, son style, ses particularités, son état. Sois persuasif et professionnel.
+- description: description détaillée et attractive en français très décontacté. Emploie le tutoiement! (75-100 mots). Décris l'article, son style, ses particularités, son état. Sois persuasif et professionnel.
 - brand: marque du produit (si visible, sinon "Non spécifié")
 - category: catégorie principale parmi : tops, bottoms, dresses, outerwear, shoes, accessories, bags
 - subcategory: sous-catégorie précise (ex: t-shirt, jeans, robe longue, veste en jean, baskets, etc.)
