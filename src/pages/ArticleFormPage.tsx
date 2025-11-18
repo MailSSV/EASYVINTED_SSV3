@@ -1141,44 +1141,42 @@ export function ArticleFormPage() {
                         </span>
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={handleSchedule}
-                        disabled={loading || publishing}
-                        className="justify-center bg-white text-amber-700 hover:bg-amber-50 border-amber-300 hover:border-amber-400"
-                      >
-                        <Calendar className="w-4 h-4" />
-                        <span>Programmer</span>
-                      </Button>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-1">
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          onClick={handleSchedule}
+                          disabled={loading || publishing}
+                          className="justify-center bg-white text-amber-700 hover:bg-amber-50 border-amber-300 hover:border-amber-400"
+                        >
+                          <Calendar className="w-4 h-4" />
+                          <span>Programmer</span>
+                        </Button>
+
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          onClick={handleMarkAsSold}
+                          disabled={loading || publishing}
+                          className="justify-center bg-white text-green-700 hover:bg-green-50 border-green-300 hover:border-green-400"
+                        >
+                          <DollarSign className="w-4 h-4" />
+                          <span>Marquer vendu</span>
+                        </Button>
+                      </div>
 
                       <Button
                         type="button"
                         variant="secondary"
-                        onClick={handleMarkAsSold}
+                        onClick={() => setDeleteModal(true)}
                         disabled={loading || publishing}
-                        className="justify-center bg-white text-green-700 hover:bg-green-50 border-green-300 hover:border-green-400"
+                        className="justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200 sm:w-auto"
                       >
-                        <DollarSign className="w-4 h-4" />
-                        <span>Marquer vendu</span>
+                        <Trash2 className="w-4 h-4" />
+                        <span>Supprimer l'article</span>
                       </Button>
                     </div>
-                  </div>
-
-                  {/* Action destructive */}
-                  <div className="border-t border-gray-200" />
-                  <div className="flex justify-end">
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={() => setDeleteModal(true)}
-                      disabled={loading || publishing}
-                      className="justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      <span>Supprimer l'article</span>
-                    </Button>
                   </div>
                 </>
               )}
