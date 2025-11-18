@@ -434,10 +434,10 @@ export function DashboardPage() {
             />
           </div>
 
-          <div className="flex items-center gap-2 overflow-x-auto">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
             <button
               onClick={() => setStatusFilter('all')}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium border ${
+              className={`px-3 py-1.5 rounded-full text-xs font-medium border whitespace-nowrap flex-shrink-0 ${
                 statusFilter === 'all'
                   ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                   : 'bg-white text-gray-600 border-gray-200'
@@ -451,7 +451,7 @@ export function DashboardPage() {
               <button
                 key={status}
                 onClick={() => setStatusFilter(status)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium border flex items-center gap-1 ${
+                className={`px-3 py-1.5 rounded-full text-xs font-medium border whitespace-nowrap flex-shrink-0 flex items-center gap-1 ${
                   statusFilter === status
                     ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                     : 'bg-white text-gray-600 border-gray-200'
