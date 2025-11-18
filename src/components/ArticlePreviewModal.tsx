@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { X, Edit, Send, Package, ShoppingBag, ChevronLeft, ChevronRight, CheckCircle, Layers, Calendar } from 'lucide-react';
+import { X, Edit, Send, Package, ShoppingBag, ChevronLeft, ChevronRight, CheckCircle, Layers, Calendar, DollarSign } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Article } from '../types/article';
 import { useNavigate } from 'react-router-dom';
 import { PublishInstructionsModal } from './PublishInstructionsModal';
 import { Toast } from './ui/Toast';
+import { supabase } from '../lib/supabase';
 
 interface ArticlePreviewModalProps {
   article: Article;
@@ -15,6 +16,7 @@ export function ArticlePreviewModal({ article, onClose }: ArticlePreviewModalPro
   const navigate = useNavigate();
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [publishing, setPublishing] = useState(false);
+  const [markingSold, setMarkingSold] = useState(false);
   const [publishInstructionsModal, setPublishInstructionsModal] = useState<{ isOpen: boolean; articleId: string }>({
     isOpen: false,
     articleId: ''
@@ -65,6 +67,37 @@ export function ArticlePreviewModal({ article, onClose }: ArticlePreviewModalPro
     onClose();
     navigate(`/articles/${article.id}/edit`);
   };
+
+  async function handleMarkAsSold() {
+    try {
+      setMarkingSold(true);
+
+      const { error } = await supabase
+        .from('articles')
+        .update({ status: 'sold' })
+        .eq('id', article.id);
+
+      if (error) throw error;
+
+      setToast({
+        type: 'success',
+        text: 'Article marqué comme vendu'
+      });
+
+      // Close modal after a short delay
+      setTimeout(() => {
+        onClose();
+      }, 1500);
+    } catch (error) {
+      console.error('Error marking article as sold:', error);
+      setToast({
+        type: 'error',
+        text: 'Erreur lors de la mise à jour du statut'
+      });
+    } finally {
+      setMarkingSold(false);
+    }
+  }
 
   return (
     <>
@@ -344,6 +377,15 @@ export function ArticlePreviewModal({ article, onClose }: ArticlePreviewModalPro
               >
                 <Edit className="w-4 h-4 mr-2" />
                 Modifier
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={handleMarkAsSold}
+                disabled={markingSold || article.status === 'sold'}
+                className="w-full sm:w-auto bg-white text-green-700 hover:bg-green-50 border-green-300 hover:border-green-400"
+              >
+                <DollarSign className="w-4 h-4 mr-2" />
+                {markingSold ? 'Enregistrement...' : 'Marquer vendu'}
               </Button>
               <Button
                 onClick={handleValidateAndSend}
