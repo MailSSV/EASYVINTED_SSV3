@@ -317,7 +317,7 @@ export function PlannerPage() {
                     {pendingSuggestions.map((suggestion) => (
                       <div
                         key={suggestion.id}
-                        onClick={() => suggestion.article_id && navigate(`/preview/${suggestion.article_id}`)}
+                        onClick={() => suggestion.article_id && navigate(`/articles/${suggestion.article_id}/preview`)}
                         className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-gray-300 cursor-pointer"
                       >
                         <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-gray-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -429,7 +429,7 @@ export function PlannerPage() {
                     {acceptedSuggestions.map((suggestion) => (
                       <div
                         key={suggestion.id}
-                        onClick={() => suggestion.article_id && navigate(`/preview/${suggestion.article_id}`)}
+                        onClick={() => suggestion.article_id && navigate(`/articles/${suggestion.article_id}/preview`)}
                         className="group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-emerald-200 hover:border-emerald-300 cursor-pointer"
                       >
                         <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
