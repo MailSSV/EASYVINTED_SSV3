@@ -625,8 +625,9 @@ export function DashboardPage() {
         </div>
 
         {/* TABLEAU DESKTOP */}
-        <div className="hidden md:block overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+        <div className="hidden md:block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
@@ -764,7 +765,7 @@ export function DashboardPage() {
                           </button>
 
                           {openMenuId === article.id && (
-                            <div className="absolute right-0 mt-2 w-52 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-10">
+                            <div className="absolute right-0 mt-2 w-52 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50">
                               <button
                                 className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                                 onClick={(e) => {
@@ -842,6 +843,7 @@ export function DashboardPage() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
 
         {/* Modales */}
