@@ -1113,30 +1113,23 @@ export function ArticleFormPage() {
               {id && (
                 <>
                   <div className="border-t border-gray-200" />
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center justify-between">
-                      <div className="text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:block">
-                        Changer le statut
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-500">Statut actuel :</span>
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
-                          {STATUS_LABELS[articleStatus]}
-                        </span>
-                      </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-500">Statut actuel :</span>
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
+                        {STATUS_LABELS[articleStatus]}
+                      </span>
                     </div>
-                    <div className="flex justify-end">
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={() => setDeleteModal(true)}
-                        disabled={loading || publishing}
-                        className="justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                        <span>Supprimer l'article</span>
-                      </Button>
-                    </div>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => setDeleteModal(true)}
+                      disabled={loading || publishing}
+                      className="justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      <span>Supprimer l'article</span>
+                    </Button>
                   </div>
                 </>
               )}
