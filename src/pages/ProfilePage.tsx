@@ -4,6 +4,7 @@ import { Button } from '../components/ui/Button';
 import { Toast } from '../components/ui/Toast';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { PERSONAS } from '../constants/personas';
 
 interface UserProfile {
   name: string;
@@ -12,6 +13,7 @@ interface UserProfile {
   shoe_size: string;
   dressing_name: string;
   writing_style: string;
+  persona_id: string;
 }
 
 export function ProfilePage() {
@@ -28,6 +30,7 @@ export function ProfilePage() {
     shoe_size: '',
     dressing_name: '',
     writing_style: '',
+    persona_id: '',
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -60,6 +63,7 @@ export function ProfilePage() {
           shoe_size: data.shoe_size || '',
           dressing_name: data.dressing_name || 'Mon Dressing',
           writing_style: data.writing_style || '',
+          persona_id: data.persona_id || '',
         });
       }
     } catch (error) {
@@ -267,31 +271,43 @@ export function ProfilePage() {
             </div>
 
             <div>
-              <label htmlFor="writing_style" className="block text-sm font-medium text-gray-700 mb-1">
-                Style de rédaction
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                Choisis ton Persona
               </label>
-              <p className="text-sm text-gray-500 mb-2">Comment l'IA doit rédiger vos descriptions d'articles</p>
-              <input
-                type="text"
-                id="writing_style"
-                list="writing_styles"
-                value={profile.writing_style}
-                onChange={(e) => setProfile({ ...profile, writing_style: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                placeholder="Sélectionner ou saisir un style"
-              />
-              <datalist id="writing_styles">
-                <option value="Décontracté et amical" />
-                <option value="Professionnel et détaillé" />
-                <option value="Court et concis" />
-                <option value="Enthousiaste et dynamique" />
-                <option value="Élégant et raffiné" />
-                <option value="Simple et direct" />
-                <option value="Chaleureux et personnel" />
-                  <option value="Façon Jean Claude Van Damme" />
-                <option value="Façon Tuche Daddy" />
-                <option value="Sois très drôle et use de blagues ou traits d'humour en relation avec l'article décrit!" />
-              </datalist>
+              <p className="text-sm text-gray-500 mb-4">Sélectionne le style qui te correspond pour tes descriptions d'articles</p>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {PERSONAS.map((persona) => (
+                  <button
+                    key={persona.id}
+                    type="button"
+                    onClick={() => {
+                      setProfile({
+                        ...profile,
+                        persona_id: persona.id,
+                        writing_style: persona.writingStyle
+                      });
+                    }}
+                    className={`p-4 border-2 rounded-xl transition-all ${
+                      profile.persona_id === persona.id
+                        ? `${persona.color} ring-2 ring-emerald-500 scale-105`
+                        : `${persona.color} opacity-60`
+                    }`}
+                  >
+                    <div className="text-4xl mb-2">{persona.emoji}</div>
+                    <div className="font-semibold text-sm text-gray-900">{persona.name}</div>
+                    <div className="text-xs text-gray-600 mt-1">{persona.description}</div>
+                  </button>
+                ))}
+              </div>
+
+              {profile.persona_id && (
+                <div className="mt-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+                  <p className="text-sm text-emerald-800">
+                    <strong>Style sélectionné :</strong> {PERSONAS.find(p => p.id === profile.persona_id)?.name}
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="flex justify-end">
