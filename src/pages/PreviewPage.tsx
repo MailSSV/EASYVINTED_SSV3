@@ -16,6 +16,7 @@ export function PreviewPage() {
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
   const [publishing, setPublishing] = useState(false);
+  const [markingReady, setMarkingReady] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [modalState, setModalState] = useState<{ isOpen: boolean; title: string; message: string; type: 'info' | 'error' }>(
     { isOpen: false, title: '', message: '', type: 'info' }
@@ -79,6 +80,36 @@ export function PreviewPage() {
       });
     } finally {
       setPublishing(false);
+    }
+  }
+
+  async function handleMarkAsReady() {
+    if (!id) return;
+
+    try {
+      setMarkingReady(true);
+
+      const { error } = await supabase
+        .from('articles')
+        .update({ status: 'ready' })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setToast({
+        type: 'success',
+        text: 'Article marqué comme prêt pour Vinted'
+      });
+
+      await fetchArticle();
+    } catch (error) {
+      console.error('Error marking article as ready:', error);
+      setToast({
+        type: 'error',
+        text: 'Erreur lors de la mise à jour du statut'
+      });
+    } finally {
+      setMarkingReady(false);
     }
   }
 
@@ -405,9 +436,18 @@ export function PreviewPage() {
                 <Edit className="w-4 h-4 mr-2" />
                 Modifier
               </Button>
-              <Button onClick={handleValidateAndSend} disabled={publishing} className="px-6 w-full md:w-auto">
+              <Button
+                variant="secondary"
+                onClick={handleMarkAsReady}
+                disabled={markingReady || article.status === 'ready'}
+                className="px-6 w-full md:w-auto bg-white text-blue-700 hover:bg-blue-50 border-blue-300 hover:border-blue-400"
+              >
+                <CheckCircle className="w-4 h-4 mr-2" />
+                {markingReady ? 'Enregistrement...' : 'Prêt pour Vinted'}
+              </Button>
+              <Button onClick={handleValidateAndSend} disabled={publishing} className="px-6 w-full md:w-auto bg-emerald-600 hover:bg-emerald-700">
                 <Send className="w-4 h-4 mr-2" />
-                {publishing ? 'Préparation...' : 'Valider et envoyer à Vinted'}
+                {publishing ? 'Préparation...' : 'Envoyer à Vinted'}
               </Button>
             </div>
           </>
