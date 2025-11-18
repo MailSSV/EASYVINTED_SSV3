@@ -62,9 +62,10 @@ export function ArticleSoldModal({ isOpen, onClose, onConfirm, article }: Articl
       className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-50 p-4"
       onClick={handleBackdropClick}
     >
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden animate-in fade-in zoom-in duration-200">
-        <div className="p-6 max-h-[90vh] overflow-y-auto">
-          <div className="flex items-start justify-between mb-6">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
+        {/* Header - Fixed */}
+        <div className="flex-shrink-0 p-6 pb-4 border-b border-gray-200">
+          <div className="flex items-start justify-between">
             <div className="flex items-start gap-4">
               <div className="flex-shrink-0 w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
                 <DollarSign className="w-6 h-6 text-green-600" />
@@ -82,7 +83,10 @@ export function ArticleSoldModal({ isOpen, onClose, onConfirm, article }: Articl
               <X className="w-5 h-5" />
             </button>
           </div>
+        </div>
 
+        {/* Content - Scrollable */}
+        <div className="flex-1 overflow-y-auto p-6">
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -224,8 +228,11 @@ export function ArticleSoldModal({ isOpen, onClose, onConfirm, article }: Articl
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="flex gap-3 mt-6 pt-4 border-t border-gray-200">
+        {/* Footer - Fixed */}
+        <div className="flex-shrink-0 p-6 pt-4 border-t border-gray-200 bg-gray-50">
+          <div className="flex gap-3">
             <button
               onClick={onClose}
               className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
