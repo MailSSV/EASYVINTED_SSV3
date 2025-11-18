@@ -215,11 +215,11 @@ export function PlannerPage() {
 
   async function acceptSuggestion(suggestionId: string, articleId: string, suggestedDate: string) {
     try {
-      const scheduledAt = new Date(suggestedDate).toISOString();
+      const scheduledFor = new Date(suggestedDate).toISOString();
 
       const { error: articleError } = await supabase
         .from('articles')
-        .update({ status: 'scheduled', scheduled_at: scheduledAt })
+        .update({ status: 'scheduled', scheduled_for: scheduledFor })
         .eq('id', articleId);
 
       if (articleError) throw articleError;
