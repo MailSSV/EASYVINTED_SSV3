@@ -1088,7 +1088,7 @@ export function ArticleFormPage() {
                 <div className="text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:block">
                   Actions principales
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                   <Button
                     type="button"
                     variant="secondary"
@@ -1113,9 +1113,20 @@ export function ArticleFormPage() {
 
                   <Button
                     type="button"
+                    variant="secondary"
+                    onClick={handleSchedule}
+                    disabled={loading || publishing}
+                    className="justify-center bg-white text-amber-700 hover:bg-amber-50 border-amber-300 hover:border-amber-400"
+                  >
+                    <Calendar className="w-4 h-4" />
+                    <span>Programmer</span>
+                  </Button>
+
+                  <Button
+                    type="button"
                     onClick={handlePublishToVinted}
                     disabled={loading || publishing}
-                    className="justify-center bg-emerald-600 hover:bg-emerald-700 text-white sm:col-span-2 lg:col-span-1"
+                    className="justify-center bg-emerald-600 hover:bg-emerald-700 text-white"
                   >
                     <Send className="w-4 h-4" />
                     <span>
@@ -1142,29 +1153,16 @@ export function ArticleFormPage() {
                       </div>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-3">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-1">
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          onClick={handleSchedule}
-                          disabled={loading || publishing}
-                          className="justify-center bg-white text-amber-700 hover:bg-amber-50 border-amber-300 hover:border-amber-400"
-                        >
-                          <Calendar className="w-4 h-4" />
-                          <span>Programmer</span>
-                        </Button>
-
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          onClick={handleMarkAsSold}
-                          disabled={loading || publishing}
-                          className="justify-center bg-white text-green-700 hover:bg-green-50 border-green-300 hover:border-green-400"
-                        >
-                          <DollarSign className="w-4 h-4" />
-                          <span>Marquer vendu</span>
-                        </Button>
-                      </div>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={handleMarkAsSold}
+                        disabled={loading || publishing}
+                        className="justify-center bg-white text-green-700 hover:bg-green-50 border-green-300 hover:border-green-400 flex-1"
+                      >
+                        <DollarSign className="w-4 h-4" />
+                        <span>Marquer vendu</span>
+                      </Button>
 
                       <Button
                         type="button"
