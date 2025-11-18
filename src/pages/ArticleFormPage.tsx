@@ -34,6 +34,14 @@ const SEASON_LABELS: Record<Season, string> = {
   undefined: 'Non défini',
 };
 
+const STATUS_LABELS: Record<ArticleStatus, string> = {
+  draft: 'Brouillon',
+  ready: 'Prêt',
+  scheduled: 'Planifié',
+  published: 'Publié',
+  sold: 'Vendu',
+};
+
 export function ArticleFormPage() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -64,6 +72,7 @@ export function ArticleFormPage() {
   const [scheduleModal, setScheduleModal] = useState(false);
   const [soldModal, setSoldModal] = useState(false);
   const [currentArticle, setCurrentArticle] = useState<any>(null);
+  const [articleStatus, setArticleStatus] = useState<ArticleStatus>('draft');
 
   const [formData, setFormData] = useState({
     title: '',
@@ -159,6 +168,7 @@ export function ArticleFormPage() {
           color: data.color || '',
           material: data.material || '',
         });
+        setArticleStatus(data.status as ArticleStatus);
       }
     } catch (error) {
       console.error('Error fetching article:', error);
@@ -1084,7 +1094,7 @@ export function ArticleFormPage() {
                     variant="secondary"
                     onClick={(e) => handleSubmit(e as any, 'draft')}
                     disabled={loading || publishing}
-                    className="justify-center bg-gray-50 text-gray-700 hover:bg-gray-100 border-gray-200"
+                    className="justify-center bg-white text-gray-700 hover:bg-gray-50 border-gray-300 hover:border-gray-400"
                   >
                     <Save className="w-4 h-4" />
                     <span>Enregistrer brouillon</span>
@@ -1095,7 +1105,7 @@ export function ArticleFormPage() {
                     variant="secondary"
                     onClick={(e) => handleSubmit(e as any, 'ready')}
                     disabled={loading || publishing}
-                    className="justify-center bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
+                    className="justify-center bg-white text-blue-700 hover:bg-blue-50 border-blue-300 hover:border-blue-400"
                   >
                     <CheckCircle className="w-4 h-4" />
                     <span>Prêt pour Vinted</span>
@@ -1120,8 +1130,16 @@ export function ArticleFormPage() {
                 <>
                   <div className="border-t border-gray-200" />
                   <div className="flex flex-col gap-3">
-                    <div className="text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:block">
-                      Changer le statut
+                    <div className="flex items-center justify-between">
+                      <div className="text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:block">
+                        Changer le statut
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-500">Statut actuel :</span>
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
+                          {STATUS_LABELS[articleStatus]}
+                        </span>
+                      </div>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <Button
@@ -1129,7 +1147,7 @@ export function ArticleFormPage() {
                         variant="secondary"
                         onClick={handleSchedule}
                         disabled={loading || publishing}
-                        className="justify-center bg-amber-50 text-amber-700 hover:bg-amber-100 border-amber-200"
+                        className="justify-center bg-white text-amber-700 hover:bg-amber-50 border-amber-300 hover:border-amber-400"
                       >
                         <Calendar className="w-4 h-4" />
                         <span>Programmer</span>
@@ -1140,7 +1158,7 @@ export function ArticleFormPage() {
                         variant="secondary"
                         onClick={handleMarkAsPublished}
                         disabled={loading || publishing}
-                        className="justify-center bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border-indigo-200"
+                        className="justify-center bg-white text-indigo-700 hover:bg-indigo-50 border-indigo-300 hover:border-indigo-400"
                       >
                         <CheckSquare className="w-4 h-4" />
                         <span>Marquer publié</span>
@@ -1151,7 +1169,7 @@ export function ArticleFormPage() {
                         variant="secondary"
                         onClick={handleMarkAsSold}
                         disabled={loading || publishing}
-                        className="justify-center bg-green-50 text-green-700 hover:bg-green-100 border-green-200"
+                        className="justify-center bg-white text-green-700 hover:bg-green-50 border-green-300 hover:border-green-400"
                       >
                         <DollarSign className="w-4 h-4" />
                         <span>Marquer vendu</span>
