@@ -1071,101 +1071,109 @@ export function ArticleFormPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3">
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={(e) => handleSubmit(e as any, 'draft')}
-                  disabled={loading || publishing}
-                  className="w-full sm:w-auto justify-center"
-                >
-                  <Save className="w-4 h-4" />
-                  <span className="hidden sm:inline">Enregistrer comme brouillon</span>
-                  <span className="sm:hidden">Brouillon</span>
-                </Button>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="space-y-4">
+              {/* Actions principales */}
+              <div className="flex flex-col gap-3">
+                <div className="text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:block">
+                  Actions principales
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={(e) => handleSubmit(e as any, 'draft')}
+                    disabled={loading || publishing}
+                    className="justify-center bg-gray-50 text-gray-700 hover:bg-gray-100 border-gray-200"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Enregistrer brouillon</span>
+                  </Button>
 
-                <Button
-  type="button"
-  variant="secondary"
-  onClick={(e) => handleSubmit(e as any, 'ready')}
-  disabled={loading || publishing}
-  className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 hover:bg-blue-200"
->
-  <CheckCircle className="w-4 h-4 mr-1" />
-  <span className="hidden sm:inline">Marquer comme prêt pour Vinted</span>
-  <span className="sm:hidden">Prêt</span>
-</Button>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={(e) => handleSubmit(e as any, 'ready')}
+                    disabled={loading || publishing}
+                    className="justify-center bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
+                  >
+                    <CheckCircle className="w-4 h-4" />
+                    <span>Prêt pour Vinted</span>
+                  </Button>
 
-
-                <Button
-                  type="button"
-                  onClick={handlePublishToVinted}
-                  disabled={loading || publishing}
-                  className="w-full sm:w-auto justify-center bg-emerald-600 hover:bg-emerald-700 text-white"
-                >
-                  <Send className="w-4 h-4" />
-                  <span className="hidden sm:inline">
-                    {publishing ? 'Publication en cours...' : 'Envoyer à Vinted'}
-                  </span>
-                  <span className="sm:hidden">
-                    {publishing ? 'Envoi...' : 'Envoyer à Vinted'}
-                  </span>
-                </Button>
-
-                {id && (
-                  <>
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={handleSchedule}
-                      disabled={loading || publishing}
-                      className="w-full sm:w-auto justify-center bg-yellow-50 text-yellow-700 hover:bg-yellow-100 border-yellow-200"
-                    >
-                      <Calendar className="w-4 h-4" />
-                      <span className="hidden sm:inline">Programmer</span>
-                      <span className="sm:hidden">Programmer</span>
-                    </Button>
-
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={handleMarkAsPublished}
-                      disabled={loading || publishing}
-                      className="w-full sm:w-auto justify-center bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-200"
-                    >
-                      <CheckSquare className="w-4 h-4" />
-                      <span className="hidden sm:inline">Marquer comme publié</span>
-                      <span className="sm:hidden">Publié</span>
-                    </Button>
-
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={handleMarkAsSold}
-                      disabled={loading || publishing}
-                      className="w-full sm:w-auto justify-center bg-green-50 text-green-700 hover:bg-green-100 border-green-200"
-                    >
-                      <DollarSign className="w-4 h-4" />
-                      <span className="hidden sm:inline">Marquer comme vendu</span>
-                      <span className="sm:hidden">Vendu</span>
-                    </Button>
-                  </>
-                )}
+                  <Button
+                    type="button"
+                    onClick={handlePublishToVinted}
+                    disabled={loading || publishing}
+                    className="justify-center bg-emerald-600 hover:bg-emerald-700 text-white sm:col-span-2 lg:col-span-1"
+                  >
+                    <Send className="w-4 h-4" />
+                    <span>
+                      {publishing ? 'Publication...' : 'Envoyer à Vinted'}
+                    </span>
+                  </Button>
+                </div>
               </div>
 
+              {/* Actions de statut (uniquement en mode édition) */}
               {id && (
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => setDeleteModal(true)}
-                  disabled={loading || publishing}
-                  className="w-full sm:w-auto justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  Supprimer
-                </Button>
+                <>
+                  <div className="border-t border-gray-200" />
+                  <div className="flex flex-col gap-3">
+                    <div className="text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:block">
+                      Changer le statut
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={handleSchedule}
+                        disabled={loading || publishing}
+                        className="justify-center bg-amber-50 text-amber-700 hover:bg-amber-100 border-amber-200"
+                      >
+                        <Calendar className="w-4 h-4" />
+                        <span>Programmer</span>
+                      </Button>
+
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={handleMarkAsPublished}
+                        disabled={loading || publishing}
+                        className="justify-center bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border-indigo-200"
+                      >
+                        <CheckSquare className="w-4 h-4" />
+                        <span>Marquer publié</span>
+                      </Button>
+
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={handleMarkAsSold}
+                        disabled={loading || publishing}
+                        className="justify-center bg-green-50 text-green-700 hover:bg-green-100 border-green-200"
+                      >
+                        <DollarSign className="w-4 h-4" />
+                        <span>Marquer vendu</span>
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Action destructive */}
+                  <div className="border-t border-gray-200" />
+                  <div className="flex justify-end">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => setDeleteModal(true)}
+                      disabled={loading || publishing}
+                      className="justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      <span>Supprimer l'article</span>
+                    </Button>
+                  </div>
+                </>
               )}
             </div>
           </div>
