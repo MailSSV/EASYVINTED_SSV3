@@ -161,7 +161,7 @@ export function AppLayout({ children }: AppLayoutProps) {
               style={{ transitionDelay: mobileMenuOpen ? '50ms' : '0ms' }}
             >
               <Package className="w-5 h-5" />
-              Mon Stock
+              Mes articles
             </Link>
             <Link
               to="/sales"
