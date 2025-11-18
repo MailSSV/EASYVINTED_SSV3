@@ -36,7 +36,7 @@ const STATUS_LABELS: Record<ArticleStatus, string> = {
 const STATUS_COLORS: Record<ArticleStatus, string> = {
   draft: 'bg-gray-100 text-gray-700',
   ready: 'bg-blue-100 text-blue-700',
-  scheduled: 'bg-indigo-100 text-indigo-700',
+ scheduled: 'bg-yellow-50 text-yellow-700 border border-yellow-200',
   published: 'bg-purple-100 text-purple-700',
   sold: 'bg-green-100 text-green-700',
 };
