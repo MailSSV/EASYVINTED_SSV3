@@ -4,6 +4,7 @@ import { Button } from './ui/Button';
 import { Article } from '../types/article';
 import { useNavigate } from 'react-router-dom';
 import { PublishInstructionsModal } from './PublishInstructionsModal';
+import { ArticleSoldModal } from './ArticleSoldModal';
 import { Toast } from './ui/Toast';
 import { supabase } from '../lib/supabase';
 
@@ -16,7 +17,7 @@ export function ArticlePreviewModal({ article, onClose }: ArticlePreviewModalPro
   const navigate = useNavigate();
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [publishing, setPublishing] = useState(false);
-  const [markingSold, setMarkingSold] = useState(false);
+  const [showSoldModal, setShowSoldModal] = useState(false);
   const [publishInstructionsModal, setPublishInstructionsModal] = useState<{ isOpen: boolean; articleId: string }>({
     isOpen: false,
     articleId: ''
@@ -68,34 +69,53 @@ export function ArticlePreviewModal({ article, onClose }: ArticlePreviewModalPro
     navigate(`/articles/${article.id}/edit`);
   };
 
-  async function handleMarkAsSold() {
-    try {
-      setMarkingSold(true);
+  const handleOpenSoldModal = () => {
+    setShowSoldModal(true);
+  };
 
+  async function handleConfirmSold(saleData: {
+    soldPrice: number;
+    soldAt: string;
+    platform: string;
+    fees: number;
+    shippingCost: number;
+    buyerName: string;
+    notes: string;
+  }) {
+    try {
       const { error } = await supabase
         .from('articles')
-        .update({ status: 'sold' })
+        .update({
+          status: 'sold',
+          sold_price: saleData.soldPrice,
+          sold_at: saleData.soldAt,
+          sale_platform: saleData.platform,
+          platform_fees: saleData.fees,
+          shipping_cost: saleData.shippingCost,
+          buyer_name: saleData.buyerName,
+          sale_notes: saleData.notes,
+        })
         .eq('id', article.id);
 
       if (error) throw error;
 
       setToast({
         type: 'success',
-        text: 'Article marqué comme vendu'
+        text: 'Vente enregistrée avec succès'
       });
+
+      setShowSoldModal(false);
 
       // Close modal after a short delay
       setTimeout(() => {
         onClose();
       }, 1500);
     } catch (error) {
-      console.error('Error marking article as sold:', error);
+      console.error('Error recording sale:', error);
       setToast({
         type: 'error',
-        text: 'Erreur lors de la mise à jour du statut'
+        text: 'Erreur lors de l\'enregistrement de la vente'
       });
-    } finally {
-      setMarkingSold(false);
     }
   }
 
@@ -113,6 +133,13 @@ export function ArticlePreviewModal({ article, onClose }: ArticlePreviewModalPro
         isOpen={publishInstructionsModal.isOpen}
         onClose={() => setPublishInstructionsModal({ isOpen: false, articleId: '' })}
         articleId={publishInstructionsModal.articleId}
+      />
+
+      <ArticleSoldModal
+        isOpen={showSoldModal}
+        onClose={() => setShowSoldModal(false)}
+        onConfirm={handleConfirmSold}
+        article={article}
       />
 
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
@@ -380,12 +407,12 @@ export function ArticlePreviewModal({ article, onClose }: ArticlePreviewModalPro
               </Button>
               <Button
                 variant="secondary"
-                onClick={handleMarkAsSold}
-                disabled={markingSold || article.status === 'sold'}
+                onClick={handleOpenSoldModal}
+                disabled={article.status === 'sold'}
                 className="w-full sm:w-auto bg-white text-green-700 hover:bg-green-50 border-green-300 hover:border-green-400"
               >
                 <DollarSign className="w-4 h-4 mr-2" />
-                {markingSold ? 'Enregistrement...' : 'Marquer vendu'}
+                Marquer vendu
               </Button>
               <Button
                 onClick={handleValidateAndSend}
