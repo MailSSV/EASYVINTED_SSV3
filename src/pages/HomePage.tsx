@@ -65,7 +65,7 @@ export function HomePage() {
             to="/stock"
             className="inline-flex items-center justify-center px-8 py-3 rounded-full text-sm font-semibold border border-emerald-500 text-emerald-600 bg-white hover:bg-emerald-50 transition"
           >
-            Mon Stock
+            Mes articles
           </Link>
 
           <Link
