@@ -874,7 +874,7 @@ export function ArticleFormPage() {
   variant="secondary"
   onClick={(e) => handleSubmit(e as any, 'ready')}
   disabled={loading || publishing}
-  className="w-full sm:w-auto justify-center bg-blue-150 text-blue-600 border border-blue-200 hover:bg-blue-100"
+  className="w-full sm:w-auto justify-center bg-blue-550 text-blue-600 border border-blue-200 hover:bg-blue-100"
 >
   <CheckCircle className="w-4 h-4 mr-1" />
   <span className="hidden sm:inline">Marquer comme prêt pour Vinted</span>
