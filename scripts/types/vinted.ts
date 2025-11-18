@@ -46,5 +46,5 @@ export interface ArticleToPublish {
   photos: string[];
   color?: string;
   material?: string;
-  scheduled_at?: string;
+  scheduled_for?: string;
 }

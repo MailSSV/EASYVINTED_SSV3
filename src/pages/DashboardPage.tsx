@@ -495,10 +495,10 @@ export function DashboardPage() {
                         {SEASON_LABELS[article.season]}
                       </span>
 
-                      {article.status === 'scheduled' && article.scheduled_at ? (
+                      {article.status === 'scheduled' && article.scheduled_for ? (
                         <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] bg-yellow-50 text-yellow-700 border border-yellow-100">
                           <Clock className="w-3 h-3 mr-1" />
-                          {formatDate(article.scheduled_at)}
+                          {formatDate(article.scheduled_for)}
                         </span>
                       ) : (
                         <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] bg-gray-50 text-gray-500 border border-gray-100">
@@ -720,8 +720,8 @@ export function DashboardPage() {
                     
                     <td className="px-4 py-3 whitespace-nowrap">
                       <span className="text-sm text-gray-700">
-                        {article.status === 'scheduled' && article.scheduled_at
-                          ? formatDate(article.scheduled_at)
+                        {article.status === 'scheduled' && article.scheduled_for
+                          ? formatDate(article.scheduled_for)
                           : 'Non planifié'}
                       </span>
                     </td>

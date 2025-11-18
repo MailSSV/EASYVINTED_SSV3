@@ -25,8 +25,8 @@ export class SupabaseService {
       .from('articles')
       .select('*')
       .in('status', ['ready', 'scheduled'])
-      .or(`scheduled_at.is.null,scheduled_at.lte.${now}`)
-      .order('scheduled_at', { ascending: true, nullsFirst: false });
+      .or(`scheduled_for.is.null,scheduled_for.lte.${now}`)
+      .order('scheduled_for', { ascending: true, nullsFirst: false });
 
     if (error) {
       throw new Error(`Failed to fetch articles: ${error.message}`);

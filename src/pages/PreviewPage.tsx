@@ -183,11 +183,11 @@ export function PreviewPage() {
                 <div>
                   <h3 className="font-semibold text-yellow-900 mb-1">Statut : Planifié</h3>
                   <p className="text-sm text-yellow-800">
-                    {article.scheduled_at ? (
+                    {article.scheduled_for ? (
                       <>
                         Publication prévue le{' '}
                         <span className="font-semibold">
-                          {new Date(article.scheduled_at).toLocaleDateString('fr-FR', {
+                          {new Date(article.scheduled_for).toLocaleDateString('fr-FR', {
                             day: 'numeric',
                             month: 'long',
                             year: 'numeric',

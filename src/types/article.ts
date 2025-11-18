@@ -23,7 +23,7 @@ export interface Article {
   status: ArticleStatus;
   color?: string;
   material?: string;
-  scheduled_at?: string;
+  scheduled_for?: string;
   published_at?: string;
   sold_at?: string;
   sold_price?: number;

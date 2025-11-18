@@ -11,7 +11,7 @@ async function checkArticles(): Promise<void> {
 
   const { data, error } = await supabase
     .from('articles')
-    .select('id, title, status, scheduled_at, photos')
+    .select('id, title, status, scheduled_for, photos')
     .in('status', ['ready', 'scheduled']);
 
   if (error) {
@@ -26,8 +26,8 @@ async function checkArticles(): Promise<void> {
       console.log(`  ✓ ${article.title}`);
       console.log(`    - Statut: ${article.status}`);
       console.log(`    - Photos: ${article.photos?.length || 0}`);
-      if (article.scheduled_at) {
-        console.log(`    - Programmé pour: ${article.scheduled_at}`);
+      if (article.scheduled_for) {
+        console.log(`    - Programmé pour: ${article.scheduled_for}`);
       }
       console.log('');
     });

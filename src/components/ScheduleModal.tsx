@@ -1,27 +1,49 @@
 import { useState } from 'react';
 import { X, Calendar } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import { Article } from '../types/article';
 
 interface ScheduleModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSchedule: (date: Date) => void;
-  articleTitle: string;
+  article: Article;
+  onScheduled: () => void;
 }
 
-export function ScheduleModal({ isOpen, onClose, onSchedule, articleTitle }: ScheduleModalProps) {
+export function ScheduleModal({ isOpen, onClose, article, onScheduled }: ScheduleModalProps) {
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
+  const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSchedule = () => {
+  const handleSchedule = async () => {
     if (!selectedDate || !selectedTime) return;
 
-    const dateTime = new Date(`${selectedDate}T${selectedTime}`);
-    onSchedule(dateTime);
-    onClose();
-    setSelectedDate('');
-    setSelectedTime('');
+    try {
+      setLoading(true);
+      const dateTime = new Date(`${selectedDate}T${selectedTime}`);
+
+      const { error } = await supabase
+        .from('articles')
+        .update({
+          status: 'scheduled',
+          scheduled_for: dateTime.toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', article.id);
+
+      if (error) throw error;
+
+      onScheduled();
+      onClose();
+      setSelectedDate('');
+      setSelectedTime('');
+    } catch (error) {
+      console.error('Error scheduling article:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -46,7 +68,7 @@ export function ScheduleModal({ isOpen, onClose, onSchedule, articleTitle }: Sch
               </div>
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Programmer la publication</h3>
-                <p className="text-sm text-gray-600">{articleTitle}</p>
+                <p className="text-sm text-gray-600">{article.title}</p>
               </div>
             </div>
             <button
@@ -94,16 +116,17 @@ export function ScheduleModal({ isOpen, onClose, onSchedule, articleTitle }: Sch
           <div className="flex gap-3 mt-6">
             <button
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              disabled={loading}
+              className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
             >
               Annuler
             </button>
             <button
               onClick={handleSchedule}
-              disabled={!selectedDate || !selectedTime}
+              disabled={!selectedDate || !selectedTime || loading}
               className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Programmer
+              {loading ? 'Programmation...' : 'Programmer'}
             </button>
           </div>
         </div>
