@@ -290,7 +290,7 @@ export function ProfilePage() {
                 <option value="Chaleureux et personnel" />
                   <option value="Façon Jean Claude Van Damme" />
                 <option value="Façon Tuche Daddy" />
-                <option value="sois très drôle et use de blagues ou traits d'humour en relation avec l'article décrit!" />
+                <option value="Sois très drôle et use de blagues ou traits d'humour en relation avec l'article décrit!" />
               </datalist>
             </div>
 
