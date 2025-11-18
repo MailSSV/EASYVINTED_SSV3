@@ -588,7 +588,7 @@ export function DashboardPage() {
                               handleMarkPublished(article);
                             }}
                           >
-                            <SendIcon className="w-3 h-3" />
+                            <Send className="w-3 h-3" />
                             Marquer comme publié
                           </button>
                         )}
