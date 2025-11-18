@@ -707,14 +707,8 @@ export function DashboardPage() {
                         {SEASON_LABELS[article.season]}
                       </span>
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      <span className="text-sm text-gray-700">
-                        {article.status === 'scheduled' && article.scheduled_at
-                          ? formatDate(article.scheduled_at)
-                          : 'Non planifié'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap">
+
+  <td className="px-4 py-3 whitespace-nowrap">
                       <span
                         className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[article.status]}`}
                       >
@@ -722,6 +716,15 @@ export function DashboardPage() {
                         {STATUS_LABELS[article.status]}
                       </span>
                     </td>
+                    
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span className="text-sm text-gray-700">
+                        {article.status === 'scheduled' && article.scheduled_at
+                          ? formatDate(article.scheduled_at)
+                          : 'Non planifié'}
+                      </span>
+                    </td>
+                  
                     <td className="px-4 py-3 whitespace-nowrap">
                       <div className="flex items-center gap-2">
                         <button
