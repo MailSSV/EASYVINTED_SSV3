@@ -625,8 +625,8 @@ export function DashboardPage() {
         </div>
 
         {/* TABLEAU DESKTOP */}
-        <div className="hidden md:block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="overflow-x-auto">
+        <div className="hidden md:block bg-white rounded-xl shadow-sm border border-gray-200">
+          <div className="overflow-x-auto overflow-y-visible">
             <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -727,7 +727,7 @@ export function DashboardPage() {
                       </span>
                     </td>
                   
-                    <td className="px-4 py-3 whitespace-nowrap">
+                    <td className="px-4 py-3 whitespace-nowrap relative">
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() =>
@@ -765,7 +765,7 @@ export function DashboardPage() {
                           </button>
 
                           {openMenuId === article.id && (
-                            <div className="absolute right-0 mt-2 w-52 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50">
+                            <div className="absolute right-0 mt-2 w-52 bg-white rounded-lg shadow-xl border border-gray-200 py-1 z-[100]">
                               <button
                                 className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                                 onClick={(e) => {
