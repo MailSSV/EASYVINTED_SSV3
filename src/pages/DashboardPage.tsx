@@ -469,7 +469,7 @@ export function DashboardPage() {
               {filteredArticles.map((article) => (
                 <div
                   key={article.id}
-                  className="bg-white rounded-xl shadow-sm border border-gray-100 px-3 py-3 flex gap-3 cursor-pointer"
+                  className="bg-white rounded-xl shadow-sm border border-gray-100 px-3 py-3 flex gap-3 cursor-pointer relative"
                   onClick={() => navigate(`/articles/${article.id}/preview`)}
                 >
                   <div className="w-20 h-20 rounded-lg bg-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0">
@@ -567,75 +567,91 @@ export function DashboardPage() {
                     </div>
 
                     {openMenuId === article.id && (
-                      <div className="mt-2 border-t border-gray-100 pt-2 space-y-1 text-[13px]">
-                        <button
-                          className="w-full text-left py-1.5 text-gray-700 hover:text-emerald-600 flex items-center gap-2"
+                      <>
+                        <div
+                          className="fixed inset-0 z-10"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDuplicate(article);
+                            setOpenMenuId(null);
                           }}
-                        >
-                          <Copy className="w-3 h-3" />
-                          Dupliquer
-                        </button>
-                        <button
-                          className="w-full text-left py-1.5 text-gray-700 hover:text-emerald-600 flex items-center gap-2"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handlePlanification(article);
-                          }}
-                        >
-                          <Calendar className="w-3 h-3" />
-                          Programmer
-                        </button>
-                        {article.status !== 'ready' && (
+                        />
+                        <div className="absolute right-3 top-full mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20 text-[13px]">
                           <button
-                            className="w-full text-left py-1.5 text-gray-700 hover:text-emerald-600 flex items-center gap-2"
+                            className="w-full text-left px-3 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-2"
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleMarkReady(article);
+                              setOpenMenuId(null);
+                              handleDuplicate(article);
                             }}
                           >
-                            <CheckCircle2 className="w-3 h-3" />
-                            Marquer comme prêt
+                            <Copy className="w-4 h-4" />
+                            Dupliquer
                           </button>
-                        )}
-                        {article.status !== 'published' && (
                           <button
-                            className="w-full text-left py-1.5 text-gray-700 hover:text-emerald-600 flex items-center gap-2"
+                            className="w-full text-left px-3 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-2"
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleMarkPublished(article);
+                              setOpenMenuId(null);
+                              handlePlanification(article);
                             }}
                           >
-                            <Send className="w-3 h-3" />
-                            Marquer comme publié
+                            <Calendar className="w-4 h-4" />
+                            Programmer
                           </button>
-                        )}
-                        <button
-                          className="w-full text-left py-1.5 text-red-600 hover:text-red-700 flex items-center gap-2"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSoldModal({ isOpen: true, article });
-                          }}
-                        >
-                          <DollarSign className="w-3 h-3" />
-                          Marquer comme vendu
-                        </button>
-                        <button
-                          className="w-full text-left py-1.5 text-red-600 hover:text-red-700 flex items-center gap-2"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setDeleteModal({
-                              isOpen: true,
-                              articleId: article.id,
-                            });
-                          }}
-                        >
-                          <Trash2 className="w-3 h-3" />
-                          Supprimer
-                        </button>
-                      </div>
+                          {article.status !== 'ready' && (
+                            <button
+                              className="w-full text-left px-3 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-2"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setOpenMenuId(null);
+                                handleMarkReady(article);
+                              }}
+                            >
+                              <CheckCircle2 className="w-4 h-4" />
+                              Marquer comme prêt
+                            </button>
+                          )}
+                          {article.status !== 'published' && (
+                            <button
+                              className="w-full text-left px-3 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-2"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setOpenMenuId(null);
+                                handleMarkPublished(article);
+                              }}
+                            >
+                              <Send className="w-4 h-4" />
+                              Marquer comme publié
+                            </button>
+                          )}
+                          <div className="border-t border-gray-200 my-1"></div>
+                          <button
+                            className="w-full text-left px-3 py-2 text-red-600 hover:bg-red-50 flex items-center gap-2"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setOpenMenuId(null);
+                              setSoldModal({ isOpen: true, article });
+                            }}
+                          >
+                            <DollarSign className="w-4 h-4" />
+                            Marquer comme vendu
+                          </button>
+                          <button
+                            className="w-full text-left px-3 py-2 text-red-600 hover:bg-red-50 flex items-center gap-2"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setOpenMenuId(null);
+                              setDeleteModal({
+                                isOpen: true,
+                                articleId: article.id,
+                              });
+                            }}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                            Supprimer
+                          </button>
+                        </div>
+                      </>
                     )}
                   </div>
                 </div>
