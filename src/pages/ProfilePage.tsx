@@ -284,11 +284,13 @@ export function ProfilePage() {
                 <option value="Décontracté et amical" />
                 <option value="Professionnel et détaillé" />
                 <option value="Court et concis" />
-                <option value="Descriptif et précis" />
                 <option value="Enthousiaste et dynamique" />
                 <option value="Élégant et raffiné" />
                 <option value="Simple et direct" />
                 <option value="Chaleureux et personnel" />
+                  <option value="Façon Jean Claude Van Damme" />
+                <option value="Façon Tuche Daddy" />
+                <option value="sois très drôle et use de blagues ou traits d'humour en relation avec l'article décrit!" />
               </datalist>
             </div>
 
