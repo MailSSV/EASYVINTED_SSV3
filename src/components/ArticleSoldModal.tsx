@@ -62,8 +62,8 @@ export function ArticleSoldModal({ isOpen, onClose, onConfirm, article }: Articl
       className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-50 p-4"
       onClick={handleBackdropClick}
     >
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
-        <div className="p-6">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden animate-in fade-in zoom-in duration-200">
+        <div className="p-6 max-h-[90vh] overflow-y-auto">
           <div className="flex items-start justify-between mb-6">
             <div className="flex items-start gap-4">
               <div className="flex-shrink-0 w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
