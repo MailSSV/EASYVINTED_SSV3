@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, TrendingUp, Clock, CheckCircle, X, Sparkles } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
@@ -40,6 +41,7 @@ const SEASON_LABELS: Record<string, string> = {
 
 export function PlannerPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
@@ -315,7 +317,8 @@ export function PlannerPage() {
                     {pendingSuggestions.map((suggestion) => (
                       <div
                         key={suggestion.id}
-                        className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-gray-300"
+                        onClick={() => suggestion.article_id && navigate(`/preview/${suggestion.article_id}`)}
+                        className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-gray-300 cursor-pointer"
                       >
                         <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-gray-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
@@ -380,14 +383,20 @@ export function PlannerPage() {
 
                             <div className="flex gap-2">
                               <button
-                                onClick={() => rejectSuggestion(suggestion.id)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  rejectSuggestion(suggestion.id);
+                                }}
                                 className="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 active:scale-95 transition-all"
                                 title="Rejeter"
                               >
                                 <X className="w-4 h-4" />
                               </button>
                               <button
-                                onClick={() => acceptSuggestion(suggestion.id, suggestion.article_id, suggestion.suggested_date)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  acceptSuggestion(suggestion.id, suggestion.article_id, suggestion.suggested_date);
+                                }}
                                 className="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-sm font-medium hover:from-emerald-600 hover:to-emerald-700 active:scale-95 transition-all shadow-sm hover:shadow-md flex items-center gap-1.5"
                                 title="Accepter"
                               >
@@ -420,7 +429,8 @@ export function PlannerPage() {
                     {acceptedSuggestions.map((suggestion) => (
                       <div
                         key={suggestion.id}
-                        className="group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-emerald-200 hover:border-emerald-300"
+                        onClick={() => suggestion.article_id && navigate(`/preview/${suggestion.article_id}`)}
+                        className="group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-emerald-200 hover:border-emerald-300 cursor-pointer"
                       >
                         <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
