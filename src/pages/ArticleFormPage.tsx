@@ -88,6 +88,17 @@ export function ArticleFormPage() {
     }
   }, [id]);
 
+  useEffect(() => {
+    if (!id && userProfile && !formData.size) {
+      const isShoeCategory = formData.subcategory === 'Chaussures';
+      if (isShoeCategory && userProfile.shoe_size) {
+        setFormData(prev => ({ ...prev, size: userProfile.shoe_size }));
+      } else if (!isShoeCategory && userProfile.clothing_size) {
+        setFormData(prev => ({ ...prev, size: userProfile.clothing_size }));
+      }
+    }
+  }, [userProfile, formData.subcategory, id]);
+
   async function loadUserProfile() {
     if (!user) return;
 
@@ -597,13 +608,30 @@ export function ArticleFormPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Taille</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Taille
+                      {!id && userProfile && (
+                        <span className="ml-1 text-xs text-gray-500 font-normal">
+                          {formData.subcategory === 'Chaussures' && userProfile.shoe_size
+                            ? `(Défaut: ${userProfile.shoe_size})`
+                            : userProfile.clothing_size
+                            ? `(Défaut: ${userProfile.clothing_size})`
+                            : ''}
+                        </span>
+                      )}
+                    </label>
                     <input
                       type="text"
                       value={formData.size}
                       onChange={(e) => setFormData({ ...formData, size: e.target.value })}
                       className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                      placeholder="Ex: M, 38, 42"
+                      placeholder={
+                        !id && userProfile
+                          ? formData.subcategory === 'Chaussures' && userProfile.shoe_size
+                            ? userProfile.shoe_size
+                            : userProfile.clothing_size || 'Ex: M, 38, 42'
+                          : 'Ex: M, 38, 42'
+                      }
                     />
                   </div>
                 </div>
@@ -706,10 +734,23 @@ export function ArticleFormPage() {
                       required
                       value={formData.subcategory}
                       onChange={(e) => {
+                        const newSubcategory = e.target.value;
+                        const isShoeCategory = newSubcategory === 'Chaussures';
+                        let newSize = formData.size;
+
+                        if (!id && userProfile && !formData.size) {
+                          if (isShoeCategory && userProfile.shoe_size) {
+                            newSize = userProfile.shoe_size;
+                          } else if (!isShoeCategory && userProfile.clothing_size) {
+                            newSize = userProfile.clothing_size;
+                          }
+                        }
+
                         setFormData({
                           ...formData,
-                          subcategory: e.target.value,
+                          subcategory: newSubcategory,
                           item_category: '',
+                          size: newSize,
                         });
                         if (validationErrors.includes('subcategory')) {
                           setValidationErrors(validationErrors.filter((err) => err !== 'subcategory'));
