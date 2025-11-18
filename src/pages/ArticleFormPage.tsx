@@ -1152,24 +1152,13 @@ export function ArticleFormPage() {
                         </span>
                       </div>
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={handleMarkAsSold}
-                        disabled={loading || publishing}
-                        className="justify-center bg-white text-green-700 hover:bg-green-50 border-green-300 hover:border-green-400 flex-1"
-                      >
-                        <DollarSign className="w-4 h-4" />
-                        <span>Marquer vendu</span>
-                      </Button>
-
+                    <div className="flex justify-end">
                       <Button
                         type="button"
                         variant="secondary"
                         onClick={() => setDeleteModal(true)}
                         disabled={loading || publishing}
-                        className="justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200 sm:w-auto"
+                        className="justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
                       >
                         <Trash2 className="w-4 h-4" />
                         <span>Supprimer l'article</span>

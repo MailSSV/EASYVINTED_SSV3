@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Edit, Send, Package, ShoppingBag, ChevronLeft, ChevronRight, CheckCircle, Layers, Calendar } from 'lucide-react';
+import { Edit, Send, Package, ShoppingBag, ChevronLeft, ChevronRight, CheckCircle, Layers, Calendar, DollarSign } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { supabase } from '../lib/supabase';
 import { Article } from '../types/article';
@@ -17,6 +17,7 @@ export function PreviewPage() {
   const [loading, setLoading] = useState(true);
   const [publishing, setPublishing] = useState(false);
   const [markingReady, setMarkingReady] = useState(false);
+  const [markingSold, setMarkingSold] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [modalState, setModalState] = useState<{ isOpen: boolean; title: string; message: string; type: 'info' | 'error' }>(
     { isOpen: false, title: '', message: '', type: 'info' }
@@ -110,6 +111,36 @@ export function PreviewPage() {
       });
     } finally {
       setMarkingReady(false);
+    }
+  }
+
+  async function handleMarkAsSold() {
+    if (!id) return;
+
+    try {
+      setMarkingSold(true);
+
+      const { error } = await supabase
+        .from('articles')
+        .update({ status: 'sold' })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setToast({
+        type: 'success',
+        text: 'Article marqué comme vendu'
+      });
+
+      await fetchArticle();
+    } catch (error) {
+      console.error('Error marking article as sold:', error);
+      setToast({
+        type: 'error',
+        text: 'Erreur lors de la mise à jour du statut'
+      });
+    } finally {
+      setMarkingSold(false);
     }
   }
 
@@ -444,6 +475,15 @@ export function PreviewPage() {
               >
                 <CheckCircle className="w-4 h-4 mr-2" />
                 {markingReady ? 'Enregistrement...' : 'Prêt pour Vinted'}
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={handleMarkAsSold}
+                disabled={markingSold || article.status === 'sold'}
+                className="px-6 w-full md:w-auto bg-white text-green-700 hover:bg-green-50 border-green-300 hover:border-green-400"
+              >
+                <DollarSign className="w-4 h-4 mr-2" />
+                {markingSold ? 'Enregistrement...' : 'Marquer vendu'}
               </Button>
               <Button onClick={handleValidateAndSend} disabled={publishing} className="px-6 w-full md:w-auto bg-emerald-600 hover:bg-emerald-700">
                 <Send className="w-4 h-4 mr-2" />
