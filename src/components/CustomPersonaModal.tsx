@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { Button } from './ui/Button';
 
@@ -34,12 +34,32 @@ const EMOJI_SUGGESTIONS = ['🎨', '✨', '🌟', '💫', '🎭', '🎪', '🎬'
 
 export function CustomPersonaModal({ isOpen, onClose, onSave, editingPersona }: CustomPersonaModalProps) {
   const [formData, setFormData] = useState<CustomPersonaData>({
-    name: editingPersona?.name || '',
-    description: editingPersona?.description || '',
-    writing_style: editingPersona?.writing_style || '',
-    emoji: editingPersona?.emoji || '🎨',
-    color: editingPersona?.color || 'bg-blue-100 border-blue-300 hover:border-blue-500',
+    name: '',
+    description: '',
+    writing_style: '',
+    emoji: '🎨',
+    color: 'bg-blue-100 border-blue-300 hover:border-blue-500',
   });
+
+  useEffect(() => {
+    if (editingPersona) {
+      setFormData({
+        name: editingPersona.name,
+        description: editingPersona.description,
+        writing_style: editingPersona.writing_style,
+        emoji: editingPersona.emoji,
+        color: editingPersona.color,
+      });
+    } else {
+      setFormData({
+        name: '',
+        description: '',
+        writing_style: '',
+        emoji: '🎨',
+        color: 'bg-blue-100 border-blue-300 hover:border-blue-500',
+      });
+    }
+  }, [editingPersona, isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
