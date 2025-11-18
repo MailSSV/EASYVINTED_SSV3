@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Plus, Trash2, Edit2 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Toast } from '../components/ui/Toast';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
-import { PERSONAS } from '../constants/personas';
+import { PERSONAS, Persona } from '../constants/personas';
+import { CustomPersonaModal, CustomPersonaData } from '../components/CustomPersonaModal';
 
 interface UserProfile {
   name: string;
@@ -16,12 +18,22 @@ interface UserProfile {
   persona_id: string;
 }
 
+interface CustomPersona extends CustomPersonaData {
+  id: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export function ProfilePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [customPersonas, setCustomPersonas] = useState<CustomPersona[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingPersona, setEditingPersona] = useState<CustomPersona | undefined>();
 
   const [profile, setProfile] = useState<UserProfile>({
     name: '',
@@ -41,6 +53,7 @@ export function ProfilePage() {
 
   useEffect(() => {
     loadProfile();
+    loadCustomPersonas();
   }, [user]);
 
   const loadProfile = async () => {
@@ -71,6 +84,87 @@ export function ProfilePage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadCustomPersonas = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('custom_personas')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      if (data) setCustomPersonas(data);
+    } catch (error) {
+      console.error('Error loading custom personas:', error);
+    }
+  };
+
+  const handleCreatePersona = async (personaData: CustomPersonaData) => {
+    if (!user) return;
+
+    try {
+      if (editingPersona) {
+        const { error } = await supabase
+          .from('custom_personas')
+          .update({
+            ...personaData,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', editingPersona.id);
+
+        if (error) throw error;
+        setToast({ type: 'success', text: 'Persona modifié avec succès' });
+      } else {
+        const { error } = await supabase
+          .from('custom_personas')
+          .insert([{
+            ...personaData,
+            user_id: user.id,
+          }]);
+
+        if (error) throw error;
+        setToast({ type: 'success', text: 'Persona créé avec succès' });
+      }
+
+      setIsModalOpen(false);
+      setEditingPersona(undefined);
+      loadCustomPersonas();
+    } catch (error) {
+      console.error('Error saving persona:', error);
+      setToast({ type: 'error', text: 'Erreur lors de la sauvegarde du persona' });
+    }
+  };
+
+  const handleDeletePersona = async (personaId: string) => {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce persona ?')) return;
+
+    try {
+      const { error } = await supabase
+        .from('custom_personas')
+        .delete()
+        .eq('id', personaId);
+
+      if (error) throw error;
+
+      if (profile.persona_id === `custom_${personaId}`) {
+        setProfile({ ...profile, persona_id: '', writing_style: '' });
+      }
+
+      setToast({ type: 'success', text: 'Persona supprimé avec succès' });
+      loadCustomPersonas();
+    } catch (error) {
+      console.error('Error deleting persona:', error);
+      setToast({ type: 'error', text: 'Erreur lors de la suppression du persona' });
+    }
+  };
+
+  const handleEditPersona = (persona: CustomPersona) => {
+    setEditingPersona(persona);
+    setIsModalOpen(true);
   };
 
   const handleProfileSubmit = async (e: React.FormEvent) => {
@@ -271,40 +365,118 @@ export function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                Choisis ton Persona
-              </label>
+              <div className="flex items-center justify-between mb-3">
+                <label className="block text-sm font-medium text-gray-700">
+                  Choisis ton Persona
+                </label>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => {
+                    setEditingPersona(undefined);
+                    setIsModalOpen(true);
+                  }}
+                  className="text-sm"
+                >
+                  <Plus className="w-4 h-4" />
+                  Créer un Persona
+                </Button>
+              </div>
               <p className="text-sm text-gray-500 mb-4">Sélectionne le style qui te correspond pour tes descriptions d'articles</p>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {PERSONAS.map((persona) => (
-                  <button
-                    key={persona.id}
-                    type="button"
-                    onClick={() => {
-                      setProfile({
-                        ...profile,
-                        persona_id: persona.id,
-                        writing_style: persona.writingStyle
-                      });
-                    }}
-                    className={`p-4 border-2 rounded-xl transition-all ${
-                      profile.persona_id === persona.id
-                        ? `${persona.color} ring-2 ring-emerald-500 scale-105`
-                        : `${persona.color} opacity-60`
-                    }`}
-                  >
-                    <div className="text-4xl mb-2">{persona.emoji}</div>
-                    <div className="font-semibold text-sm text-gray-900">{persona.name}</div>
-                    <div className="text-xs text-gray-600 mt-1">{persona.description}</div>
-                  </button>
-                ))}
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Personas par défaut</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {PERSONAS.map((persona) => (
+                      <button
+                        key={persona.id}
+                        type="button"
+                        onClick={() => {
+                          setProfile({
+                            ...profile,
+                            persona_id: persona.id,
+                            writing_style: persona.writingStyle
+                          });
+                        }}
+                        className={`p-4 border-2 rounded-xl transition-all ${
+                          profile.persona_id === persona.id
+                            ? `${persona.color} ring-2 ring-emerald-500 scale-105`
+                            : `${persona.color} opacity-60`
+                        }`}
+                      >
+                        <div className="text-4xl mb-2">{persona.emoji}</div>
+                        <div className="font-semibold text-sm text-gray-900">{persona.name}</div>
+                        <div className="text-xs text-gray-600 mt-1">{persona.description}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {customPersonas.length > 0 && (
+                  <div>
+                    <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Mes Personas personnalisés</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {customPersonas.map((persona) => (
+                        <div key={persona.id} className="relative">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setProfile({
+                                ...profile,
+                                persona_id: `custom_${persona.id}`,
+                                writing_style: persona.writing_style
+                              });
+                            }}
+                            className={`w-full p-4 border-2 rounded-xl transition-all ${
+                              profile.persona_id === `custom_${persona.id}`
+                                ? `${persona.color} ring-2 ring-emerald-500 scale-105`
+                                : `${persona.color} opacity-60`
+                            }`}
+                          >
+                            <div className="text-4xl mb-2">{persona.emoji}</div>
+                            <div className="font-semibold text-sm text-gray-900">{persona.name}</div>
+                            <div className="text-xs text-gray-600 mt-1">{persona.description}</div>
+                          </button>
+                          <div className="absolute top-2 right-2 flex gap-1">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditPersona(persona);
+                              }}
+                              className="p-1 bg-white rounded-full shadow-sm hover:bg-gray-100 transition-colors"
+                              title="Modifier"
+                            >
+                              <Edit2 className="w-3 h-3 text-gray-600" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeletePersona(persona.id);
+                              }}
+                              className="p-1 bg-white rounded-full shadow-sm hover:bg-red-50 transition-colors"
+                              title="Supprimer"
+                            >
+                              <Trash2 className="w-3 h-3 text-red-600" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {profile.persona_id && (
                 <div className="mt-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
                   <p className="text-sm text-emerald-800">
-                    <strong>Style sélectionné :</strong> {PERSONAS.find(p => p.id === profile.persona_id)?.name}
+                    <strong>Style sélectionné :</strong>{' '}
+                    {profile.persona_id.startsWith('custom_')
+                      ? customPersonas.find(p => `custom_${p.id}` === profile.persona_id)?.name
+                      : PERSONAS.find(p => p.id === profile.persona_id)?.name
+                    }
                   </p>
                 </div>
               )}
@@ -361,6 +533,16 @@ export function ProfilePage() {
           </form>
         </div>
       </div>
+
+      <CustomPersonaModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingPersona(undefined);
+        }}
+        onSave={handleCreatePersona}
+        editingPersona={editingPersona}
+      />
     </>
   );
 }
