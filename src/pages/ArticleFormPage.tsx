@@ -1,6 +1,6 @@
 import { useState, FormEvent, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Save, CheckCircle, Trash2, Send } from 'lucide-react';
+import { Save, CheckCircle, Trash2, Send, Calendar, CheckSquare, DollarSign } from 'lucide-react';
 import { Condition, Season, ArticleStatus } from '../types/article';
 import { Button } from '../components/ui/Button';
 import { Toast } from '../components/ui/Toast';
@@ -10,6 +10,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { Modal } from '../components/ui/Modal';
 import { ConfirmModal } from '../components/ui/ConfirmModal';
 import { PublishInstructionsModal } from '../components/PublishInstructionsModal';
+import { ScheduleModal } from '../components/ScheduleModal';
+import { ArticleSoldModal } from '../components/ArticleSoldModal';
 import { VINTED_CATEGORIES } from '../constants/categories';
 import { COLORS, MATERIALS } from '../constants/articleAttributes';
 
@@ -59,6 +61,9 @@ export function ArticleFormPage() {
     isOpen: false,
     articleId: '',
   });
+  const [scheduleModal, setScheduleModal] = useState(false);
+  const [soldModal, setSoldModal] = useState(false);
+  const [currentArticle, setCurrentArticle] = useState<any>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -437,6 +442,166 @@ export function ArticleFormPage() {
       setToast({
         type: 'error',
         text: "Erreur lors de la suppression de l'article",
+      });
+    }
+  };
+
+  const handleSchedule = async () => {
+    if (!id) {
+      setToast({
+        type: 'error',
+        text: 'Veuillez enregistrer l\'article avant de le programmer',
+      });
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('articles')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (error || !data) {
+      setToast({
+        type: 'error',
+        text: 'Erreur lors du chargement de l\'article',
+      });
+      return;
+    }
+
+    setCurrentArticle(data);
+    setScheduleModal(true);
+  };
+
+  const handleScheduleConfirm = async (scheduledDate: string) => {
+    if (!id) return;
+
+    try {
+      const { error } = await supabase
+        .from('articles')
+        .update({
+          scheduled_for: scheduledDate,
+          status: 'scheduled',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setToast({
+        type: 'success',
+        text: 'Article programmé avec succès',
+      });
+
+      setScheduleModal(false);
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
+    } catch (error) {
+      console.error('Error scheduling article:', error);
+      setToast({
+        type: 'error',
+        text: 'Erreur lors de la programmation',
+      });
+    }
+  };
+
+  const handleMarkAsPublished = async () => {
+    if (!id) {
+      setToast({
+        type: 'error',
+        text: 'Veuillez enregistrer l\'article avant de le marquer comme publié',
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('articles')
+        .update({
+          status: 'published',
+          published_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setToast({
+        type: 'success',
+        text: 'Article marqué comme publié',
+      });
+
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
+    } catch (error) {
+      console.error('Error marking article as published:', error);
+      setToast({
+        type: 'error',
+        text: 'Erreur lors de la mise à jour',
+      });
+    }
+  };
+
+  const handleMarkAsSold = async () => {
+    if (!id) {
+      setToast({
+        type: 'error',
+        text: 'Veuillez enregistrer l\'article avant de le marquer comme vendu',
+      });
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('articles')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (error || !data) {
+      setToast({
+        type: 'error',
+        text: 'Erreur lors du chargement de l\'article',
+      });
+      return;
+    }
+
+    setCurrentArticle(data);
+    setSoldModal(true);
+  };
+
+  const handleSoldConfirm = async (soldPrice: number, salePrice: number) => {
+    if (!id) return;
+
+    try {
+      const { error } = await supabase
+        .from('articles')
+        .update({
+          status: 'sold',
+          sold_at: new Date().toISOString(),
+          sold_price: soldPrice,
+          sale_price: salePrice,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setToast({
+        type: 'success',
+        text: 'Article marqué comme vendu',
+      });
+
+      setSoldModal(false);
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
+    } catch (error) {
+      console.error('Error marking article as sold:', error);
+      setToast({
+        type: 'error',
+        text: 'Erreur lors de la mise à jour',
       });
     }
   };
@@ -948,6 +1113,46 @@ export function ArticleFormPage() {
                     {publishing ? 'Envoi...' : 'Envoyer à Vinted'}
                   </span>
                 </Button>
+
+                {id && (
+                  <>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={handleSchedule}
+                      disabled={loading || publishing}
+                      className="w-full sm:w-auto justify-center bg-yellow-50 text-yellow-700 hover:bg-yellow-100 border-yellow-200"
+                    >
+                      <Calendar className="w-4 h-4" />
+                      <span className="hidden sm:inline">Programmer</span>
+                      <span className="sm:hidden">Programmer</span>
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={handleMarkAsPublished}
+                      disabled={loading || publishing}
+                      className="w-full sm:w-auto justify-center bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-200"
+                    >
+                      <CheckSquare className="w-4 h-4" />
+                      <span className="hidden sm:inline">Marquer comme publié</span>
+                      <span className="sm:hidden">Publié</span>
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={handleMarkAsSold}
+                      disabled={loading || publishing}
+                      className="w-full sm:w-auto justify-center bg-green-50 text-green-700 hover:bg-green-100 border-green-200"
+                    >
+                      <DollarSign className="w-4 h-4" />
+                      <span className="hidden sm:inline">Marquer comme vendu</span>
+                      <span className="sm:hidden">Vendu</span>
+                    </Button>
+                  </>
+                )}
               </div>
 
               {id && (
@@ -975,6 +1180,24 @@ export function ArticleFormPage() {
           confirmLabel="Supprimer"
           variant="danger"
         />
+
+        {currentArticle && (
+          <>
+            <ScheduleModal
+              isOpen={scheduleModal}
+              onClose={() => setScheduleModal(false)}
+              onConfirm={handleScheduleConfirm}
+              article={currentArticle}
+            />
+
+            <ArticleSoldModal
+              isOpen={soldModal}
+              onClose={() => setSoldModal(false)}
+              onConfirm={handleSoldConfirm}
+              article={currentArticle}
+            />
+          </>
+        )}
       </div>
     </>
   );
