@@ -169,7 +169,7 @@ export function PreviewPage() {
               </div>
             )}
             {article.status === 'draft' && (
-              <div className="bg-amber-50 border-l-4 border-amber-500 rounded-lg p-4 mb-6 flex items-start gap-3">
+              <div className="bg-grey-50 border-l-4 border-amber-500 rounded-lg p-4 mb-6 flex items-start gap-3">
                 <Package className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <h3 className="font-semibold text-amber-900 mb-1">Statut : Brouillon</h3>
