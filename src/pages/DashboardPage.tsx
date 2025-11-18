@@ -188,7 +188,7 @@ export function DashboardPage() {
       case 'scheduled':
         return <Clock className="w-3 h-3 mr-1" />;
       case 'published':
-        return <SendIcon className="w-3 h-3 mr-1" />;
+        return <Send className="w-3 h-3 mr-1" />;
       case 'sold':
         return <DollarSign className="w-3 h-3 mr-1" />;
       default:
