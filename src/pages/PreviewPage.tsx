@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase';
 import { Article } from '../types/article';
 import { Modal } from '../components/ui/Modal';
 import { PublishInstructionsModal } from '../components/PublishInstructionsModal';
+import { ScheduleModal } from '../components/ScheduleModal';
 import { Toast } from '../components/ui/Toast';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -23,6 +24,7 @@ export function PreviewPage() {
     { isOpen: false, title: '', message: '', type: 'info' }
   );
   const [publishInstructionsModal, setPublishInstructionsModal] = useState<{ isOpen: boolean; articleId: string }>({ isOpen: false, articleId: '' });
+  const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
@@ -187,6 +189,20 @@ export function PreviewPage() {
         onClose={() => setPublishInstructionsModal({ isOpen: false, articleId: '' })}
         articleId={publishInstructionsModal.articleId}
       />
+      {article && (
+        <ScheduleModal
+          isOpen={scheduleModalOpen}
+          onClose={() => setScheduleModalOpen(false)}
+          article={article}
+          onScheduled={() => {
+            setToast({
+              type: 'success',
+              text: 'Article programmé avec succès'
+            });
+            fetchArticle();
+          }}
+        />
+      )}
       <div className="max-w-5xl mx-auto">
         <div className="mb-8">
           <Button
@@ -466,6 +482,14 @@ export function PreviewPage() {
               >
                 <Edit className="w-4 h-4 mr-2" />
                 Modifier
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => setScheduleModalOpen(true)}
+                className="px-6 w-full md:w-auto bg-white text-blue-700 hover:bg-blue-50 border-blue-300 hover:border-blue-400"
+              >
+                <Calendar className="w-4 h-4 mr-2" />
+                Programmer
               </Button>
               <Button
                 variant="secondary"
