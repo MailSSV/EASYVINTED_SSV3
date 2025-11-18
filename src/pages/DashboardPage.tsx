@@ -255,16 +255,36 @@ export function DashboardPage() {
     }
   };
 
-  const handleMarkAsSold = async (price: number) => {
+  const handleMarkAsSold = async (saleData: {
+    soldPrice: number;
+    soldAt: string;
+    platform: string;
+    fees: number;
+    shippingCost: number;
+    buyerName: string;
+    notes: string;
+  }) => {
     if (!soldModal.article) return;
 
     try {
+      // Calculate net profit
+      const netProfit = saleData.soldPrice -
+        (soldModal.article.actual_value || 0) -
+        saleData.fees -
+        saleData.shippingCost;
+
       const { error } = await supabase
         .from('articles')
         .update({
           status: 'sold',
-          sold_price: price,
-          sold_at: new Date().toISOString(),
+          sold_price: saleData.soldPrice,
+          sold_at: saleData.soldAt,
+          platform: saleData.platform,
+          fees: saleData.fees,
+          shipping_cost: saleData.shippingCost,
+          buyer_name: saleData.buyerName,
+          sale_notes: saleData.notes,
+          net_profit: netProfit,
           updated_at: new Date().toISOString(),
         })
         .eq('id', soldModal.article.id);
@@ -281,7 +301,7 @@ export function DashboardPage() {
       console.error('Error marking article as sold:', error);
       setToast({
         type: 'error',
-        text: 'Erreur lors de la mise à jour de l’article',
+        text: "Erreur lors de la mise à jour de l'article",
       });
     }
   };
