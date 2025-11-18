@@ -11,6 +11,7 @@ interface UserProfile {
   clothing_size: string;
   shoe_size: string;
   dressing_name: string;
+  writing_style: string;
 }
 
 export function ProfilePage() {
@@ -26,6 +27,7 @@ export function ProfilePage() {
     clothing_size: '',
     shoe_size: '',
     dressing_name: '',
+    writing_style: '',
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -57,6 +59,7 @@ export function ProfilePage() {
           clothing_size: data.clothing_size || '',
           shoe_size: data.shoe_size || '',
           dressing_name: data.dressing_name || 'Mon Dressing',
+          writing_style: data.writing_style || '',
         });
       }
     } catch (error) {
@@ -261,6 +264,32 @@ export function ProfilePage() {
                   placeholder="Ex: 38, 42"
                 />
               </div>
+            </div>
+
+            <div>
+              <label htmlFor="writing_style" className="block text-sm font-medium text-gray-700 mb-1">
+                Style de rédaction
+              </label>
+              <p className="text-sm text-gray-500 mb-2">Comment l'IA doit rédiger vos descriptions d'articles</p>
+              <input
+                type="text"
+                id="writing_style"
+                list="writing_styles"
+                value={profile.writing_style}
+                onChange={(e) => setProfile({ ...profile, writing_style: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                placeholder="Sélectionner ou saisir un style"
+              />
+              <datalist id="writing_styles">
+                <option value="Décontracté et amical" />
+                <option value="Professionnel et détaillé" />
+                <option value="Court et concis" />
+                <option value="Descriptif et précis" />
+                <option value="Enthousiaste et dynamique" />
+                <option value="Élégant et raffiné" />
+                <option value="Simple et direct" />
+                <option value="Chaleureux et personnel" />
+              </datalist>
             </div>
 
             <div className="flex justify-end">

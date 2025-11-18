@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -45,6 +46,50 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Authorization header manquant" }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      {
+        global: {
+          headers: { Authorization: authHeader },
+        },
+      }
+    );
+
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return new Response(
+        JSON.stringify({ error: "Utilisateur non authentifié" }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const { data: profile } = await supabase
+      .from("user_profiles")
+      .select("writing_style")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    const writingStyle = profile?.writing_style || "Description détaillée et attractive";
+
     const { imageUrls } = await req.json();
     console.log("Received imageUrls:", imageUrls);
 
@@ -70,7 +115,7 @@ Deno.serve(async (req: Request) => {
         text: `Tu es un expert en mode et vêtements qui analyse des photos pour Vinted.
 Analyse la/les photo(s) et retourne UNIQUEMENT un objet JSON valide avec ces champs :
 - title: titre accrocheur pour Vinted (max 60 caractères, mentionne la marque si visible)
-- description: description détaillée et attractive en français très drole et use de blagues ou traits d'humour en relation avec l'article décrit! (75-100 mots). Décris l'article, son style, ses particularités, son état. Sois persuasif et professionnel.
+- description: description en français (75-100 mots). Utilise le style de rédaction suivant : "${writingStyle}". Décris l'article, son style, ses particularités, son état. Sois persuasif et professionnel tout en respectant ce style.
 - brand: marque du produit (si visible, sinon "Non spécifié")
 - category: catégorie principale parmi : tops, bottoms, dresses, outerwear, shoes, accessories, bags
 - subcategory: sous-catégorie précise (ex: t-shirt, jeans, robe longue, veste en jean, baskets, etc.)
