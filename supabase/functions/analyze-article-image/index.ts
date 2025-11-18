@@ -123,7 +123,7 @@ Analyse la/les photo(s) et retourne UNIQUEMENT un objet JSON valide avec ces cha
 - material: matière principale en français (choisis parmi: Acier, Acrylique, Alpaga, Argent, Bambou, Bois, Cachemire, Caoutchouc, Carton, Coton, Cuir, Cuir synthétique, Cuir verni, Céramique, Daim, Denim, Dentelle, Duvet, Fausse fourrure, Feutre, Flanelle, Jute, Laine, Latex, Lin, Maille, Mohair, Mousse, Mousseline, Mérinos, Métal, Nylon, Néoprène, Or, Paille, Papier, Peluche, Pierre, Plastique, Polaire, Polyester, Porcelaine, Rotin, Satin, Sequin, Silicone, Soie, Toile, Tulle, Tweed, Velours, Velous côtelé, Verre, Viscose, Élasthanne). Si non identifiable, retourne null.
 - size: taille si visible sur l'étiquette (S, M, L, XL, 36, 38, etc. sinon null)
 - condition: état estimé parmi : new_with_tags, new_without_tags, very_good, good, satisfactory
-- season: saison optimale pour vendre parmi : spring, summer, autumn, winter, all_seasons
+- season: saison optimale pour vendre parmi : spring, summer, autumn, winter, all-seasons
 - suggestedPeriod: période idéale pour vendre cet article (ex: "Mars - Mai", "Octobre - Décembre", "Toute l'année"). Base-toi sur la saison et le type d'article.
 - estimatedPrice: prix estimé en euros basé sur la marque, l'état et le type d'article
 

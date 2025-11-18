@@ -136,6 +136,7 @@ export function ArticleFormPage() {
       if (error) throw error;
 
       if (data) {
+        const normalizedSeason = data.season === 'all_seasons' ? 'all-seasons' : data.season;
         setFormData({
           title: data.title,
           description: data.description || '',
@@ -147,7 +148,7 @@ export function ArticleFormPage() {
           item_category: data.item_category || '',
           price: data.price.toString(),
           actual_value: data.actual_value ? data.actual_value.toString() : '',
-          season: data.season as Season,
+          season: normalizedSeason as Season,
           suggested_period: data.suggested_period || '',
           photos: data.photos || [],
           color: data.color || '',
@@ -206,6 +207,10 @@ export function ArticleFormPage() {
       }
 
       const analysisResult = await response.json();
+
+      if (analysisResult.season === 'all_seasons') {
+        analysisResult.season = 'all-seasons';
+      }
 
       let mainCategory = 'Femmes';
       let subcategory = 'Vêtements';

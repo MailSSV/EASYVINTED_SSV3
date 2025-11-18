@@ -150,6 +150,7 @@ export function DashboardPage() {
         (data || []).map((article) => ({
           ...article,
           price: parseFloat(article.price),
+          season: (article.season === 'all_seasons' ? 'all-seasons' : article.season) as Season,
         }))
       );
     } catch (error) {
@@ -523,7 +524,7 @@ export function DashboardPage() {
                     {/* Saison + planification alignées à droite */}
                     <div className="mt-2 flex flex-wrap items-center justify-end gap-2">
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] bg-gray-100 text-gray-700">
-                        {SEASON_LABELS[article.season]}
+                        {article.season ? SEASON_LABELS[article.season] : SEASON_LABELS['undefined']}
                       </span>
 
                       {article.status === 'scheduled' && article.scheduled_for ? (
@@ -655,7 +656,7 @@ export function DashboardPage() {
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <span className="text-sm text-gray-700">
-                        {SEASON_LABELS[article.season]}
+                        {article.season ? SEASON_LABELS[article.season] : SEASON_LABELS['undefined']}
                       </span>
                     </td>
 
