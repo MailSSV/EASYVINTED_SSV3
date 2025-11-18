@@ -172,7 +172,7 @@ export function PreviewPage() {
               <div className="bg-grey-50 border-l-4 border-grey-500 rounded-lg p-4 mb-6 flex items-start gap-3">
                 <Package className="w-5 h-5 text-grey-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h3 className="font-semibold text-amber-900 mb-1">Statut : Brouillon</h3>
+                  <h3 className="font-semibold text-grey-900 mb-1">Statut : Brouillon</h3>
                   <p className="text-sm text-amber-800">Cette annonce est en cours de préparation. Complétez tous les champs requis avant de l'envoyer sur Vinted.</p>
                 </div>
               </div>
