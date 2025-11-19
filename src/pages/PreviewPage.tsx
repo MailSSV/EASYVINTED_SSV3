@@ -7,6 +7,7 @@ import { Article } from '../types/article';
 import { Modal } from '../components/ui/Modal';
 import { PublishInstructionsModal } from '../components/PublishInstructionsModal';
 import { ScheduleModal } from '../components/ScheduleModal';
+import { ArticleSoldModal } from '../components/ArticleSoldModal';
 import { Toast } from '../components/ui/Toast';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -18,13 +19,13 @@ export function PreviewPage() {
   const [loading, setLoading] = useState(true);
   const [publishing, setPublishing] = useState(false);
   const [markingReady, setMarkingReady] = useState(false);
-  const [markingSold, setMarkingSold] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [modalState, setModalState] = useState<{ isOpen: boolean; title: string; message: string; type: 'info' | 'error' }>(
     { isOpen: false, title: '', message: '', type: 'info' }
   );
   const [publishInstructionsModal, setPublishInstructionsModal] = useState<{ isOpen: boolean; articleId: string }>({ isOpen: false, articleId: '' });
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
+  const [soldModalOpen, setSoldModalOpen] = useState(false);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
@@ -116,15 +117,38 @@ export function PreviewPage() {
     }
   }
 
-  async function handleMarkAsSold() {
-    if (!id) return;
+  function handleOpenSoldModal() {
+    setSoldModalOpen(true);
+  }
+
+  async function handleMarkAsSold(saleData: {
+    soldPrice: number;
+    soldAt: string;
+    platform: string;
+    fees: number;
+    shippingCost: number;
+    buyerName: string;
+    notes: string;
+  }) {
+    if (!id || !article) return;
 
     try {
-      setMarkingSold(true);
+      const netProfit = saleData.soldPrice - saleData.fees - saleData.shippingCost;
 
       const { error } = await supabase
         .from('articles')
-        .update({ status: 'sold' })
+        .update({
+          status: 'sold',
+          sold_price: saleData.soldPrice,
+          sold_at: saleData.soldAt,
+          platform: saleData.platform,
+          fees: saleData.fees,
+          shipping_cost: saleData.shippingCost,
+          buyer_name: saleData.buyerName,
+          sale_notes: saleData.notes,
+          net_profit: netProfit,
+          updated_at: new Date().toISOString(),
+        })
         .eq('id', id);
 
       if (error) throw error;
@@ -134,6 +158,7 @@ export function PreviewPage() {
         text: 'Article marqué comme vendu'
       });
 
+      setSoldModalOpen(false);
       await fetchArticle();
     } catch (error) {
       console.error('Error marking article as sold:', error);
@@ -141,8 +166,6 @@ export function PreviewPage() {
         type: 'error',
         text: 'Erreur lors de la mise à jour du statut'
       });
-    } finally {
-      setMarkingSold(false);
     }
   }
 
@@ -190,18 +213,26 @@ export function PreviewPage() {
         articleId={publishInstructionsModal.articleId}
       />
       {article && (
-        <ScheduleModal
-          isOpen={scheduleModalOpen}
-          onClose={() => setScheduleModalOpen(false)}
-          article={article}
-          onScheduled={() => {
-            setToast({
-              type: 'success',
-              text: 'Article programmé avec succès'
-            });
-            fetchArticle();
-          }}
-        />
+        <>
+          <ScheduleModal
+            isOpen={scheduleModalOpen}
+            onClose={() => setScheduleModalOpen(false)}
+            article={article}
+            onScheduled={() => {
+              setToast({
+                type: 'success',
+                text: 'Article programmé avec succès'
+              });
+              fetchArticle();
+            }}
+          />
+          <ArticleSoldModal
+            isOpen={soldModalOpen}
+            onClose={() => setSoldModalOpen(false)}
+            onConfirm={handleMarkAsSold}
+            article={article}
+          />
+        </>
       )}
       <div className="max-w-5xl mx-auto">
         <div className="mb-8">
@@ -540,12 +571,11 @@ export function PreviewPage() {
               {(article.status === 'ready' || article.status === 'scheduled' || article.status === 'published') && (
                 <Button
                   variant="secondary"
-                  onClick={handleMarkAsSold}
-                  disabled={markingSold}
+                  onClick={handleOpenSoldModal}
                   className="px-6 w-full md:w-auto bg-white text-green-700 hover:bg-green-50 border-green-300 hover:border-green-400"
                 >
                   <DollarSign className="w-4 h-4 mr-2" />
-                  {markingSold ? 'Enregistrement...' : 'Marquer vendu'}
+                  Marquer vendu
                 </Button>
               )}
 
