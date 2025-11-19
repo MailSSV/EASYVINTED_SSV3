@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Toast } from '../components/ui/Toast';
 import { Button } from '../components/ui/Button';
 import { ScheduleModal } from '../components/ScheduleModal';
+import { ArticlePreviewModal } from '../components/ArticlePreviewModal';
 import { Article } from '../types/article';
 
 interface Suggestion {
@@ -48,6 +49,7 @@ export function PlannerPage() {
   const [generating, setGenerating] = useState(false);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [selectedSuggestionId, setSelectedSuggestionId] = useState<string | null>(null);
 
@@ -268,6 +270,17 @@ export function PlannerPage() {
     setScheduleModalOpen(true);
   }
 
+  function handleOpenPreviewModal(article: Article) {
+    setSelectedArticle(article);
+    setPreviewModalOpen(true);
+  }
+
+  function handleClosePreviewModal() {
+    setPreviewModalOpen(false);
+    setSelectedArticle(null);
+    loadSuggestions();
+  }
+
   async function handleScheduled() {
     if (selectedSuggestionId) {
       try {
@@ -297,16 +310,25 @@ export function PlannerPage() {
       {toast && <Toast message={toast.text} type={toast.type} onClose={() => setToast(null)} />}
 
       {selectedArticle && (
-        <ScheduleModal
-          isOpen={scheduleModalOpen}
-          onClose={() => {
-            setScheduleModalOpen(false);
-            setSelectedArticle(null);
-            setSelectedSuggestionId(null);
-          }}
-          article={selectedArticle}
-          onScheduled={handleScheduled}
-        />
+        <>
+          <ScheduleModal
+            isOpen={scheduleModalOpen}
+            onClose={() => {
+              setScheduleModalOpen(false);
+              setSelectedArticle(null);
+              setSelectedSuggestionId(null);
+            }}
+            article={selectedArticle}
+            onScheduled={handleScheduled}
+          />
+
+          {previewModalOpen && (
+            <ArticlePreviewModal
+              article={selectedArticle}
+              onClose={handleClosePreviewModal}
+            />
+          )}
+        </>
       )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -361,7 +383,11 @@ export function PlannerPage() {
                     {pendingSuggestions.map((suggestion) => (
                       <div
                         key={suggestion.id}
-                        onClick={() => suggestion.article_id && navigate(`/articles/${suggestion.article_id}/preview`)}
+                        onClick={() => {
+                          if (suggestion.article) {
+                            handleOpenPreviewModal(suggestion.article);
+                          }
+                        }}
                         className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-gray-300 cursor-pointer"
                       >
                         <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-gray-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -484,7 +510,11 @@ export function PlannerPage() {
                     {acceptedSuggestions.map((suggestion) => (
                       <div
                         key={suggestion.id}
-                        onClick={() => suggestion.article_id && navigate(`/articles/${suggestion.article_id}/preview`)}
+                        onClick={() => {
+                          if (suggestion.article) {
+                            handleOpenPreviewModal(suggestion.article);
+                          }
+                        }}
                         className="group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-emerald-200 hover:border-emerald-300 cursor-pointer"
                       >
                         <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
