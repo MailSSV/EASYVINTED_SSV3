@@ -205,13 +205,7 @@ export function PreviewPage() {
       )}
       <div className="max-w-5xl mx-auto">
         <div className="mb-8">
-          <Button
-  variant="secondary"
-  onClick={() => navigate(-1)}
-  className="mb-4"
->
-  Retour
-</Button>
+          
 
           <h1 className="text-3xl font-bold text-gray-900">Prévisualisation de l'annonce</h1>
           <p className="text-gray-600 mt-2">
