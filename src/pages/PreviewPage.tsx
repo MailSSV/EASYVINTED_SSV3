@@ -236,8 +236,16 @@ export function PreviewPage() {
             </div>
           </div>
         ) : (
-         
-           
+          <>
+            {article.status === 'ready' && (
+              <div className="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 mb-6 flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-blue-900 mb-1">Statut : Prêt pour Vinted</h3>
+                  <p className="text-sm text-blue-800">Tous les champs requis sont remplis. Vous pouvez maintenant envoyer cette annonce sur la plateforme Vinted.</p>
+                </div>
+              </div>
+            )}
             {article.status === 'draft' && (
               <div className="bg-grey-50 border-l-4 border-grey-500 rounded-lg p-4 mb-6 flex items-start gap-3">
                 <Package className="w-5 h-5 text-grey-600 flex-shrink-0 mt-0.5" />
@@ -245,49 +253,7 @@ export function PreviewPage() {
                   <h3 className="font-semibold text-grey-900 mb-1">Statut : Brouillon</h3>
                   <p className="text-sm text-grey-800">Cette annonce est en cours de préparation. Complétez tous les champs requis avant de l'envoyer sur Vinted.</p>
                 </div>
-              </div>{article.status === 'ready' && (
-  <div className="relative mb-6 overflow-hidden rounded-2xl border border-emerald-100/70 bg-white/70 backdrop-blur-sm shadow-sm">
-    {/* Dégradé de fond subtil */}
-    <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-emerald-50/90 via-sky-50/70 to-indigo-50/60" />
-
-    <div className="relative flex items-start gap-4 px-5 py-4">
-      {/* Pastille icône */}
-      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/80 shadow-sm">
-        <CheckCircle className="h-6 w-6 text-emerald-600" />
-      </div>
-
-      {/* Texte principal */}
-      <div className="flex-1">
-        <div className="flex items-center gap-2 mb-1">
-          <h3 className="text-base sm:text-lg font-semibold text-emerald-900">
-            Statut : Prêt pour Vinted
-          </h3>
-
-          <span className="inline-flex items-center rounded-full bg-emerald-100/80 px-2.5 py-0.5 text-[11px] font-medium uppercase tracking-wide text-emerald-800">
-            100% complété
-          </span>
-        </div>
-
-        <p className="text-sm text-emerald-900/80 leading-snug">
-          Tous les champs requis sont remplis. Vous pouvez maintenant envoyer cette
-          annonce sur la plateforme Vinted.
-        </p>
-      </div>
-    </div>
-
-    {/* Bas de bandeau avec petit rappel */}
-    <div className="relative flex items-center justify-between border-t border-emerald-100/70 px-5 py-2.5 text-[11px] text-emerald-800/80">
-      <span className="truncate">
-        Conseil : gardez ce statut pour vos annonces prêtes à être publiées.
-      </span>
-      <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-white/70 px-2 py-0.5 font-medium">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-        Prêt à publier
-      </span>
-    </div>
-  </div>
-)}
-
+              </div>
             )}
             {article.status === 'scheduled' && (
               <div className="bg-yellow-50 border-l-4 border-yellow-500 rounded-lg p-4 mb-6 flex items-start gap-3">
