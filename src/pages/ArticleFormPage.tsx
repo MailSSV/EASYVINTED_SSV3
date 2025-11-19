@@ -1116,16 +1116,7 @@ export function ArticleFormPage() {
                 </div>
               </div>
 
-              {/* Actions de statut (uniquement en mode édition) */}
-              {id && (
-                <>
-                  <div className="border-t border-gray-200" />
-                  <div className="flex items-center justify-between">
-                    
-                   
-                  </div>
-                </>
-              )}
+             
             </div>
           </div>
         </form>
