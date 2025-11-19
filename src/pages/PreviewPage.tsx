@@ -237,7 +237,15 @@ export function PreviewPage() {
           </div>
         ) : (
           <>
-           {article.status === 'ready' && (
+           
+            {article.status === 'draft' && (
+              <div className="bg-grey-50 border-l-4 border-grey-500 rounded-lg p-4 mb-6 flex items-start gap-3">
+                <Package className="w-5 h-5 text-grey-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-grey-900 mb-1">Statut : Brouillon</h3>
+                  <p className="text-sm text-grey-800">Cette annonce est en cours de préparation. Complétez tous les champs requis avant de l'envoyer sur Vinted.</p>
+                </div>
+              </div>{article.status === 'ready' && (
   <div className="relative mb-6 overflow-hidden rounded-2xl border border-emerald-100/70 bg-white/70 backdrop-blur-sm shadow-sm">
     {/* Dégradé de fond subtil */}
     <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-emerald-50/90 via-sky-50/70 to-indigo-50/60" />
@@ -272,16 +280,14 @@ export function PreviewPage() {
       <span className="truncate">
         Conseil : gardez ce statut pour vos annonces prêtes à être publiées.
       </span>
-      <span className="hidden sm:inline-flex items-center gap-1
+      <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-white/70 px-2 py-0.5 font-medium">
+        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+        Prêt à publier
+      </span>
+    </div>
+  </div>
+)}
 
-            {article.status === 'draft' && (
-              <div className="bg-grey-50 border-l-4 border-grey-500 rounded-lg p-4 mb-6 flex items-start gap-3">
-                <Package className="w-5 h-5 text-grey-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="font-semibold text-grey-900 mb-1">Statut : Brouillon</h3>
-                  <p className="text-sm text-grey-800">Cette annonce est en cours de préparation. Complétez tous les champs requis avant de l'envoyer sur Vinted.</p>
-                </div>
-              </div>
             )}
             {article.status === 'scheduled' && (
               <div className="bg-yellow-50 border-l-4 border-yellow-500 rounded-lg p-4 mb-6 flex items-start gap-3">
