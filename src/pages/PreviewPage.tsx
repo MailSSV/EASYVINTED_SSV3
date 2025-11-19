@@ -511,36 +511,42 @@ export function PreviewPage() {
                 <Edit className="w-4 h-4 mr-2" />
                 Modifier
               </Button>
-              <Button
-                variant="secondary"
-                onClick={() => setScheduleModalOpen(true)}
-                className="px-6 w-full md:w-auto bg-white text-blue-700 hover:bg-blue-50 border-blue-300 hover:border-blue-400"
-              >
-                <Calendar className="w-4 h-4 mr-2" />
-                Programmer
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={handleMarkAsReady}
-                disabled={markingReady || article.status === 'ready'}
-                className="px-6 w-full md:w-auto bg-white text-blue-700 hover:bg-blue-50 border-blue-300 hover:border-blue-400"
-              >
-                <CheckCircle className="w-4 h-4 mr-2" />
-                {markingReady ? 'Enregistrement...' : 'Prêt pour Vinted'}
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={handleMarkAsSold}
-                disabled={markingSold || article.status === 'sold'}
-                className="px-6 w-full md:w-auto bg-white text-green-700 hover:bg-green-50 border-green-300 hover:border-green-400"
-              >
-                <DollarSign className="w-4 h-4 mr-2" />
-                {markingSold ? 'Enregistrement...' : 'Marquer vendu'}
-              </Button>
-              <Button onClick={handleValidateAndSend} disabled={publishing} className="px-6 w-full md:w-auto bg-emerald-600 hover:bg-emerald-700">
-                <Send className="w-4 h-4 mr-2" />
-                {publishing ? 'Préparation...' : 'Envoyer à Vinted'}
-              </Button>
+              {article.status === 'draft' && (
+                <Button
+                  variant="secondary"
+                  onClick={handleMarkAsReady}
+                  disabled={markingReady}
+                  className="px-6 w-full md:w-auto bg-white text-emerald-700 hover:bg-emerald-50 border-emerald-300 hover:border-emerald-400"
+                >
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  {markingReady ? 'Enregistrement...' : 'Prêt pour Vinted'}
+                </Button>
+              )}
+              {article.status !== 'draft' && (
+                <>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setScheduleModalOpen(true)}
+                    className="px-6 w-full md:w-auto bg-white text-blue-700 hover:bg-blue-50 border-blue-300 hover:border-blue-400"
+                  >
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Programmer
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={handleMarkAsSold}
+                    disabled={markingSold || article.status === 'sold'}
+                    className="px-6 w-full md:w-auto bg-white text-green-700 hover:bg-green-50 border-green-300 hover:border-green-400"
+                  >
+                    <DollarSign className="w-4 h-4 mr-2" />
+                    {markingSold ? 'Enregistrement...' : 'Marquer vendu'}
+                  </Button>
+                  <Button onClick={handleValidateAndSend} disabled={publishing} className="px-6 w-full md:w-auto bg-emerald-600 hover:bg-emerald-700">
+                    <Send className="w-4 h-4 mr-2" />
+                    {publishing ? 'Préparation...' : 'Envoyer à Vinted'}
+                  </Button>
+                </>
+              )}
             </div>
           </>
         )}

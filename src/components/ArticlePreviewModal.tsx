@@ -497,31 +497,35 @@ export function ArticlePreviewModal({ article, onClose }: ArticlePreviewModalPro
                   Prêt pour Vinted
                 </Button>
               )}
-              <Button
-                variant="secondary"
-                onClick={() => setScheduleModalOpen(true)}
-                className="w-full sm:w-auto bg-white text-blue-700 hover:bg-blue-50 border-blue-300 hover:border-blue-400"
-              >
-                <Calendar className="w-4 h-4 mr-2" />
-                Programmer
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={handleOpenSoldModal}
-                disabled={article.status === 'sold'}
-                className="w-full sm:w-auto bg-white text-green-700 hover:bg-green-50 border-green-300 hover:border-green-400"
-              >
-                <DollarSign className="w-4 h-4 mr-2" />
-                Marquer vendu
-              </Button>
-              <Button
-                onClick={handleValidateAndSend}
-                disabled={publishing}
-                className="w-full sm:w-auto"
-              >
-                <Send className="w-4 h-4 mr-2" />
-                {publishing ? 'Préparation...' : 'Envoyer à Vinted'}
-              </Button>
+              {article.status !== 'draft' && (
+                <>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setScheduleModalOpen(true)}
+                    className="w-full sm:w-auto bg-white text-blue-700 hover:bg-blue-50 border-blue-300 hover:border-blue-400"
+                  >
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Programmer
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={handleOpenSoldModal}
+                    disabled={article.status === 'sold'}
+                    className="w-full sm:w-auto bg-white text-green-700 hover:bg-green-50 border-green-300 hover:border-green-400"
+                  >
+                    <DollarSign className="w-4 h-4 mr-2" />
+                    Marquer vendu
+                  </Button>
+                  <Button
+                    onClick={handleValidateAndSend}
+                    disabled={publishing}
+                    className="w-full sm:w-auto"
+                  >
+                    <Send className="w-4 h-4 mr-2" />
+                    {publishing ? 'Préparation...' : 'Envoyer à Vinted'}
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
