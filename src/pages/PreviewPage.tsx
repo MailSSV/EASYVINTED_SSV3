@@ -475,14 +475,14 @@ export function PreviewPage() {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="group">
                       <div className="text-xs text-gray-500 font-medium mb-1.5">Taille</div>
-                      <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-sm text-gray-900 font-medium">
+                      <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-base text-gray-900 font-medium">
                         {article.size || 'Non spécifié'}
                       </div>
                     </div>
 
                     <div className="group">
                       <div className="text-xs text-gray-500 font-medium mb-1.5">État</div>
-                      <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-sm text-gray-900 font-medium">
+                      <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-base text-gray-900 font-medium">
                         {CONDITION_LABELS[article.condition] || article.condition}
                       </div>
                     </div>
@@ -490,7 +490,7 @@ export function PreviewPage() {
                     {article.color && (
                       <div className="group">
                         <div className="text-xs text-gray-500 font-medium mb-1.5">Couleur</div>
-                        <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-sm text-gray-900 font-medium">
+                        <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-base text-gray-900 font-medium">
                           {article.color}
                         </div>
                       </div>
@@ -499,7 +499,7 @@ export function PreviewPage() {
                     {article.material && (
                       <div className="group">
                         <div className="text-xs text-gray-500 font-medium mb-1.5">Matière</div>
-                        <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-sm text-gray-900 font-medium">
+                        <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-base text-gray-900 font-medium">
                           {article.material}
                         </div>
                       </div>
@@ -517,7 +517,7 @@ export function PreviewPage() {
                       {article.main_category && (
                         <div className="group">
                           <div className="text-xs text-gray-500 font-medium mb-1.5">Catégorie principale</div>
-                          <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-sm text-gray-900 font-medium">
+                          <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-base text-gray-900 font-medium">
                             {article.main_category}
                           </div>
                         </div>
@@ -525,7 +525,7 @@ export function PreviewPage() {
                       {article.subcategory && (
                         <div className="group">
                           <div className="text-xs text-gray-500 font-medium mb-1.5">Sous-catégorie</div>
-                          <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-sm text-gray-900 font-medium">
+                          <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-base text-gray-900 font-medium">
                             {article.subcategory}
                           </div>
                         </div>
@@ -533,7 +533,7 @@ export function PreviewPage() {
                       {article.item_category && (
                         <div className="group">
                           <div className="text-xs text-gray-500 font-medium mb-1.5">Type d'article</div>
-                          <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-sm text-gray-900 font-medium">
+                          <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-base text-gray-900 font-medium">
                             {article.item_category}
                           </div>
                         </div>
