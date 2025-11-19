@@ -236,7 +236,7 @@ export function PreviewPage() {
             </div>
           </div>
         ) : (
-          <>
+         
            
             {article.status === 'draft' && (
               <div className="bg-grey-50 border-l-4 border-grey-500 rounded-lg p-4 mb-6 flex items-start gap-3">
