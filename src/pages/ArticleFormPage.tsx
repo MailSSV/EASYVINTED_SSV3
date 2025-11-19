@@ -1056,52 +1056,74 @@ export function ArticleFormPage() {
                   Actions principales
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={(e) => handleSubmit(e as any, 'draft')}
-                    disabled={loading || publishing}
-                    className="justify-center bg-white text-gray-700 hover:bg-gray-50 border-gray-300 hover:border-gray-400"
-                  >
-                    <Save className="w-4 h-4" />
-                    <span>Enregistrer brouillon</span>
-                  </Button>
+                  {articleStatus !== 'sold' && (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={(e) => handleSubmit(e as any, 'draft')}
+                      disabled={loading || publishing}
+                      className="justify-center bg-white text-gray-700 hover:bg-gray-50 border-gray-300 hover:border-gray-400"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>Enregistrer brouillon</span>
+                    </Button>
+                  )}
 
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={(e) => handleSubmit(e as any, 'ready')}
-                    disabled={loading || publishing}
-                    className="justify-center bg-white text-blue-700 hover:bg-blue-50 border-blue-300 hover:border-blue-400"
-                  >
-                    <CheckCircle className="w-4 h-4" />
-                    <span>Prêt pour Vinted</span>
-                  </Button>
+                  {articleStatus === 'draft' && (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={(e) => handleSubmit(e as any, 'ready')}
+                      disabled={loading || publishing}
+                      className="justify-center bg-white text-emerald-700 hover:bg-emerald-50 border-emerald-300 hover:border-emerald-400"
+                    >
+                      <CheckCircle className="w-4 h-4" />
+                      <span>Prêt pour Vinted</span>
+                    </Button>
+                  )}
 
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={handleSchedule}
-                    disabled={loading || publishing}
-                    className="justify-center bg-white text-amber-700 hover:bg-amber-50 border-amber-300 hover:border-amber-400"
-                  >
-                    <Calendar className="w-4 h-4" />
-                    <span>Programmer</span>
-                  </Button>
+                  {(articleStatus === 'ready' || articleStatus === 'scheduled' || articleStatus === 'published') && (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={handleSchedule}
+                      disabled={loading || publishing}
+                      className="justify-center bg-white text-amber-700 hover:bg-amber-50 border-amber-300 hover:border-amber-400"
+                    >
+                      <Calendar className="w-4 h-4" />
+                      <span>Programmer</span>
+                    </Button>
+                  )}
 
-                  <Button
-                    type="button"
-                    onClick={handlePublishToVinted}
-                    disabled={loading || publishing}
-                    className="justify-center bg-emerald-600 hover:bg-emerald-700 text-white"
-                  >
-                    <Send className="w-4 h-4" />
-                    <span>
-                      {publishing ? 'Publication...' : 'Envoyer à Vinted'}
-                    </span>
-                  </Button>
+                  {(articleStatus === 'ready' || articleStatus === 'scheduled' || articleStatus === 'published') && (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={handleMarkAsSold}
+                      disabled={loading || publishing}
+                      className="justify-center bg-white text-green-700 hover:bg-green-50 border-green-300 hover:border-green-400"
+                    >
+                      <DollarSign className="w-4 h-4" />
+                      <span>Marquer vendu</span>
+                    </Button>
+                  )}
 
- <Button
+                  {(articleStatus === 'ready' || articleStatus === 'scheduled') && (
+                    <Button
+                      type="button"
+                      onClick={handlePublishToVinted}
+                      disabled={loading || publishing}
+                      className="justify-center bg-emerald-600 hover:bg-emerald-700 text-white"
+                    >
+                      <Send className="w-4 h-4" />
+                      <span>
+                        {publishing ? 'Publication...' : 'Envoyer à Vinted'}
+                      </span>
+                    </Button>
+                  )}
+
+                  {id && articleStatus !== 'sold' && (
+                    <Button
                       type="button"
                       variant="secondary"
                       onClick={() => setDeleteModal(true)}
@@ -1111,8 +1133,7 @@ export function ArticleFormPage() {
                       <Trash2 className="w-4 h-4" />
                       <span>Supprimer l'article</span>
                     </Button>
-
-                  
+                  )}
                 </div>
               </div>
 
