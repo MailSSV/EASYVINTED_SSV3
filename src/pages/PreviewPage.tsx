@@ -473,29 +473,35 @@ export function PreviewPage() {
                     Caractéristiques
                   </h3>
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Taille</p>
-                      <p className="font-semibold text-gray-900">{article.size || 'Non spécifié'}</p>
+                    <div className="group">
+                      <div className="text-xs text-gray-500 font-medium mb-1.5">Taille</div>
+                      <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-sm text-gray-900 font-medium">
+                        {article.size || 'Non spécifié'}
+                      </div>
                     </div>
 
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">État</p>
-                      <p className="font-semibold text-gray-900">
+                    <div className="group">
+                      <div className="text-xs text-gray-500 font-medium mb-1.5">État</div>
+                      <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-sm text-gray-900 font-medium">
                         {CONDITION_LABELS[article.condition] || article.condition}
-                      </p>
+                      </div>
                     </div>
 
                     {article.color && (
-                      <div className="p-3 bg-gray-50 rounded-lg">
-                        <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Couleur</p>
-                        <p className="font-semibold text-gray-900">{article.color}</p>
+                      <div className="group">
+                        <div className="text-xs text-gray-500 font-medium mb-1.5">Couleur</div>
+                        <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-sm text-gray-900 font-medium">
+                          {article.color}
+                        </div>
                       </div>
                     )}
 
                     {article.material && (
-                      <div className="p-3 bg-gray-50 rounded-lg">
-                        <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Matière</p>
-                        <p className="font-semibold text-gray-900">{article.material}</p>
+                      <div className="group">
+                        <div className="text-xs text-gray-500 font-medium mb-1.5">Matière</div>
+                        <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-sm text-gray-900 font-medium">
+                          {article.material}
+                        </div>
                       </div>
                     )}
                   </div>
