@@ -206,15 +206,7 @@ export function ArticlePreviewModal({ article, onClose }: ArticlePreviewModalPro
           </div>
 
           <div className="flex-1 overflow-y-auto p-6">
-            {article.status === 'ready' && (
-              <div className="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 mb-6 flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="font-semibold text-blue-900 mb-1">Statut : Prêt pour Vinted</h3>
-                  <p className="text-sm text-blue-800">Tous les champs requis sont remplis. Vous pouvez maintenant envoyer cette annonce sur la plateforme Vinted.</p>
-                </div>
-              </div>
-            )}
+           
             {article.status === 'draft' && (
               <div className="bg-grey-50 border-l-4 border-grey-500 rounded-lg p-4 mb-6 flex items-start gap-3">
                 <Package className="w-5 h-5 text-grey-600 flex-shrink-0 mt-0.5" />
