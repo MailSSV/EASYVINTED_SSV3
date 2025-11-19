@@ -1112,7 +1112,7 @@ export function ArticleFormPage() {
                       <span>Supprimer l'article</span>
                     </Button>
                   
-                </>
+                
               )}
             </div>
           </div>
