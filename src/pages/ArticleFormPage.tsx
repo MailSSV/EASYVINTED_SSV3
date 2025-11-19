@@ -1109,16 +1109,7 @@ export function ArticleFormPage() {
                   <div className="border-t border-gray-200" />
                   <div className="flex items-center justify-between">
                     
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={() => setDeleteModal(true)}
-                      disabled={loading || publishing}
-                      className="justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      <span>Supprimer l'article</span>
-                    </Button>
+                   
                   </div>
                 </>
               )}
