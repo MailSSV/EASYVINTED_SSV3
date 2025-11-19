@@ -56,7 +56,7 @@ export function ScheduleModal({ isOpen, onClose, article, onScheduled }: Schedul
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-50 p-4"
       onClick={handleBackdropClick}
     >
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full animate-in fade-in zoom-in duration-200">
