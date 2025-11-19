@@ -121,6 +121,35 @@ export function ArticlePreviewModal({ article, onClose }: ArticlePreviewModalPro
     }
   }
 
+  async function handleMarkAsReady() {
+    try {
+      const { error } = await supabase
+        .from('articles')
+        .update({
+          status: 'ready',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', article.id);
+
+      if (error) throw error;
+
+      setToast({
+        type: 'success',
+        text: 'Article marqué comme prêt pour Vinted'
+      });
+
+      setTimeout(() => {
+        onClose();
+      }, 1500);
+    } catch (error) {
+      console.error('Error marking article as ready:', error);
+      setToast({
+        type: 'error',
+        text: 'Erreur lors de la mise à jour du statut'
+      });
+    }
+  }
+
   return (
     <>
       {toast && (
@@ -424,6 +453,16 @@ export function ArticlePreviewModal({ article, onClose }: ArticlePreviewModalPro
                 <Edit className="w-4 h-4 mr-2" />
                 Modifier
               </Button>
+              {article.status === 'draft' && (
+                <Button
+                  variant="secondary"
+                  onClick={handleMarkAsReady}
+                  className="w-full sm:w-auto bg-white text-emerald-700 hover:bg-emerald-50 border-emerald-300 hover:border-emerald-400"
+                >
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  Prêt pour Vinted
+                </Button>
+              )}
               <Button
                 variant="secondary"
                 onClick={() => setScheduleModalOpen(true)}
