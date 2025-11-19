@@ -501,7 +501,7 @@ export function ArticlePreviewModal({ article, onClose }: ArticlePreviewModalPro
                 </Button>
               )}
 
-              {(article.status === 'ready' || article.status === 'published') && (
+              {(article.status === 'ready' || article.status === 'scheduled' || article.status === 'published') && (
                 <Button
                   variant="secondary"
                   onClick={() => setScheduleModalOpen(true)}
