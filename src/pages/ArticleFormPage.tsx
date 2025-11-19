@@ -1108,12 +1108,7 @@ export function ArticleFormPage() {
                 <>
                   <div className="border-t border-gray-200" />
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-500">Statut actuel :</span>
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
-                        {STATUS_LABELS[articleStatus]}
-                      </span>
-                    </div>
+                    
                     <Button
                       type="button"
                       variant="secondary"
