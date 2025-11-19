@@ -704,13 +704,7 @@ export function ArticleFormPage() {
 
       <div className="max-w-5xl mx-auto">
         <div className="mb-4">
-          <Button
-            variant="secondary"
-            onClick={() => navigate(-1)}
-            className="mb-4"
-          >
-            Retour
-          </Button>
+         
         </div>
 
         <div className="mb-6">
