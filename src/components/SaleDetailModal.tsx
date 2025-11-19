@@ -91,21 +91,6 @@ export function SaleDetailModal({ sale, onClose }: SaleDetailModalProps) {
               </div>
 
               <div className="lg:col-span-2 space-y-6">
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                    <p className="text-xs font-medium text-gray-500 mb-1">FRAIS TOTAUX</p>
-                    <p className="text-xl font-bold text-gray-900">{totalCosts.toFixed(2)} €</p>
-                  </div>
-                  <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                    <p className="text-xs font-medium text-blue-700 mb-1">REVENU BRUT</p>
-                    <p className="text-xl font-bold text-blue-900">{sale.sold_price.toFixed(2)} €</p>
-                  </div>
-                  <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
-                    <p className="text-xs font-medium text-emerald-700 mb-1">BÉNÉFICE NET</p>
-                    <p className="text-xl font-bold text-emerald-900">{sale.net_profit.toFixed(2)} €</p>
-                  </div>
-                </div>
-
                 <div className="bg-white border border-gray-200 rounded-xl p-6">
                   <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Détail de la transaction</h4>
 
