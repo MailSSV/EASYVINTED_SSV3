@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { Toast } from '../components/ui/Toast';
 import { Button } from '../components/ui/Button';
+import { ScheduleModal } from '../components/ScheduleModal';
 import { Article } from '../types/article';
 
 interface Suggestion {
@@ -46,6 +47,9 @@ export function PlannerPage() {
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const [selectedSuggestionId, setSelectedSuggestionId] = useState<string | null>(null);
 
   useEffect(() => {
     loadSuggestions();
@@ -258,12 +262,52 @@ export function PlannerPage() {
     }
   }
 
+  function handleOpenScheduleModal(article: Article, suggestionId: string) {
+    setSelectedArticle(article);
+    setSelectedSuggestionId(suggestionId);
+    setScheduleModalOpen(true);
+  }
+
+  async function handleScheduled() {
+    if (selectedSuggestionId) {
+      try {
+        const { error } = await supabase
+          .from('selling_suggestions')
+          .update({ status: 'accepted', updated_at: new Date().toISOString() })
+          .eq('id', selectedSuggestionId);
+
+        if (error) throw error;
+      } catch (error) {
+        console.error('Error updating suggestion:', error);
+      }
+    }
+
+    await loadSuggestions();
+    setToast({ type: 'success', text: 'Article programmé avec succès' });
+    setScheduleModalOpen(false);
+    setSelectedArticle(null);
+    setSelectedSuggestionId(null);
+  }
+
   const pendingSuggestions = suggestions.filter((s) => s.status === 'pending');
   const acceptedSuggestions = suggestions.filter((s) => s.status === 'accepted');
 
   return (
     <>
       {toast && <Toast message={toast.text} type={toast.type} onClose={() => setToast(null)} />}
+
+      {selectedArticle && (
+        <ScheduleModal
+          isOpen={scheduleModalOpen}
+          onClose={() => {
+            setScheduleModalOpen(false);
+            setSelectedArticle(null);
+            setSelectedSuggestionId(null);
+          }}
+          article={selectedArticle}
+          onScheduled={handleScheduled}
+        />
+      )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-6 space-y-4">
@@ -373,15 +417,24 @@ export function PlannerPage() {
                           </p>
 
                           <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                            <div className="flex items-center gap-2 text-sm text-gray-500">
-                              <Calendar className="w-4 h-4" />
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (suggestion.article) {
+                                  handleOpenScheduleModal(suggestion.article, suggestion.id);
+                                }
+                              }}
+                              className="flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600 transition-colors group"
+                              title="Cliquez pour personnaliser la date"
+                            >
+                              <Calendar className="w-4 h-4 group-hover:scale-110 transition-transform" />
                               <span className="font-medium">
                                 {new Date(suggestion.suggested_date).toLocaleDateString('fr-FR', {
                                   day: 'numeric',
                                   month: 'short',
                                 })}
                               </span>
-                            </div>
+                            </button>
 
                             <div className="flex gap-2">
                               <button
