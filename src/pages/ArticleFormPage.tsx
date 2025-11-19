@@ -1055,14 +1055,14 @@ export function ArticleFormPage() {
                 <div className="text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:block">
                   Actions principales
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div className="flex flex-wrap gap-3">
                   {articleStatus !== 'sold' && (
                     <Button
                       type="button"
                       variant="secondary"
                       onClick={(e) => handleSubmit(e as any, 'draft')}
                       disabled={loading || publishing}
-                      className="justify-center bg-white text-gray-700 hover:bg-gray-50 border-gray-300 hover:border-gray-400"
+                      className="flex-1 min-w-[200px] justify-center bg-white text-gray-700 hover:bg-gray-50 border-gray-300 hover:border-gray-400"
                     >
                       <Save className="w-4 h-4" />
                       <span>Enregistrer brouillon</span>
@@ -1075,7 +1075,7 @@ export function ArticleFormPage() {
                       variant="secondary"
                       onClick={(e) => handleSubmit(e as any, 'ready')}
                       disabled={loading || publishing}
-                      className="justify-center bg-white text-emerald-700 hover:bg-emerald-50 border-emerald-300 hover:border-emerald-400"
+                      className="flex-1 min-w-[200px] justify-center bg-white text-emerald-700 hover:bg-emerald-50 border-emerald-300 hover:border-emerald-400"
                     >
                       <CheckCircle className="w-4 h-4" />
                       <span>Prêt pour Vinted</span>
@@ -1088,7 +1088,7 @@ export function ArticleFormPage() {
                       variant="secondary"
                       onClick={handleSchedule}
                       disabled={loading || publishing}
-                      className="justify-center bg-white text-amber-700 hover:bg-amber-50 border-amber-300 hover:border-amber-400"
+                      className="flex-1 min-w-[200px] justify-center bg-white text-amber-700 hover:bg-amber-50 border-amber-300 hover:border-amber-400"
                     >
                       <Calendar className="w-4 h-4" />
                       <span>Programmer</span>
@@ -1101,7 +1101,7 @@ export function ArticleFormPage() {
                       variant="secondary"
                       onClick={handleMarkAsSold}
                       disabled={loading || publishing}
-                      className="justify-center bg-white text-green-700 hover:bg-green-50 border-green-300 hover:border-green-400"
+                      className="flex-1 min-w-[200px] justify-center bg-white text-green-700 hover:bg-green-50 border-green-300 hover:border-green-400"
                     >
                       <DollarSign className="w-4 h-4" />
                       <span>Marquer vendu</span>
@@ -1113,7 +1113,7 @@ export function ArticleFormPage() {
                       type="button"
                       onClick={handlePublishToVinted}
                       disabled={loading || publishing}
-                      className="justify-center bg-emerald-600 hover:bg-emerald-700 text-white"
+                      className="flex-1 min-w-[200px] justify-center bg-emerald-600 hover:bg-emerald-700 text-white"
                     >
                       <Send className="w-4 h-4" />
                       <span>
@@ -1121,22 +1121,20 @@ export function ArticleFormPage() {
                       </span>
                     </Button>
                   )}
-                </div>
 
-                {id && articleStatus !== 'sold' && (
-                  <div className="flex justify-end pt-2 border-t border-gray-200">
+                  {id && articleStatus !== 'sold' && (
                     <Button
                       type="button"
                       variant="secondary"
                       onClick={() => setDeleteModal(true)}
                       disabled={loading || publishing}
-                      className="bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
+                      className="flex-1 min-w-[200px] justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
                     >
                       <Trash2 className="w-4 h-4" />
                       <span>Supprimer l'article</span>
                     </Button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
 
 
