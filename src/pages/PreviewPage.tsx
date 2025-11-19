@@ -507,23 +507,29 @@ export function PreviewPage() {
                       <Layers className="w-4 h-4" />
                       Catégorisation Vinted
                     </h3>
-                    <div className="space-y-2">
+                    <div className="grid grid-cols-1 gap-3">
                       {article.main_category && (
-                        <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                          <span className="text-xs text-blue-700 font-medium">Catégorie principale</span>
-                          <span className="text-sm text-blue-900 font-semibold">{article.main_category}</span>
+                        <div className="group">
+                          <div className="text-xs text-gray-500 font-medium mb-1.5">Catégorie principale</div>
+                          <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-sm text-gray-900 font-medium">
+                            {article.main_category}
+                          </div>
                         </div>
                       )}
                       {article.subcategory && (
-                        <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                          <span className="text-xs text-blue-700 font-medium">Sous-catégorie</span>
-                          <span className="text-sm text-blue-900 font-semibold">{article.subcategory}</span>
+                        <div className="group">
+                          <div className="text-xs text-gray-500 font-medium mb-1.5">Sous-catégorie</div>
+                          <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-sm text-gray-900 font-medium">
+                            {article.subcategory}
+                          </div>
                         </div>
                       )}
                       {article.item_category && (
-                        <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                          <span className="text-xs text-blue-700 font-medium">Type d'article</span>
-                          <span className="text-sm text-blue-900 font-semibold">{article.item_category}</span>
+                        <div className="group">
+                          <div className="text-xs text-gray-500 font-medium mb-1.5">Type d'article</div>
+                          <div className="px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-sm text-gray-900 font-medium">
+                            {article.item_category}
+                          </div>
                         </div>
                       )}
                     </div>
