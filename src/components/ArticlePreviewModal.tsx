@@ -5,6 +5,7 @@ import { Article } from '../types/article';
 import { useNavigate } from 'react-router-dom';
 import { PublishInstructionsModal } from './PublishInstructionsModal';
 import { ArticleSoldModal } from './ArticleSoldModal';
+import { ScheduleModal } from './ScheduleModal';
 import { Toast } from './ui/Toast';
 import { supabase } from '../lib/supabase';
 
@@ -22,6 +23,7 @@ export function ArticlePreviewModal({ article, onClose }: ArticlePreviewModalPro
     isOpen: false,
     articleId: ''
   });
+  const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const CONDITION_LABELS: Record<string, string> = {
@@ -140,6 +142,23 @@ export function ArticlePreviewModal({ article, onClose }: ArticlePreviewModalPro
         onClose={() => setShowSoldModal(false)}
         onConfirm={handleConfirmSold}
         article={article}
+      />
+
+      <ScheduleModal
+        isOpen={scheduleModalOpen}
+        onClose={() => setScheduleModalOpen(false)}
+        article={article}
+        onScheduled={() => {
+          setToast({
+            type: 'success',
+            text: 'Article programm\u00e9 avec succ\u00e8s'
+          });
+          setScheduleModalOpen(false);
+          // Close preview modal after scheduling
+          setTimeout(() => {
+            onClose();
+          }, 1500);
+        }}
       />
 
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
@@ -404,6 +423,14 @@ export function ArticlePreviewModal({ article, onClose }: ArticlePreviewModalPro
               >
                 <Edit className="w-4 h-4 mr-2" />
                 Modifier
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => setScheduleModalOpen(true)}
+                className="w-full sm:w-auto bg-white text-blue-700 hover:bg-blue-50 border-blue-300 hover:border-blue-400"
+              >
+                <Calendar className="w-4 h-4 mr-2" />
+                Programmer
               </Button>
               <Button
                 variant="secondary"
