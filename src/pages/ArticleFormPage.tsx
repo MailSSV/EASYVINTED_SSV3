@@ -1052,8 +1052,23 @@ export function ArticleFormPage() {
             <div className="space-y-4">
               {/* Actions principales */}
               <div className="flex flex-col gap-3">
-                <div className="text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:block">
-                  Actions principales
+                <div className="flex items-center justify-between">
+                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:block">
+                    Actions principales
+                  </div>
+                  {id && articleStatus !== 'sold' && (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => setDeleteModal(true)}
+                      disabled={loading || publishing}
+                      className="bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      <span className="hidden sm:inline">Supprimer l'article</span>
+                      <span className="sm:hidden">Supprimer</span>
+                    </Button>
+                  )}
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                   {articleStatus !== 'sold' && (
@@ -1121,23 +1136,10 @@ export function ArticleFormPage() {
                       </span>
                     </Button>
                   )}
-
-                  {id && articleStatus !== 'sold' && (
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={() => setDeleteModal(true)}
-                      disabled={loading || publishing}
-                      className="justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      <span>Supprimer l'article</span>
-                    </Button>
-                  )}
                 </div>
               </div>
 
-             
+
             </div>
           </div>
         </form>
