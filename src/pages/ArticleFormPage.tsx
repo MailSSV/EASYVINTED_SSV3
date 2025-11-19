@@ -1111,10 +1111,11 @@ export function ArticleFormPage() {
                       <Trash2 className="w-4 h-4" />
                       <span>Supprimer l'article</span>
                     </Button>
-                  </div>
+                  
                 </>
               )}
-          
+            </div>
+          </div>
         </form>
 
         <ConfirmModal
