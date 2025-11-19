@@ -167,12 +167,7 @@ export function SaleDetailModal({ sale, onClose }: SaleDetailModalProps) {
             <Calendar className="w-4 h-4" />
             <span>Référence: {sale.id.slice(0, 8)}</span>
           </div>
-          <button
-            onClick={onClose}
-            className="px-6 py-2.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-all font-semibold shadow-sm hover:shadow-md"
-          >
-            Fermer
-          </button>
+          
         </div>
       </div>
     </div>
