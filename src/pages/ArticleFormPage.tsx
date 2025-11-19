@@ -1100,6 +1100,19 @@ export function ArticleFormPage() {
                       {publishing ? 'Publication...' : 'Envoyer à Vinted'}
                     </span>
                   </Button>
+
+ <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => setDeleteModal(true)}
+                      disabled={loading || publishing}
+                      className="justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      <span>Supprimer l'article</span>
+                    </Button>
+
+                  
                 </div>
               </div>
 
