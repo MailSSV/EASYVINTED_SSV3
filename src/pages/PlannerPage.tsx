@@ -6,7 +6,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { Toast } from '../components/ui/Toast';
 import { Button } from '../components/ui/Button';
 import { ScheduleModal } from '../components/ScheduleModal';
-import { ArticlePreviewModal } from '../components/ArticlePreviewModal';
 import { Article } from '../types/article';
 
 interface Suggestion {
@@ -49,7 +48,6 @@ export function PlannerPage() {
   const [generating, setGenerating] = useState(false);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
-  const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [selectedSuggestionId, setSelectedSuggestionId] = useState<string | null>(null);
 
@@ -271,14 +269,7 @@ export function PlannerPage() {
   }
 
   function handleOpenPreviewModal(article: Article) {
-    setSelectedArticle(article);
-    setPreviewModalOpen(true);
-  }
-
-  function handleClosePreviewModal() {
-    setPreviewModalOpen(false);
-    setSelectedArticle(null);
-    loadSuggestions();
+    navigate(`/articles/${article.id}/preview`);
   }
 
   async function handleScheduled() {
@@ -321,13 +312,6 @@ export function PlannerPage() {
             article={selectedArticle}
             onScheduled={handleScheduled}
           />
-
-          {previewModalOpen && (
-            <ArticlePreviewModal
-              article={selectedArticle}
-              onClose={handleClosePreviewModal}
-            />
-          )}
         </>
       )}
 

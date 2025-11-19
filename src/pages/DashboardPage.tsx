@@ -25,7 +25,6 @@ import { ScheduleModal } from '../components/ScheduleModal';
 import { ArticleSoldModal } from '../components/ArticleSoldModal';
 import { Toast } from '../components/ui/Toast';
 import { useAuth } from '../contexts/AuthContext';
-import { ArticlePreviewModal } from '../components/ArticlePreviewModal';
 
 const STATUS_LABELS: Record<ArticleStatus, string> = {
   draft: 'Brouillon',
@@ -97,13 +96,6 @@ export function DashboardPage() {
     article: null,
   });
 
-  const [previewModal, setPreviewModal] = useState<{
-    isOpen: boolean;
-    article: Article | null;
-  }>({
-    isOpen: false,
-    article: null,
-  });
 
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const desktopMenuRef = useRef<HTMLDivElement | null>(null);
@@ -548,7 +540,7 @@ export function DashboardPage() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            setPreviewModal({ isOpen: true, article });
+                            navigate(`/articles/${article.id}/preview`);
                           }}
                           className="p-1.5 rounded-full hover:bg-gray-100 text-gray-600"
                         >
@@ -626,7 +618,7 @@ export function DashboardPage() {
                     key={article.id}
                     className="hover:bg-gray-50 cursor-pointer"
                     onDoubleClick={() =>
-                      setPreviewModal({ isOpen: true, article })
+                      navigate(`/articles/${article.id}/preview`)
                     }
                   >
                     <td className="px-4 py-3">
@@ -681,7 +673,7 @@ export function DashboardPage() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            setPreviewModal({ isOpen: true, article });
+                            navigate(`/articles/${article.id}/preview`);
                           }}
                           className="p-1 text-gray-600 hover:text-emerald-600 transition-colors"
                           title="Voir"
@@ -813,12 +805,6 @@ export function DashboardPage() {
           />
         )}
 
-        {previewModal.isOpen && previewModal.article && (
-          <ArticlePreviewModal
-            article={previewModal.article}
-            onClose={() => setPreviewModal({ isOpen: false, article: null })}
-          />
-        )}
       </div>
     </>
   );
