@@ -409,6 +409,73 @@ export function ArticleFormPage() {
       if (id) {
         const { error } = await supabase.from('articles').update(articleData).eq('id', id);
         if (error) throw error;
+
+        const { data: existingSuggestion } = await supabase
+          .from('selling_suggestions')
+          .select('id, status')
+          .eq('article_id', id)
+          .eq('status', 'pending')
+          .maybeSingle();
+
+        if (existingSuggestion) {
+          const now = new Date();
+          const currentMonth = now.getMonth();
+          let targetMonth = currentMonth;
+          let priority: 'high' | 'medium' | 'low' = 'medium';
+          let reason = '';
+
+          if (formData.season === 'spring') {
+            targetMonth = 2;
+            reason = 'Articles de printemps - meilleure période de vente en mars-avril';
+          } else if (formData.season === 'summer') {
+            targetMonth = 4;
+            reason = "Articles d'été - meilleure période de vente en mai-juin";
+          } else if (formData.season === 'autumn') {
+            targetMonth = 7;
+            reason = "Articles d'automne - meilleure période de vente en août-septembre";
+          } else if (formData.season === 'winter') {
+            targetMonth = 9;
+            reason = "Articles d'hiver - meilleure période de vente en octobre-novembre";
+          } else if (formData.season === 'all-seasons') {
+            targetMonth = currentMonth;
+            reason = 'Article toutes saisons - peut être publié maintenant';
+          } else {
+            targetMonth = currentMonth;
+            reason = 'Article sans saison définie - peut être publié maintenant';
+          }
+
+          const monthDiff = (targetMonth - currentMonth + 12) % 12;
+
+          if (monthDiff === 0 || monthDiff === 1) {
+            priority = 'high';
+            reason = `Période optimale maintenant ! ${reason}`;
+          } else if (monthDiff <= 3) {
+            priority = 'medium';
+          } else {
+            priority = 'low';
+          }
+
+          let suggestedDate: Date;
+          if (formData.season === 'all-seasons' || formData.season === 'undefined') {
+            suggestedDate = new Date(now);
+            suggestedDate.setDate(suggestedDate.getDate() + 7);
+          } else {
+            suggestedDate = new Date(now.getFullYear(), targetMonth, 1);
+            if (suggestedDate < now) {
+              suggestedDate.setFullYear(suggestedDate.getFullYear() + 1);
+            }
+          }
+
+          await supabase
+            .from('selling_suggestions')
+            .update({
+              suggested_date: suggestedDate.toISOString().split('T')[0],
+              priority,
+              reason,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', existingSuggestion.id);
+        }
       } else {
         const { error } = await supabase.from('articles').insert([articleData]);
         if (error) throw error;
