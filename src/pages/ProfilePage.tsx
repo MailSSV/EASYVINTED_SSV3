@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Plus, Trash2, Edit2 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Toast } from '../components/ui/Toast';
+import { ConfirmModal } from '../components/ui/ConfirmModal';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { PERSONAS, Persona } from '../constants/personas';
@@ -34,6 +35,7 @@ export function ProfilePage() {
   const [customPersonas, setCustomPersonas] = useState<CustomPersona[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPersona, setEditingPersona] = useState<CustomPersona | undefined>();
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState<{ isOpen: boolean; personaId: string | null }>({ isOpen: false, personaId: null });
 
   const [profile, setProfile] = useState<UserProfile>({
     name: '',
@@ -139,8 +141,9 @@ export function ProfilePage() {
     }
   };
 
-  const handleDeletePersona = async (personaId: string) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce persona ?')) return;
+  const handleDeletePersona = async () => {
+    const personaId = deleteConfirmModal.personaId;
+    if (!personaId) return;
 
     try {
       const { error } = await supabase
@@ -466,7 +469,7 @@ export function ProfilePage() {
                               type="button"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleDeletePersona(persona.id);
+                                setDeleteConfirmModal({ isOpen: true, personaId: persona.id });
                               }}
                               className="p-1 bg-white rounded-full shadow-sm hover:bg-red-50 transition-colors"
                               title="Supprimer"
@@ -554,6 +557,17 @@ export function ProfilePage() {
         }}
         onSave={handleCreatePersona}
         editingPersona={editingPersona}
+      />
+
+      <ConfirmModal
+        isOpen={deleteConfirmModal.isOpen}
+        onClose={() => setDeleteConfirmModal({ isOpen: false, personaId: null })}
+        onConfirm={handleDeletePersona}
+        title="Supprimer le persona"
+        message="Êtes-vous sûr de vouloir supprimer ce persona ? Cette action est irréversible."
+        confirmLabel="Supprimer"
+        cancelLabel="Annuler"
+        variant="danger"
       />
     </>
   );
