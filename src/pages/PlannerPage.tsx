@@ -445,7 +445,7 @@ export function PlannerPage() {
 
                 {/* Articles Planifiés */}
                 <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Annonces planifiées</h3>
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Annonces programées</h3>
                   <div className="text-3xl font-bold text-emerald-600 mb-2">{scheduledArticles.length}</div>
                   <p className="text-xs text-emerald-600 mb-4">
                     {scheduledArticles.length > 0 ? 'Publication en 24h' : 'Aucune publication prévue'}
