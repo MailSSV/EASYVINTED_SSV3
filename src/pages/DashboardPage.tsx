@@ -235,6 +235,33 @@ export function DashboardPage() {
     if (!deleteModal.articleId) return;
 
     try {
+      const { data: article, error: fetchError } = await supabase
+        .from('articles')
+        .select('photos')
+        .eq('id', deleteModal.articleId)
+        .maybeSingle();
+
+      if (fetchError) throw fetchError;
+
+      if (article?.photos && article.photos.length > 0) {
+        const filePaths = article.photos
+          .map((photoUrl: string) => {
+            const urlParts = photoUrl.split('/article-photos/');
+            return urlParts.length === 2 ? urlParts[1] : null;
+          })
+          .filter((path: string | null): path is string => path !== null);
+
+        if (filePaths.length > 0) {
+          const { error: storageError } = await supabase.storage
+            .from('article-photos')
+            .remove(filePaths);
+
+          if (storageError) {
+            console.error('Error deleting photos from storage:', storageError);
+          }
+        }
+      }
+
       const { error } = await supabase
         .from('articles')
         .delete()
@@ -252,7 +279,7 @@ export function DashboardPage() {
       console.error('Error deleting article:', error);
       setToast({
         type: 'error',
-        text: 'Erreur lors de la suppression de l’article',
+        text: 'Erreur lors de la suppression de l\'article',
       });
     }
   };

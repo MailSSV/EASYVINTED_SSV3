@@ -434,6 +434,33 @@ export function ArticleFormPage() {
     if (!id) return;
 
     try {
+      const { data: article, error: fetchError } = await supabase
+        .from('articles')
+        .select('photos')
+        .eq('id', id)
+        .maybeSingle();
+
+      if (fetchError) throw fetchError;
+
+      if (article?.photos && article.photos.length > 0) {
+        const filePaths = article.photos
+          .map((photoUrl: string) => {
+            const urlParts = photoUrl.split('/article-photos/');
+            return urlParts.length === 2 ? urlParts[1] : null;
+          })
+          .filter((path: string | null): path is string => path !== null);
+
+        if (filePaths.length > 0) {
+          const { error: storageError } = await supabase.storage
+            .from('article-photos')
+            .remove(filePaths);
+
+          if (storageError) {
+            console.error('Error deleting photos from storage:', storageError);
+          }
+        }
+      }
+
       const { error } = await supabase.from('articles').delete().eq('id', id);
       if (error) throw error;
 
