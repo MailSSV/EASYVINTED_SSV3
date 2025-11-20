@@ -54,7 +54,7 @@ export function HomePage() {
               Publication optimisée
             </h3>
             <p className="text-sm text-gray-600">
-              Publiez automatiquement sur Vinted aux moments les plus efficaces.
+              EasyVinted prépare la mise en ligne pour vous : Gardez le contrôle, sans la charge mentale.
             </p>
           </div>
         </div>
