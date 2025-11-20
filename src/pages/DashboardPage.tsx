@@ -93,6 +93,14 @@ export function DashboardPage() {
     article: null,
   });
 
+  const [statusModal, setStatusModal] = useState<{
+    isOpen: boolean;
+    article: Article | null;
+  }>({
+    isOpen: false,
+    article: null,
+  });
+
   const [soldModal, setSoldModal] = useState<{
     isOpen: boolean;
     article: Article | null;
@@ -567,12 +575,16 @@ export function DashboardPage() {
                       </span>
 
                       {/* Statut */}
-                      <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[article.status]}`}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setStatusModal({ isOpen: true, article });
+                        }}
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all hover:shadow-md ${STATUS_COLORS[article.status]}`}
                       >
                         {renderStatusIcon(article.status)}
                         {STATUS_LABELS[article.status]}
-                      </span>
+                      </button>
                     </div>
 
                     {/* Actions */}
@@ -705,12 +717,16 @@ export function DashboardPage() {
                     </td>
 
   <td className="px-4 py-3 whitespace-nowrap">
-                      <span
-                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[article.status]}`}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setStatusModal({ isOpen: true, article });
+                        }}
+                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium transition-all hover:shadow-md ${STATUS_COLORS[article.status]}`}
                       >
                         {renderStatusIcon(article.status)}
                         {STATUS_LABELS[article.status]}
-                      </span>
+                      </button>
                     </td>
                     
                     <td className="px-4 py-3 whitespace-nowrap">
@@ -856,6 +872,71 @@ export function DashboardPage() {
             onConfirm={handleMarkAsSold}
             article={soldModal.article}
           />
+        )}
+
+        {statusModal.article && (
+          <Modal
+            isOpen={statusModal.isOpen}
+            onClose={() => setStatusModal({ isOpen: false, article: null })}
+            title="Changer le statut"
+          >
+            <div className="space-y-2">
+              {(['draft', 'ready', 'scheduled', 'published', 'sold'] as ArticleStatus[]).map((status) => (
+                <button
+                  key={status}
+                  onClick={async () => {
+                    try {
+                      if (status === 'sold') {
+                        setStatusModal({ isOpen: false, article: null });
+                        setSoldModal({ isOpen: true, article: statusModal.article });
+                        return;
+                      }
+
+                      const updateData: any = { status };
+
+                      if (status === 'published' && !statusModal.article?.published_at) {
+                        updateData.published_at = new Date().toISOString();
+                      }
+
+                      const { error } = await supabase
+                        .from('articles')
+                        .update(updateData)
+                        .eq('id', statusModal.article!.id);
+
+                      if (error) throw error;
+
+                      setToast({
+                        type: 'success',
+                        text: `Statut changé en "${STATUS_LABELS[status]}"`,
+                      });
+                      fetchArticles();
+                      setStatusModal({ isOpen: false, article: null });
+                    } catch (error) {
+                      console.error('Error updating status:', error);
+                      setToast({
+                        type: 'error',
+                        text: 'Erreur lors du changement de statut',
+                      });
+                    }
+                  }}
+                  disabled={statusModal.article?.status === status}
+                  className={`w-full text-left px-4 py-3 rounded-lg border transition-all flex items-center gap-3 ${
+                    statusModal.article?.status === status
+                      ? 'bg-gray-50 border-gray-300 cursor-not-allowed opacity-60'
+                      : 'bg-white border-gray-200 hover:border-emerald-300 hover:bg-emerald-50'
+                  }`}
+                >
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[status]}`}>
+                    {renderStatusIcon(status)}
+                    {STATUS_LABELS[status]}
+                  </span>
+                  {statusModal.article?.status === status && (
+                    <span className="ml-auto text-xs text-gray-500">(Actuel)</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </Modal>
         )}
 
       </div>
