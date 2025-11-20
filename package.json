@@ -9,7 +9,6 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
-    "postinstall": "playwright install chromium",
     "vinted:setup": "tsx scripts/setupVintedAuth.ts",
     "vinted:publish": "tsx scripts/publishArticles.ts",
     "vinted:publish:single": "tsx scripts/publishSingleArticle.ts",

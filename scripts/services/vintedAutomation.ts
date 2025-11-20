@@ -2,6 +2,7 @@ import { Browser, Page, chromium } from 'playwright';
 import { promises as fs } from 'fs';
 import { ArticleToPublish, VintedPublishResult, VintedSession } from '../types/vinted.js';
 import path from 'path';
+import os from 'os';
 
 export class VintedAutomation {
   private browser: Browser | null = null;
@@ -85,6 +86,21 @@ export class VintedAutomation {
     return isLoggedIn;
   }
 
+  private async downloadPhoto(url: string): Promise<string> {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to download photo: ${response.statusText}`);
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const filename = path.basename(new URL(url).pathname);
+    const tempPath = path.join(os.tmpdir(), filename);
+
+    await fs.writeFile(tempPath, buffer);
+    return tempPath;
+  }
+
   async uploadPhotos(photoPaths: string[]): Promise<void> {
     if (!this.page) {
       throw new Error('Page not initialized');
@@ -92,9 +108,27 @@ export class VintedAutomation {
 
     const fileInput = await this.page.locator('input[type="file"][accept*="image"]').first();
 
+    const localPaths: string[] = [];
+
     for (const photoPath of photoPaths) {
-      await fileInput.setInputFiles(photoPath);
+      let localPath = photoPath;
+
+      if (photoPath.startsWith('http://') || photoPath.startsWith('https://')) {
+        console.log(`📥 Downloading photo from: ${photoPath}`);
+        localPath = await this.downloadPhoto(photoPath);
+        localPaths.push(localPath);
+      }
+
+      await fileInput.setInputFiles(localPath);
       await this.page.waitForTimeout(1500);
+    }
+
+    for (const localPath of localPaths) {
+      try {
+        await fs.unlink(localPath);
+      } catch (error) {
+        console.warn(`⚠ Failed to delete temp file: ${localPath}`);
+      }
     }
 
     console.log(`✓ Uploaded ${photoPaths.length} photos`);
