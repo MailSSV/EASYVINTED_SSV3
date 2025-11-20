@@ -52,7 +52,11 @@ export function PlannerPage() {
   const [selectedSuggestionId, setSelectedSuggestionId] = useState<string | null>(null);
 
   useEffect(() => {
-    loadSuggestions();
+    async function initializePlanner() {
+      await generateSuggestions();
+      await loadSuggestions();
+    }
+    initializePlanner();
   }, []);
 
   async function loadSuggestions() {
@@ -102,128 +106,37 @@ export function PlannerPage() {
     try {
       setGenerating(true);
 
-      const { data: articles, error } = await supabase
-        .from('articles')
-        .select('*')
-        .eq('user_id', user.id)
-        .in('status', ['draft', 'ready']);
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
 
-      if (error) throw error;
-
-      if (!articles || articles.length === 0) {
-        setToast({ type: 'error', text: 'Aucun article à planifier' });
+      if (!token) {
+        setToast({ type: 'error', text: 'Non authentifié' });
         return;
       }
 
-      const newSuggestions = articles.map((article) => {
-        const { suggestedDate, priority, reason } = analyzArticle(article);
-
-        return {
-          article_id: article.id,
-          user_id: user.id,
-          suggested_date: suggestedDate,
-          priority,
-          reason,
-          status: 'pending' as const,
-        };
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-planner-suggestions`;
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
-      const { data: existing } = await supabase
-        .from('selling_suggestions')
-        .select('article_id')
-        .eq('user_id', user.id);
-
-      const existingArticleIds = new Set(existing?.map((s) => s.article_id) || []);
-      const toInsert = newSuggestions.filter((s) => !existingArticleIds.has(s.article_id));
-
-      if (toInsert.length > 0) {
-        const { error: insertError } = await supabase
-          .from('selling_suggestions')
-          .insert(toInsert);
-
-        if (insertError) throw insertError;
+      if (!response.ok) {
+        throw new Error('Erreur lors de la génération des suggestions');
       }
 
-      await loadSuggestions();
-      setToast({ type: 'success', text: `${toInsert.length} nouvelle(s) suggestion(s) générée(s)` });
+      const result = await response.json();
+
+      if (result.created > 0) {
+        setToast({ type: 'success', text: `${result.created} nouvelle(s) suggestion(s) générée(s)` });
+      }
     } catch (error) {
       console.error('Error generating suggestions:', error);
-      setToast({ type: 'error', text: 'Erreur lors de la génération des suggestions' });
     } finally {
       setGenerating(false);
     }
-  }
-
-  function analyzArticle(article: Article): {
-    suggestedDate: string;
-    priority: 'high' | 'medium' | 'low';
-    reason: string;
-  } {
-    const now = new Date();
-    const currentMonth = now.getMonth();
-
-    let targetMonths: number[] = [];
-    let priority: 'high' | 'medium' | 'low' = 'medium';
-    let reason = '';
-    let isAllSeasons = false;
-
-    if (article.season === 'spring') {
-      targetMonths = [2, 3];
-      reason = 'Articles de printemps - meilleure période de vente en mars-avril';
-    } else if (article.season === 'summer') {
-      targetMonths = [4, 5];
-      reason = 'Articles d\'été - meilleure période de vente en mai-juin';
-    } else if (article.season === 'autumn') {
-      targetMonths = [7, 8];
-      reason = 'Articles d\'automne - meilleure période de vente en août-septembre';
-    } else if (article.season === 'winter') {
-      targetMonths = [9, 10];
-      reason = 'Articles d\'hiver - meilleure période de vente en octobre-novembre';
-    } else {
-      isAllSeasons = true;
-      targetMonths = [currentMonth];
-      reason = 'Article toutes saisons - peut être publié maintenant';
-    }
-
-    const isInTargetPeriod = targetMonths.includes(currentMonth);
-    const monthDifferences = targetMonths.map(month => {
-      const diff = (month - currentMonth + 12) % 12;
-      return diff === 0 ? 0 : diff;
-    });
-    const minMonthDiff = Math.min(...monthDifferences);
-
-    if (isInTargetPeriod || minMonthDiff === 0) {
-      priority = 'high';
-      reason = `Période optimale maintenant ! ${reason}`;
-    } else if (minMonthDiff === 1) {
-      priority = 'high';
-      reason = `Période optimale très proche ! ${reason}`;
-    } else if (minMonthDiff <= 4) {
-      priority = 'medium';
-    } else {
-      priority = 'low';
-    }
-
-    let suggestedDate: Date;
-    if (isAllSeasons || isInTargetPeriod || minMonthDiff === 0) {
-      suggestedDate = new Date(now);
-      suggestedDate.setDate(suggestedDate.getDate() + 7);
-    } else if (minMonthDiff === 1) {
-      suggestedDate = new Date(now);
-      suggestedDate.setDate(suggestedDate.getDate() + 14);
-    } else {
-      const targetMonth = targetMonths[0];
-      suggestedDate = new Date(now.getFullYear(), targetMonth, 1);
-      if (suggestedDate < now) {
-        suggestedDate.setFullYear(suggestedDate.getFullYear() + 1);
-      }
-    }
-
-    return {
-      suggestedDate: suggestedDate.toISOString().split('T')[0],
-      priority,
-      reason,
-    };
   }
 
   async function acceptSuggestion(suggestionId: string, articleId: string, suggestedDate: string) {
