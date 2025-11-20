@@ -256,7 +256,7 @@ export function DashboardPage() {
       console.error('Error duplicating article:', error);
       setToast({
         type: 'error',
-        text: 'Erreur lors de la duplication de l’article',
+        text: 'Erreur lors de la duplication de l\'article',
       });
     } finally {
       setOpenMenuId(null);
@@ -328,7 +328,6 @@ export function DashboardPage() {
     if (!soldModal.article) return;
 
     try {
-      // Calculate net profit
       const netProfit = saleData.soldPrice -
         saleData.fees -
         saleData.shippingCost;
@@ -395,7 +394,7 @@ export function DashboardPage() {
       console.error('Error marking article as ready:', error);
       setToast({
         type: 'error',
-        text: 'Erreur lors de la mise à jour de l’article',
+        text: 'Erreur lors de la mise à jour de l\'article',
       });
     } finally {
       setOpenMenuId(null);
@@ -424,7 +423,7 @@ export function DashboardPage() {
       console.error('Error marking article as published:', error);
       setToast({
         type: 'error',
-        text: 'Erreur lors de la mise à jour de l’article',
+        text: 'Erreur lors de la mise à jour de l\'article',
       });
     } finally {
       setOpenMenuId(null);
@@ -450,7 +449,6 @@ export function DashboardPage() {
       />
 
       <div>
-        {/* Header */}
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
@@ -471,7 +469,6 @@ export function DashboardPage() {
           </Button>
         </div>
 
-        {/* Filtres */}
         <div className="mb-4 flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
           <div className="relative max-w-md w-full">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -514,27 +511,29 @@ export function DashboardPage() {
           </div>
         </div>
 
-        {/* LISTE MOBILE */}
-        <div className="block md:hidden bg-gray-50">
+        <div className="block md:hidden">
           {loading ? (
-            <div className="px-4 py-8 text-center text-sm text-gray-500">
-              Chargement...
+            <div className="px-4 py-12 text-center">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
             </div>
           ) : filteredArticles.length === 0 ? (
-            <div className="px-4 py-8 text-center text-sm text-gray-500">
-              Aucun article trouvé
+            <div className="px-4 py-12 text-center">
+              <div className="max-w-sm mx-auto">
+                <ImageIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <p className="text-base font-medium text-gray-900 mb-1">Aucun article</p>
+                <p className="text-sm text-gray-500">Commencez par créer votre premier article</p>
+              </div>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2 px-0.5">
               {filteredArticles.map((article) => (
                 <div
                   key={article.id}
-                  className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
+                  className="group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:scale-[1.01]"
                 >
-                  {/* Image et titre */}
-                  <div className="flex gap-3 p-3">
+                  <div className="flex gap-4 p-4">
                     <div
-                      className="w-24 h-24 rounded-lg bg-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0 cursor-pointer"
+                      className="relative w-28 h-28 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0 cursor-pointer ring-1 ring-gray-200/50"
                       onClick={() => navigate(`/articles/${article.id}/preview`)}
                     >
                       {article.photos && article.photos.length > 0 ? (
@@ -544,57 +543,53 @@ export function DashboardPage() {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <ImageIcon className="w-8 h-8 text-gray-400" />
+                        <ImageIcon className="w-10 h-10 text-gray-300" />
                       )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
 
-                    <div className="flex-1 min-w-0 flex flex-col justify-between">
-                      {/* Titre et marque */}
+                    <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                       <div>
-                        <h3 className="text-base font-semibold text-gray-900 truncate mb-1">
+                        <h3 className="text-base font-semibold text-gray-900 truncate mb-1 group-hover:text-emerald-600 transition-colors">
                           {article.title}
                         </h3>
-                        <p className="text-sm text-gray-500 truncate">
-                          {article.brand || 'Non spécifié'}
+                        <p className="text-sm text-gray-500 truncate mb-2">
+                          {article.brand || 'Sans marque'}
                         </p>
                       </div>
 
-                      {/* Prix */}
-                      <div className="text-lg font-bold text-emerald-600">
-                        {article.price.toFixed(0)}€
+                      <div className="flex items-center justify-between">
+                        <div className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-700 bg-clip-text text-transparent">
+                          {article.price.toFixed(0)}€
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gray-50 border border-gray-200/50">
+                            {renderSeasonIcon(article.season, 'sm')}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Métadonnées */}
-                  <div className="px-3 py-2 bg-gray-50 flex items-center justify-between gap-3 border-t border-gray-100">
-                    <div className="flex items-center gap-2">
-                      {/* Saison */}
-                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white border border-gray-200">
-                        {renderSeasonIcon(article.season, 'sm')}
-                      </span>
+                  <div className="px-4 pb-3 pt-2 flex items-center justify-between gap-3">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setStatusModal({ isOpen: true, article });
+                      }}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all hover:shadow-md active:scale-95 ${STATUS_COLORS[article.status]}`}
+                    >
+                      {renderStatusIcon(article.status)}
+                      {STATUS_LABELS[article.status]}
+                    </button>
 
-                      {/* Statut */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setStatusModal({ isOpen: true, article });
-                        }}
-                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all hover:shadow-md ${STATUS_COLORS[article.status]}`}
-                      >
-                        {renderStatusIcon(article.status)}
-                        {STATUS_LABELS[article.status]}
-                      </button>
-                    </div>
-
-                    {/* Actions */}
                     <div className="flex items-center gap-1">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           navigate(`/articles/${article.id}/preview`);
                         }}
-                        className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
+                        className="p-2 rounded-xl hover:bg-gray-100 text-gray-500 hover:text-emerald-600 transition-all active:scale-90"
                         title="Voir"
                       >
                         <Eye className="w-4 h-4" />
@@ -604,7 +599,7 @@ export function DashboardPage() {
                           e.stopPropagation();
                           navigate(`/articles/${article.id}/edit`);
                         }}
-                        className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
+                        className="p-2 rounded-xl hover:bg-gray-100 text-gray-500 hover:text-emerald-600 transition-all active:scale-90"
                         title="Modifier"
                       >
                         <Edit className="w-4 h-4" />
@@ -612,12 +607,11 @@ export function DashboardPage() {
                     </div>
                   </div>
 
-                  {/* Planification si présente */}
                   {article.status === 'scheduled' && article.scheduled_for && (
-                    <div className="px-3 py-2 bg-yellow-50 border-t border-yellow-100 flex items-center justify-between">
+                    <div className="mx-4 mb-3 px-3 py-2 bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200/50 rounded-xl flex items-center justify-between">
                       <div className="flex items-center gap-2 text-xs text-yellow-800">
-                        <Clock className="w-4 h-4" />
-                        <span className="font-medium">Planifié pour le</span>
+                        <Clock className="w-3.5 h-3.5" />
+                        <span className="font-medium">Planifié</span>
                       </div>
                       <span className="text-xs font-semibold text-yellow-900">
                         {formatDate(article.scheduled_for)}
@@ -630,121 +624,141 @@ export function DashboardPage() {
           )}
         </div>
 
-        {/* TABLEAU DESKTOP */}
-        <div className="hidden md:block bg-white rounded-xl shadow-sm border border-gray-200">
+        <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-200/50 overflow-hidden">
           <div className="overflow-x-auto overflow-y-visible">
-            <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                  Photo
+            <table className="min-w-full">
+            <thead>
+              <tr className="bg-gradient-to-r from-gray-50 to-gray-50/50 border-b border-gray-200/50">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                  Article
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                  Titre
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                  Détails
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wide">
                   Saison
                 </th>
-                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
                   Statut
                 </th>
-                
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
                   Planification
                 </th>
-        
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+
+                <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wide">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-gray-100">
               {loading ? (
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-4 py-8 text-center text-sm text-gray-500"
+                    className="px-6 py-16 text-center"
                   >
-                    Chargement...
+                    <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-gray-900"></div>
                   </td>
                 </tr>
               ) : filteredArticles.length === 0 ? (
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-4 py-8 text-center text-sm text-gray-500"
+                    className="px-6 py-16 text-center"
                   >
-                    Aucun article trouvé
+                    <div className="max-w-sm mx-auto">
+                      <ImageIcon className="w-20 h-20 text-gray-300 mx-auto mb-4" />
+                      <p className="text-lg font-medium text-gray-900 mb-2">Aucun article</p>
+                      <p className="text-sm text-gray-500">Commencez par créer votre premier article</p>
+                    </div>
                   </td>
                 </tr>
               ) : (
                 filteredArticles.map((article) => (
                   <tr
                     key={article.id}
-                    className="hover:bg-gray-50 cursor-pointer"
+                    className="group hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent cursor-pointer transition-all duration-200"
                     onDoubleClick={() =>
                       navigate(`/articles/${article.id}/preview`)
                     }
                   >
-                    <td className="px-4 py-3">
-                      <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden flex items-center justify-center">
-                        {article.photos && article.photos.length > 0 ? (
-                          <img
-                            src={article.photos[0]}
-                            alt={article.title}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <ImageIcon className="w-6 h-6 text-gray-400" />
-                        )}
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-4">
+                        <div className="relative w-20 h-20 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex items-center justify-center ring-1 ring-gray-200/50 group-hover:ring-emerald-300 transition-all">
+                          {article.photos && article.photos.length > 0 ? (
+                            <img
+                              src={article.photos[0]}
+                              alt={article.title}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <ImageIcon className="w-8 h-8 text-gray-300" />
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="text-sm font-medium text-gray-900 truncate">
-                        {article.title}
-                      </div>
-                      <div className="text-xs text-gray-500 truncate">
-                        {article.brand} • {article.price.toFixed(0)}€
-                      </div>
-                      <div className="text-xs text-gray-400 mt-0.5">
-                        Créé le {formatDate(article.created_at)}
+                    <td className="px-6 py-4">
+                      <div className="max-w-xs">
+                        <div className="text-sm font-semibold text-gray-900 truncate group-hover:text-emerald-600 transition-colors mb-1">
+                          {article.title}
+                        </div>
+                        <div className="text-xs text-gray-500 truncate mb-1">
+                          {article.brand || 'Sans marque'}
+                        </div>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="text-lg font-bold bg-gradient-to-r from-emerald-600 to-emerald-700 bg-clip-text text-transparent">
+                            {article.price.toFixed(0)}€
+                          </span>
+                          <span className="text-xs text-gray-400">
+                            • {formatDate(article.created_at)}
+                          </span>
+                        </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center justify-center">
-                        {renderSeasonIcon(article.season)}
+                        <div className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-200/50 flex items-center justify-center group-hover:border-emerald-300 transition-all">
+                          {renderSeasonIcon(article.season)}
+                        </div>
                       </div>
                     </td>
 
-  <td className="px-4 py-3 whitespace-nowrap">
+  <td className="px-6 py-4 whitespace-nowrap">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           setStatusModal({ isOpen: true, article });
                         }}
-                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium transition-all hover:shadow-md ${STATUS_COLORS[article.status]}`}
+                        className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-medium transition-all hover:shadow-lg hover:scale-105 active:scale-95 ${STATUS_COLORS[article.status]}`}
                       >
                         {renderStatusIcon(article.status)}
                         {STATUS_LABELS[article.status]}
                       </button>
                     </td>
-                    
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      <span className="text-sm text-gray-700">
-                        {article.status === 'scheduled' && article.scheduled_for
-                          ? formatDate(article.scheduled_for)
-                          : 'Non planifié'}
-                      </span>
+
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {article.status === 'scheduled' && article.scheduled_for ? (
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200/50 rounded-lg">
+                          <Clock className="w-3.5 h-3.5 text-yellow-700" />
+                          <span className="text-xs font-medium text-yellow-900">
+                            {formatDate(article.scheduled_for)}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-gray-400 font-medium">Non planifié</span>
+                      )}
                     </td>
-                  
-                    <td className="px-4 py-3 whitespace-nowrap relative">
-                      <div className="flex items-center gap-2">
+
+                    <td className="px-6 py-4 whitespace-nowrap relative">
+                      <div className="flex items-center justify-end gap-1">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             navigate(`/articles/${article.id}/preview`);
                           }}
-                          className="p-1 text-gray-600 hover:text-emerald-600 transition-colors"
+                          className="p-2.5 rounded-xl text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all active:scale-90"
                           title="Voir"
                         >
                           <Eye className="w-4 h-4" />
@@ -753,7 +767,7 @@ export function DashboardPage() {
                           onClick={() =>
                             navigate(`/articles/${article.id}/edit`)
                           }
-                          className="p-1 text-gray-600 hover:text-emerald-600 transition-colors"
+                          className="p-2.5 rounded-xl text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all active:scale-90"
                           title="Modifier"
                         >
                           <Edit className="w-4 h-4" />
@@ -769,58 +783,59 @@ export function DashboardPage() {
                                 openMenuId === article.id ? null : article.id
                               );
                             }}
-                            className="p-1 text-gray-600 hover:text-emerald-600 transition-colors"
-                            title="Plus d’actions"
+                            className="p-2.5 rounded-xl text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all active:scale-90"
+                            title="Plus d'actions"
                           >
                             <MoreVertical className="w-4 h-4" />
                           </button>
 
                           {openMenuId === article.id && (
-                            <div className="absolute right-0 mt-2 w-52 bg-white rounded-lg shadow-xl border border-gray-200 py-1 z-[100]">
+                            <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-2xl border border-gray-200/50 py-2 z-[100] backdrop-blur-sm">
                               <button
-                                className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 flex items-center gap-3 rounded-lg transition-all mx-1"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleDuplicate(article);
                                 }}
                               >
                                 <Copy className="w-4 h-4" />
-                                Dupliquer
+                                <span className="font-medium">Dupliquer</span>
                               </button>
                               <button
-                                className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 flex items-center gap-3 rounded-lg transition-all mx-1"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handlePlanification(article);
                                 }}
                               >
                                 <Calendar className="w-4 h-4" />
-                                Programmer
+                                <span className="font-medium">Programmer</span>
                               </button>
                               {article.status !== 'ready' && (
                                 <button
-                                  className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                  className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 flex items-center gap-3 rounded-lg transition-all mx-1"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     handleMarkReady(article);
                                   }}
                                 >
                                   <CheckCircle2 className="w-4 h-4" />
-                                  Marquer comme prêt
+                                  <span className="font-medium">Marquer comme prêt</span>
                                 </button>
                               )}
+                              <div className="h-px bg-gray-200 my-1.5 mx-2"></div>
                               <button
-                                className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                                className="w-full text-left px-4 py-2.5 text-sm text-emerald-600 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-emerald-100 flex items-center gap-3 rounded-lg transition-all mx-1"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setSoldModal({ isOpen: true, article });
                                 }}
                               >
                                 <DollarSign className="w-4 h-4" />
-                                Marquer comme vendu
+                                <span className="font-medium">Marquer vendu</span>
                               </button>
                               <button
-                                className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                                className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 flex items-center gap-3 rounded-lg transition-all mx-1"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setDeleteModal({
@@ -830,7 +845,7 @@ export function DashboardPage() {
                                 }}
                               >
                                 <Trash2 className="w-4 h-4" />
-                                Supprimer
+                                <span className="font-medium">Supprimer</span>
                               </button>
                             </div>
                           )}
@@ -845,7 +860,6 @@ export function DashboardPage() {
           </div>
         </div>
 
-        {/* Modales */}
         <ConfirmModal
           isOpen={deleteModal.isOpen}
           onClose={() => setDeleteModal({ isOpen: false, articleId: null })}
