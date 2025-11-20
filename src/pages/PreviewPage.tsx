@@ -235,14 +235,7 @@ export function PreviewPage() {
         </>
       )}
       <div className="max-w-5xl mx-auto">
-        <div className="mb-8">
-          
-
-          <h1 className="text-3xl font-bold text-gray-900">Prévisualisation de l'annonce</h1>
-          <p className="text-gray-600 mt-2">
-            Vérifiez le rendu de votre annonce avant de l'envoyer sur Vinted
-          </p>
-        </div>
+       
 
         {loading ? (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12">
