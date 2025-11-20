@@ -25,8 +25,8 @@ export function SaleDetailModal({ sale, onClose }: SaleDetailModalProps) {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
-      hour: '2-digit',
-     
+      
+    
     });
   };
 
