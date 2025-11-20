@@ -17,19 +17,18 @@ export function HomePage() {
       <p className="
   text-lg sm:text-xl 
   font-extralight 
-  text-gray-800/90 
   leading-relaxed 
-  tracking-wide 
+  tracking-wide
   [text-wrap:balance]
-  backdrop-blur-sm
-  bg-white/30 
+  backdrop-blur-md
+  bg-white/20 
   px-4 py-2 
-  rounded-2xl
-  shadow-sm
+  rounded-3xl
+  shadow-lg
+  text-gray-900/95 
+  ring-1 ring-white/40
 ">
-  Créez vos fiches produits avec l’IA, planifiez vos publications 
-  et publiez vos annonces au meilleur moment, sans prise de tête.
-</p>
+
 
 
 
