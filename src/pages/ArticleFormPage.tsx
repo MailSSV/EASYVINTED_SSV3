@@ -1175,12 +1175,12 @@ export function ArticleFormPage() {
                     <Button
                       type="button"
                       variant="secondary"
-                      onClick={(e) => handleSubmit(e as any, 'draft')}
+                      onClick={(e) => handleSubmit(e as any, articleStatus)}
                       disabled={loading || publishing}
                       className="flex-1 min-w-[200px] justify-center bg-white text-gray-700 hover:bg-gray-50 border-gray-300 hover:border-gray-400"
                     >
                       <Save className="w-4 h-4" />
-                      <span>Enregistrer brouillon</span>
+                      <span>Enregistrer</span>
                     </Button>
                   )}
 
