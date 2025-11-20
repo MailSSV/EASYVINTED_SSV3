@@ -397,7 +397,7 @@ export function PlannerPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Brouillons - Articles Prêts */}
                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Articles prêts mais non planifiées</h3>
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Articles prêts mais non planifiés</h3>
                   <div className="text-3xl font-bold text-gray-900 mb-2">{readyArticles.length}</div>
                   <p className="text-xs text-gray-500 mb-4">
                     {readyArticles.length > 0 ? 'À programmer' : 'Aucun article prêt'}
