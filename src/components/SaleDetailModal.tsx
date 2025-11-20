@@ -48,10 +48,7 @@ export function SaleDetailModal({ sale, onClose }: SaleDetailModalProps) {
                     <Calendar className="w-4 h-4" />
                     <span>{formatDate(sale.sold_at)}</span>
                   </div>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-white text-emerald-700 border border-emerald-200 shadow-sm">
-                    <ShoppingBag className="w-3.5 h-3.5" />
-                    {sale.platform}
-                  </span>
+                 
                   {sale.buyer_name && (
                     <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-white text-gray-700 border border-gray-200 shadow-sm">
                       <User className="w-3.5 h-3.5" />
