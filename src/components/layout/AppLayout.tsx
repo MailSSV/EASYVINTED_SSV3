@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Package, Settings, BarChart3, ShoppingBag, Calendar, Menu, X, LogOut } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 
 interface AppLayoutProps {
@@ -15,12 +15,29 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [dressingName, setDressingName] = useState<string>('Mon Dressing');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (user) {
       loadDressingName();
     }
   }, [user]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false);
+      }
+    }
+
+    if (showUserMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showUserMenu]);
 
   async function loadDressingName() {
     if (!user) return;
@@ -128,7 +145,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 <Settings className="w-5 h-5" />
               </Link>
 
-              <div className="hidden sm:block relative">
+              <div className="hidden sm:block relative" ref={userMenuRef}>
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex w-10 h-10 rounded-full bg-emerald-600 items-center justify-center hover:bg-emerald-700 transition-colors"
