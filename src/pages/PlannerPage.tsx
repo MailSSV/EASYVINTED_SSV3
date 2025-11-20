@@ -49,6 +49,7 @@ export function PlannerPage() {
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [selectedSuggestionId, setSelectedSuggestionId] = useState<string | null>(null);
+  const [scheduledArticlesDisplayLimit, setScheduledArticlesDisplayLimit] = useState(5);
 
   useEffect(() => {
     async function initializePlanner() {
@@ -346,42 +347,52 @@ export function PlannerPage() {
                   </p>
 
                   {scheduledArticles.length > 0 && (
-                    <div className="space-y-2 max-h-80 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-emerald-300 scrollbar-track-emerald-50">
-                      {scheduledArticles.map((article) => (
-                        <div
-                          key={article.id}
-                          onClick={() => navigate(`/articles/${article.id}/preview`)}
-                          className="flex items-center gap-3 bg-white rounded-lg p-2 hover:shadow-sm transition-shadow cursor-pointer border border-emerald-100"
-                        >
-                          {article.photos?.[0] ? (
-                            <img
-                              src={article.photos[0]}
-                              alt={article.title}
-                              className="w-10 h-10 rounded object-cover"
-                            />
-                          ) : (
-                            <div className="w-10 h-10 rounded bg-gray-200" />
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs font-medium text-gray-900 truncate">{article.title}</p>
-                            <div className="flex items-center gap-2 mt-0.5">
-                              <Clock className="w-3 h-3 text-emerald-600" />
-                              <span className="text-xs text-emerald-600">
-                                {article.scheduled_for
-                                  ? new Date(article.scheduled_for).toLocaleDateString('fr-FR', {
-                                      day: 'numeric',
-                                      month: 'short',
-                                    })
-                                  : 'Bientôt'}
-                              </span>
+                    <>
+                      <div className="space-y-2">
+                        {scheduledArticles.slice(0, scheduledArticlesDisplayLimit).map((article) => (
+                          <div
+                            key={article.id}
+                            onClick={() => navigate(`/articles/${article.id}/preview`)}
+                            className="flex items-center gap-3 bg-white rounded-lg p-2 hover:shadow-sm transition-shadow cursor-pointer border border-emerald-100"
+                          >
+                            {article.photos?.[0] ? (
+                              <img
+                                src={article.photos[0]}
+                                alt={article.title}
+                                className="w-10 h-10 rounded object-cover"
+                              />
+                            ) : (
+                              <div className="w-10 h-10 rounded bg-gray-200" />
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-medium text-gray-900 truncate">{article.title}</p>
+                              <div className="flex items-center gap-2 mt-0.5">
+                                <Clock className="w-3 h-3 text-emerald-600" />
+                                <span className="text-xs text-emerald-600">
+                                  {article.scheduled_for
+                                    ? new Date(article.scheduled_for).toLocaleDateString('fr-FR', {
+                                        day: 'numeric',
+                                        month: 'short',
+                                      })
+                                    : 'Bientôt'}
+                                </span>
+                              </div>
                             </div>
+                            <span className="hidden sm:inline-flex bg-emerald-100 text-emerald-700 text-xs font-semibold px-2 py-1 rounded">
+                              Planifié
+                            </span>
                           </div>
-                          <span className="hidden sm:inline-flex bg-emerald-100 text-emerald-700 text-xs font-semibold px-2 py-1 rounded">
-                            Planifié
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                      {scheduledArticles.length > scheduledArticlesDisplayLimit && (
+                        <button
+                          onClick={() => setScheduledArticlesDisplayLimit(prev => prev + 5)}
+                          className="w-full mt-3 text-emerald-600 hover:text-emerald-700 text-xs font-semibold py-2 rounded-lg hover:bg-emerald-100 transition-colors"
+                        >
+                          Voir + ({scheduledArticles.length - scheduledArticlesDisplayLimit} restants)
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
