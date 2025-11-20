@@ -388,16 +388,16 @@ export function PlannerPage() {
             {/* Section Aperçu */}
             <div className="bg-white rounded-2xl shadow-md border border-emerald-100 p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-gray-900">Stock prêt à être publié
-
-</h2>
+                <h2 className="text-lg font-bold text-gray-900">Stock prêt à être publié</h2>
                 <div className="flex items-center gap-2 text-emerald-600">
                   <CheckCircle className="w-5 h-5" />
                   <span className="text-sm font-semibold">
                     {readyArticles.length + scheduledArticles.length} annonces prêtes
                   </span>
                 </div>
-             
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Brouillons - Articles Prêts */}
                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
                   <h3 className="text-sm font-semibold text-gray-700 mb-3">Prêts</h3>
