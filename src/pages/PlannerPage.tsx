@@ -376,10 +376,11 @@ export function PlannerPage() {
                       >
                         <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-gray-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                        <div className="relative p-6">
-                          <div className="flex items-start gap-4 mb-4">
+                        <div className="relative p-4 sm:p-6">
+                          {/* Header avec image et infos principales */}
+                          <div className="flex items-start gap-3 sm:gap-4 mb-3 sm:mb-4">
                             {suggestion.article?.photos?.[0] ? (
-                              <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 shadow-md ring-1 ring-gray-200">
+                              <div className="w-24 h-24 sm:w-20 sm:h-20 rounded-xl overflow-hidden flex-shrink-0 shadow-md ring-1 ring-gray-200">
                                 <img
                                   src={suggestion.article.photos[0]}
                                   alt={suggestion.article.title}
@@ -387,17 +388,24 @@ export function PlannerPage() {
                                 />
                               </div>
                             ) : (
-                              <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0 shadow-md">
-                                <Calendar className="w-8 h-8 text-gray-400" />
+                              <div className="w-24 h-24 sm:w-20 sm:h-20 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0 shadow-md">
+                                <Calendar className="w-10 h-10 sm:w-8 sm:h-8 text-gray-400" />
                               </div>
                             )}
 
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-gray-900 text-base mb-1 truncate">
+                              <h3 className="font-bold text-gray-900 text-base sm:text-base mb-2 line-clamp-2 leading-tight">
                                 {suggestion.article?.title || 'Article inconnu'}
                               </h3>
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className={`inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full ${
+
+                              {suggestion.article && (
+                                <div className="text-xl sm:text-lg font-bold text-emerald-600 mb-2">
+                                  {suggestion.article.price}€
+                                </div>
+                              )}
+
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className={`inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full ${
                                   suggestion.priority === 'high'
                                     ? 'bg-red-50 text-red-700 ring-1 ring-red-200'
                                     : suggestion.priority === 'medium'
@@ -407,26 +415,23 @@ export function PlannerPage() {
                                   {PRIORITY_LABELS[suggestion.priority]}
                                 </span>
                                 {suggestion.article?.season && (
-                                  <span className="text-xs text-gray-500 font-medium">
+                                  <span className="text-xs text-gray-600 font-medium bg-gray-100 px-2.5 py-1 rounded-full">
                                     {SEASON_LABELS[suggestion.article.season] || suggestion.article.season}
                                   </span>
                                 )}
                               </div>
-                              {suggestion.article && (
-                                <div className="text-sm font-semibold text-gray-900">
-                                  {suggestion.article.price}€
-                                </div>
-                              )}
                             </div>
                           </div>
 
+                          {/* Raison */}
                           <p className={`text-sm leading-relaxed mb-4 line-clamp-2 ${
                             suggestion.priority === 'high' ? 'text-red-600 font-semibold' : 'text-gray-600'
                           }`}>
                             {suggestion.reason}
                           </p>
 
-                          <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                          {/* Footer avec date et actions */}
+                          <div className="space-y-3 pt-4 border-t border-gray-100">
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -434,11 +439,11 @@ export function PlannerPage() {
                                   handleOpenScheduleModal(suggestion.article, suggestion.id);
                                 }
                               }}
-                              className="flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600 transition-colors group"
+                              className="w-full flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-blue-600 transition-colors bg-gray-50 hover:bg-blue-50 rounded-lg py-2.5 px-3"
                               title="Cliquez pour personnaliser la date"
                             >
-                              <Calendar className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                              <span className="font-medium">
+                              <Calendar className="w-4 h-4" />
+                              <span className="font-semibold">
                                 {new Date(suggestion.suggested_date).toLocaleDateString('fr-FR', {
                                   day: 'numeric',
                                   month: 'long',
@@ -453,17 +458,18 @@ export function PlannerPage() {
                                   e.stopPropagation();
                                   rejectSuggestion(suggestion.id);
                                 }}
-                                className="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 active:scale-95 transition-all"
+                                className="flex-1 py-2.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 active:scale-95 transition-all font-medium text-sm flex items-center justify-center gap-2"
                                 title="Rejeter"
                               >
                                 <X className="w-4 h-4" />
+                                <span className="hidden sm:inline">Rejeter</span>
                               </button>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   acceptSuggestion(suggestion.id, suggestion.article_id, suggestion.suggested_date);
                                 }}
-                                className="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-sm font-medium hover:from-emerald-600 hover:to-emerald-700 active:scale-95 transition-all shadow-sm hover:shadow-md flex items-center gap-1.5"
+                                className="flex-[2] py-2.5 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-semibold hover:from-emerald-600 hover:to-emerald-700 active:scale-95 transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 text-sm"
                                 title="Accepter"
                               >
                                 <CheckCircle className="w-4 h-4" />
