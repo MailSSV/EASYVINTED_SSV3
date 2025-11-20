@@ -417,7 +417,7 @@ export function DashboardPage() {
         onClose={() => setModalState({ ...modalState, isOpen: false })}
       />
 
-      <div className="max-w-6xl mx-auto px-4 py-6">
+      <div>
         {/* Header */}
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
