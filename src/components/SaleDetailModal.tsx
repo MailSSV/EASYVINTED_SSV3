@@ -35,35 +35,38 @@ export function SaleDetailModal({ sale, onClose }: SaleDetailModalProps) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-        <div className="sticky top-0 bg-gray-100 px-6 py-5 border-b border-gray-200">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center">
-                <BadgeCheck className="w-6 h-6 text-white" />
+        <div className="sticky top-0 bg-gradient-to-r from-emerald-50 to-teal-50 px-6 py-5 border-b border-emerald-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
+                <BadgeCheck className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Vente réalisée</h2>
-                <p className="text-sm text-gray-600">{formatDate(sale.sold_at)}</p>
+                <h2 className="text-2xl font-bold text-gray-900">Vente réalisée</h2>
+                <div className="flex items-center gap-4 mt-1">
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Calendar className="w-4 h-4" />
+                    <span>{formatDate(sale.sold_at)}</span>
+                  </div>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-white text-emerald-700 border border-emerald-200 shadow-sm">
+                    <ShoppingBag className="w-3.5 h-3.5" />
+                    {sale.platform}
+                  </span>
+                  {sale.buyer_name && (
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-white text-gray-700 border border-gray-200 shadow-sm">
+                      <User className="w-3.5 h-3.5" />
+                      <span>{sale.buyer_name}</span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+              className="p-2 hover:bg-white/80 rounded-lg transition-colors"
             >
               <X className="w-6 h-6 text-gray-600" />
             </button>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
-              <ShoppingBag className="w-4 h-4" />
-              {sale.platform}
-            </span>
-            {sale.buyer_name && (
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <User className="w-4 h-4" />
-                <span className="font-medium">{sale.buyer_name}</span>
-              </div>
-            )}
           </div>
         </div>
 
