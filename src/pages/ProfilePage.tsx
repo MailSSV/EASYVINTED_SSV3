@@ -376,7 +376,7 @@ export function ProfilePage() {
         </div>
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Mon Style</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Mon Style rédactionnel</h2>
 
           <form onSubmit={handleProfileSubmit} className="space-y-4">
             <div>
@@ -397,7 +397,7 @@ export function ProfilePage() {
                   Créer un Persona
                 </Button>
               </div>
-              <p className="text-sm text-gray-500 mb-4">Sélectionne le style qui te correspond pour tes descriptions d'articles</p>
+              <p className="text-sm text-gray-500 mb-4">Sélectionne le style qui te correspond pour la rédaction automatique de tes descriptions d'articles</p>
 
               <div className="space-y-4">
                 <div>
