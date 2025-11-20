@@ -4,10 +4,10 @@ import { Upload, Calendar, TrendingUp } from "lucide-react";
 export function HomePage() {
   return (
    
-      <div className="max-w-4xl w-full bg-gray-50/50 rounded-3xl px-6 sm:px-12 py-12 sm:py-16">
+      <div className="max-w-4xl w-full bg-gray-50/50 rounded-3xl px-6 sm:px-12 py-10 sm:py-12">
 
         {/* HERO */}
-        <div className="mb-12">
+        <div className="mb-10">
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6 leading-tight">
             Automatisez votre business <span className="text-emerald-600">Vinted</span>
           </h1>
@@ -18,7 +18,7 @@ export function HomePage() {
         </div>
 
         {/* 3 AVANTAGES */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div className="flex flex-col items-start">
             <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4">
               <Upload className="w-6 h-6 text-emerald-700" />
