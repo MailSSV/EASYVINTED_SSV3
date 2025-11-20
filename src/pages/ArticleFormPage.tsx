@@ -1083,6 +1083,19 @@ export function ArticleFormPage() {
                   Actions principales
                 </div>
                 <div className="flex flex-wrap gap-3">
+                  {id && articleStatus !== 'sold' && (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => setDeleteModal(true)}
+                      disabled={loading || publishing}
+                      className="flex-1 min-w-[200px] justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      <span>Supprimer</span>
+                    </Button>
+                  )}
+
                   {articleStatus !== 'sold' && (
                     <Button
                       type="button"
@@ -1146,19 +1159,6 @@ export function ArticleFormPage() {
                       <span>
                         {publishing ? 'Publication...' : 'Envoyer à Vinted'}
                       </span>
-                    </Button>
-                  )}
-
-                  {id && articleStatus !== 'sold' && (
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={() => setDeleteModal(true)}
-                      disabled={loading || publishing}
-                      className="flex-1 min-w-[200px] justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      <span>Supprimer l'article</span>
                     </Button>
                   )}
                 </div>

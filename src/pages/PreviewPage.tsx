@@ -639,7 +639,7 @@ export function PreviewPage() {
               <Button
                 variant="secondary"
                 onClick={() => setDeleteModalOpen(true)}
-                className="px-6 w-full md:w-auto bg-white text-red-700 hover:bg-red-50 border-red-300 hover:border-red-400"
+                className="px-6 w-full md:w-auto bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
               >
                 <Trash2 className="w-4 h-4 mr-2" />
                 Supprimer
