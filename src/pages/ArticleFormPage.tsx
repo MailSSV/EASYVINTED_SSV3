@@ -1184,7 +1184,7 @@ export function ArticleFormPage() {
             <ScheduleModal
               isOpen={scheduleModal}
               onClose={() => setScheduleModal(false)}
-              onConfirm={handleScheduleConfirm}
+              onScheduled={handleScheduleConfirm}
               article={currentArticle}
             />
 
