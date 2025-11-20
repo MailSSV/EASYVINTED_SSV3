@@ -14,24 +14,9 @@ export function HomePage() {
             Automatisez votre business <span className="text-emerald-600">Vinted</span>
           </h1>
 
-      <p className="
-  text-lg sm:text-xl 
-  font-extralight 
-  leading-relaxed 
-  tracking-wide
-  [text-wrap:balance]
-  backdrop-blur-md
-  bg-white/20 
-  px-4 py-2 
-  rounded-3xl
-  shadow-lg
-  text-gray-900/95 
-  ring-1 ring-white/40
-">
-
-
-
-
+          <p className="text-base sm:text-lg text-gray-700/90 max-w-xl mx-auto leading-relaxed font-light tracking-wide">
+  Créez vos fiches produits avec l’IA, planifiez vos publications et publiez vos annonces au meilleur moment, sans prise de tête.
+</p>
 
         </div>
 
