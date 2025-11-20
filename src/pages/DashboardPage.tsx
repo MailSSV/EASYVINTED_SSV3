@@ -629,24 +629,24 @@ export function DashboardPage() {
             <table className="min-w-full">
             <thead>
               <tr className="bg-gradient-to-r from-gray-50 to-gray-50/50 border-b border-gray-200/50">
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                <th className="px-6 py-3.5 text-left text-[10px] font-semibold text-gray-600 uppercase tracking-wide">
                   Article
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                <th className="px-4 py-3.5 text-left text-[10px] font-semibold text-gray-600 uppercase tracking-wide">
                   Détails
                 </th>
-                <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                <th className="px-4 py-3.5 text-center text-[10px] font-semibold text-gray-600 uppercase tracking-wide">
                   Saison
                 </th>
-                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                 <th className="px-4 py-3.5 text-left text-[10px] font-semibold text-gray-600 uppercase tracking-wide">
                   Statut
                 </th>
 
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
-                  Planification
+                <th className="px-4 py-3.5 text-left text-[10px] font-semibold text-gray-600 uppercase tracking-wide whitespace-nowrap">
+                  Planif.
                 </th>
 
-                <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                <th className="px-6 py-3.5 text-right text-[10px] font-semibold text-gray-600 uppercase tracking-wide">
                   Actions
                 </th>
               </tr>
@@ -685,7 +685,7 @@ export function DashboardPage() {
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                        <div className="relative w-20 h-20 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex items-center justify-center ring-1 ring-gray-200/50 group-hover:ring-emerald-300 transition-all">
+                        <div className="relative w-16 h-16 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex items-center justify-center ring-1 ring-gray-200/50 group-hover:ring-emerald-300 transition-all">
                           {article.photos && article.photos.length > 0 ? (
                             <img
                               src={article.photos[0]}
@@ -693,13 +693,13 @@ export function DashboardPage() {
                               className="w-full h-full object-cover"
                             />
                           ) : (
-                            <ImageIcon className="w-8 h-8 text-gray-300" />
+                            <ImageIcon className="w-7 h-7 text-gray-300" />
                           )}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-4">
                       <div className="max-w-xs">
                         <div className="text-sm font-semibold text-gray-900 truncate group-hover:text-emerald-600 transition-colors mb-1">
                           {article.title}
@@ -707,47 +707,47 @@ export function DashboardPage() {
                         <div className="text-xs text-gray-500 truncate mb-1">
                           {article.brand || 'Sans marque'}
                         </div>
-                        <div className="flex items-center gap-2 mt-2">
-                          <span className="text-lg font-bold bg-gradient-to-r from-emerald-600 to-emerald-700 bg-clip-text text-transparent">
+                        <div className="flex items-center gap-2 mt-1.5">
+                          <span className="text-base font-bold bg-gradient-to-r from-emerald-600 to-emerald-700 bg-clip-text text-transparent">
                             {article.price.toFixed(0)}€
                           </span>
-                          <span className="text-xs text-gray-400">
+                          <span className="text-[10px] text-gray-400">
                             • {formatDate(article.created_at)}
                           </span>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 py-4 whitespace-nowrap">
                       <div className="flex items-center justify-center">
-                        <div className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-200/50 flex items-center justify-center group-hover:border-emerald-300 transition-all">
-                          {renderSeasonIcon(article.season)}
+                        <div className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200/50 flex items-center justify-center group-hover:border-emerald-300 transition-all">
+                          {renderSeasonIcon(article.season, 'sm')}
                         </div>
                       </div>
                     </td>
 
-  <td className="px-6 py-4 whitespace-nowrap">
+  <td className="px-4 py-4 whitespace-nowrap">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           setStatusModal({ isOpen: true, article });
                         }}
-                        className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-medium transition-all hover:shadow-lg hover:scale-105 active:scale-95 ${STATUS_COLORS[article.status]}`}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium transition-all hover:shadow-lg hover:scale-105 active:scale-95 ${STATUS_COLORS[article.status]}`}
                       >
                         {renderStatusIcon(article.status)}
                         {STATUS_LABELS[article.status]}
                       </button>
                     </td>
 
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 py-4 whitespace-nowrap">
                       {article.status === 'scheduled' && article.scheduled_for ? (
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200/50 rounded-lg">
-                          <Clock className="w-3.5 h-3.5 text-yellow-700" />
-                          <span className="text-xs font-medium text-yellow-900">
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200/50 rounded-lg">
+                          <Clock className="w-3 h-3 text-yellow-700" />
+                          <span className="text-[11px] font-medium text-yellow-900">
                             {formatDate(article.scheduled_for)}
                           </span>
                         </div>
                       ) : (
-                        <span className="text-xs text-gray-400 font-medium">Non planifié</span>
+                        <span className="text-[11px] text-gray-400 font-medium">Non planifié</span>
                       )}
                     </td>
 
