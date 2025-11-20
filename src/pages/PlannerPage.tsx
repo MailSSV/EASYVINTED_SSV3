@@ -242,6 +242,7 @@ export function PlannerPage() {
       if (suggestionError) throw suggestionError;
 
       await loadSuggestions();
+      await loadArticles();
       setToast({ type: 'success', text: 'Suggestion acceptée et article planifié' });
     } catch (error) {
       console.error('Error accepting suggestion:', error);
@@ -299,7 +300,9 @@ export function PlannerPage() {
   }
 
   const pendingSuggestions = suggestions.filter((s) => s.status === 'pending');
-  const acceptedSuggestions = suggestions.filter((s) => s.status === 'accepted');
+  const acceptedSuggestions = suggestions.filter(
+    (s) => s.status === 'accepted' && s.article && s.article.status === 'scheduled'
+  );
 
   const [readyArticles, setReadyArticles] = useState<Article[]>([]);
   const [scheduledArticles, setScheduledArticles] = useState<Article[]>([]);
