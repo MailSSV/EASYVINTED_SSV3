@@ -22,11 +22,16 @@ async function setupAuthentication(): Promise<void> {
 
   const page: Page = await context.newPage();
 
-  await page.goto('https://www.vinted.fr/member/login', {
+  await page.goto('https://www.vinted.fr', {
     waitUntil: 'networkidle',
   });
 
-  console.log('✓ Browser opened. Please log in to Vinted...\n');
+  console.log('✓ Browser opened at vinted.fr');
+  console.log('📝 Steps to follow:');
+  console.log('   1. Click "Se connecter" in the top right');
+  console.log('   2. Enter your email and password');
+  console.log('   3. Complete login');
+  console.log('   4. Once logged in, return here and press Enter\n');
 
   await new Promise<void>((resolve) => {
     process.stdin.once('data', () => {
