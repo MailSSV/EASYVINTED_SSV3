@@ -21,50 +21,41 @@ export function HomePage() {
         </div>
 
         {/* 3 AVANTAGES */}
-        <div className="space-y-6 mb-12">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          <div className="flex flex-col items-start">
+            <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4">
               <Upload className="w-6 h-6 text-emerald-700" />
             </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Création automatique
-              </h3>
-              <p className="text-base text-gray-600 leading-relaxed">
-                L&apos;IA génère titre, description, prix et catégorie à partir de vos<br className="hidden sm:block" />
-                photos.
-              </p>
-            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Création automatique
+            </h3>
+            <p className="text-base text-gray-600 leading-relaxed">
+              L&apos;IA génère titre, description, prix et catégorie à partir de vos photos.
+            </p>
           </div>
 
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center flex-shrink-0">
+          <div className="flex flex-col items-start">
+            <div className="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center mb-4">
               <Calendar className="w-6 h-6 text-sky-700" />
             </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Planification intelligente
-              </h3>
-              <p className="text-base text-gray-600 leading-relaxed">
-                Programmez vos annonces selon les meilleures périodes de vente<br className="hidden sm:block" />
-                et la saison.
-              </p>
-            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Planification intelligente
+            </h3>
+            <p className="text-base text-gray-600 leading-relaxed">
+              Programmez vos annonces selon les meilleures périodes de vente et la saison.
+            </p>
           </div>
 
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
+          <div className="flex flex-col items-start">
+            <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
               <TrendingUp className="w-6 h-6 text-purple-700" />
             </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Publication optimisée
-              </h3>
-              <p className="text-base text-gray-600 leading-relaxed">
-                EasyVinted prépare la mise en ligne pour vous : vous gardez le<br className="hidden sm:block" />
-                contrôle, sans la charge mentale.
-              </p>
-            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Publication optimisée
+            </h3>
+            <p className="text-base text-gray-600 leading-relaxed">
+              EasyVinted prépare la mise en ligne pour vous : vous gardez le contrôle, sans la charge mentale.
+            </p>
           </div>
         </div>
 
