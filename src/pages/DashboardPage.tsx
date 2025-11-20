@@ -15,6 +15,11 @@ import {
   CheckCircle2,
   FileText,
   Send,
+  Flower2,
+  Sun,
+  Leaf,
+  Snowflake,
+  CloudSun,
 } from 'lucide-react';
 import { Article, ArticleStatus, Season } from '../types/article';
 import { Button } from '../components/ui/Button';
@@ -195,6 +200,23 @@ export function DashboardPage() {
         return <DollarSign className="w-3 h-3 mr-1" />;
       default:
         return null;
+    }
+  };
+
+  const renderSeasonIcon = (season?: Season) => {
+    switch (season) {
+      case 'spring':
+        return <Flower2 className="w-5 h-5 text-pink-500" title="Printemps" />;
+      case 'summer':
+        return <Sun className="w-5 h-5 text-orange-500" title="Été" />;
+      case 'autumn':
+        return <Leaf className="w-5 h-5 text-amber-600" title="Automne" />;
+      case 'winter':
+        return <Snowflake className="w-5 h-5 text-blue-500" title="Hiver" />;
+      case 'all-seasons':
+        return <CloudSun className="w-5 h-5 text-gray-600" title="Toutes saisons" />;
+      default:
+        return <CloudSun className="w-5 h-5 text-gray-400" title="Non défini" />;
     }
   };
 
@@ -673,9 +695,9 @@ export function DashboardPage() {
                       </div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <span className="text-sm text-gray-700">
-                        {article.season ? SEASON_LABELS[article.season] : SEASON_LABELS['undefined']}
-                      </span>
+                      <div className="flex items-center justify-center">
+                        {renderSeasonIcon(article.season)}
+                      </div>
                     </td>
 
   <td className="px-4 py-3 whitespace-nowrap">
