@@ -291,6 +291,7 @@ export function PlannerPage() {
     }
 
     await loadSuggestions();
+    await loadArticles();
     setToast({ type: 'success', text: 'Article programmé avec succès' });
     setScheduleModalOpen(false);
     setSelectedArticle(null);
@@ -299,6 +300,41 @@ export function PlannerPage() {
 
   const pendingSuggestions = suggestions.filter((s) => s.status === 'pending');
   const acceptedSuggestions = suggestions.filter((s) => s.status === 'accepted');
+
+  const [readyArticles, setReadyArticles] = useState<Article[]>([]);
+  const [scheduledArticles, setScheduledArticles] = useState<Article[]>([]);
+
+  useEffect(() => {
+    loadArticles();
+  }, [user]);
+
+  async function loadArticles() {
+    if (!user) return;
+
+    try {
+      const { data: ready, error: readyError } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'ready')
+        .order('created_at', { ascending: false });
+
+      const { data: scheduled, error: scheduledError } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'scheduled')
+        .order('scheduled_for', { ascending: true });
+
+      if (readyError) throw readyError;
+      if (scheduledError) throw scheduledError;
+
+      setReadyArticles(ready || []);
+      setScheduledArticles(scheduled || []);
+    } catch (error) {
+      console.error('Error loading articles:', error);
+    }
+  }
 
   return (
     <>
@@ -346,6 +382,128 @@ export function PlannerPage() {
           </div>
         ) : (
           <div className="space-y-6">
+            {/* Section Aperçu */}
+            <div className="bg-white rounded-2xl shadow-md border border-emerald-100 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-gray-900">APERÇU EASYVINTED</h2>
+                <div className="flex items-center gap-2 text-emerald-600">
+                  <CheckCircle className="w-5 h-5" />
+                  <span className="text-sm font-semibold">
+                    {readyArticles.length + scheduledArticles.length} annonces prêtes
+                  </span>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600 mb-6">Votre stock prêt à être publié</p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Brouillons - Articles Prêts */}
+                <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Prêts</h3>
+                  <div className="text-3xl font-bold text-gray-900 mb-2">{readyArticles.length}</div>
+                  <p className="text-xs text-gray-500 mb-4">
+                    {readyArticles.length > 0 ? 'À programmer' : 'Aucun article prêt'}
+                  </p>
+
+                  {readyArticles.length > 0 && (
+                    <div className="space-y-2">
+                      {readyArticles.slice(0, 3).map((article) => (
+                        <div
+                          key={article.id}
+                          onClick={() => navigate(`/articles/${article.id}/preview`)}
+                          className="flex items-center gap-3 bg-white rounded-lg p-2 hover:shadow-sm transition-shadow cursor-pointer border border-gray-100"
+                        >
+                          {article.photos?.[0] ? (
+                            <img
+                              src={article.photos[0]}
+                              alt={article.title}
+                              className="w-10 h-10 rounded object-cover"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded bg-gray-200" />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-medium text-gray-900 truncate">{article.title}</p>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <Clock className="w-3 h-3 text-gray-400" />
+                              <span className="text-xs text-gray-500">À programmer</span>
+                            </div>
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedArticle(article);
+                              setScheduleModalOpen(true);
+                            }}
+                            className="text-emerald-600 hover:text-emerald-700 text-xs font-semibold"
+                          >
+                            Planifier
+                          </button>
+                        </div>
+                      ))}
+                      {readyArticles.length > 3 && (
+                        <p className="text-xs text-gray-500 text-center pt-1">
+                          +{readyArticles.length - 3} autre(s)
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Articles Planifiés */}
+                <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Planifiés</h3>
+                  <div className="text-3xl font-bold text-emerald-600 mb-2">{scheduledArticles.length}</div>
+                  <p className="text-xs text-emerald-600 mb-4">
+                    {scheduledArticles.length > 0 ? 'Publication en 24h' : 'Aucune publication prévue'}
+                  </p>
+
+                  {scheduledArticles.length > 0 && (
+                    <div className="space-y-2">
+                      {scheduledArticles.slice(0, 3).map((article) => (
+                        <div
+                          key={article.id}
+                          onClick={() => navigate(`/articles/${article.id}/preview`)}
+                          className="flex items-center gap-3 bg-white rounded-lg p-2 hover:shadow-sm transition-shadow cursor-pointer border border-emerald-100"
+                        >
+                          {article.photos?.[0] ? (
+                            <img
+                              src={article.photos[0]}
+                              alt={article.title}
+                              className="w-10 h-10 rounded object-cover"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded bg-gray-200" />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-medium text-gray-900 truncate">{article.title}</p>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <Clock className="w-3 h-3 text-emerald-600" />
+                              <span className="text-xs text-emerald-600">
+                                {article.scheduled_for
+                                  ? new Date(article.scheduled_for).toLocaleDateString('fr-FR', {
+                                      day: 'numeric',
+                                      month: 'short',
+                                    })
+                                  : 'Bientôt'}
+                              </span>
+                            </div>
+                          </div>
+                          <span className="bg-emerald-100 text-emerald-700 text-xs font-semibold px-2 py-1 rounded">
+                            Planifié
+                          </span>
+                        </div>
+                      ))}
+                      {scheduledArticles.length > 3 && (
+                        <p className="text-xs text-gray-500 text-center pt-1">
+                          +{scheduledArticles.length - 3} autre(s)
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
             <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-md border border-gray-200 overflow-hidden">
               <div className="bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-4">
                 <h2 className="text-xl font-bold text-white flex items-center gap-3">
