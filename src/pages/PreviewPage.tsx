@@ -293,10 +293,7 @@ export function PreviewPage() {
     {/* Bas de bandeau avec petit rappel */}
     <div className="relative flex items-center justify-between border-t border-emerald-100/70 px-5 py-2.5 text-[11px] text-emerald-800/80">
      
-      <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-white/70 px-2 py-0.5 font-medium">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-        Prêt à publier
-      </span>
+      
     </div>
   </div>
 )}
