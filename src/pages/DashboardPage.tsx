@@ -612,13 +612,6 @@ export function DashboardPage() {
                       </span>
                     </div>
                   )}
-
-                  {/* Date de création */}
-                  <div className="px-3 py-1.5 bg-gray-50 border-t border-gray-100">
-                    <span className="text-xs text-gray-500">
-                      Créé le {formatDate(article.created_at)}
-                    </span>
-                  </div>
                 </div>
               ))}
             </div>
