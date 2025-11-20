@@ -32,7 +32,7 @@ Deno.serve(async (req: Request) => {
     const { data: articles, error: articlesError } = await supabase
       .from("articles")
       .select("*")
-      .in("status", ["draft", "ready"]);
+      .eq("status", "ready");
 
     if (articlesError) throw articlesError;
 
