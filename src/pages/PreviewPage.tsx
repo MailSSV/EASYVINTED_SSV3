@@ -289,7 +289,7 @@ export function PreviewPage() {
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleDelete}
         title="Supprimer l'article"
-        message="Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible et supprimera également toutes les photos associées."
+        message="Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible."
         confirmLabel="Supprimer"
         variant="danger"
       />
