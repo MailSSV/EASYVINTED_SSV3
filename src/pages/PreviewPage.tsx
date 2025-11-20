@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Edit, Send, Package, ShoppingBag, ChevronLeft, ChevronRight, CheckCircle, Layers, Calendar, DollarSign } from 'lucide-react';
+import { Edit, Send, Package, ShoppingBag, ChevronLeft, ChevronRight, CheckCircle, Layers, Calendar, DollarSign, Trash2 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { supabase } from '../lib/supabase';
 import { Article } from '../types/article';
 import { Modal } from '../components/ui/Modal';
+import { ConfirmModal } from '../components/ui/ConfirmModal';
 import { PublishInstructionsModal } from '../components/PublishInstructionsModal';
 import { ScheduleModal } from '../components/ScheduleModal';
 import { ArticleSoldModal } from '../components/ArticleSoldModal';
@@ -26,6 +27,7 @@ export function PreviewPage() {
   const [publishInstructionsModal, setPublishInstructionsModal] = useState<{ isOpen: boolean; articleId: string }>({ isOpen: false, articleId: '' });
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [soldModalOpen, setSoldModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
@@ -119,6 +121,54 @@ export function PreviewPage() {
 
   function handleOpenSoldModal() {
     setSoldModalOpen(true);
+  }
+
+  async function handleDelete() {
+    if (!id || !article) return;
+
+    try {
+      if (article.photos && article.photos.length > 0) {
+        const filePaths = article.photos
+          .map((photoUrl: string) => {
+            const urlParts = photoUrl.split('/article-photos/');
+            return urlParts.length === 2 ? urlParts[1] : null;
+          })
+          .filter((path: string | null): path is string => path !== null);
+
+        if (filePaths.length > 0) {
+          const { error: storageError } = await supabase.storage
+            .from('article-photos')
+            .remove(filePaths);
+
+          if (storageError) {
+            console.error('Error deleting photos from storage:', storageError);
+          }
+        }
+      }
+
+      const { error } = await supabase
+        .from('articles')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setToast({
+        type: 'success',
+        text: 'Article supprimé avec succès'
+      });
+
+      setDeleteModalOpen(false);
+      setTimeout(() => {
+        navigate('/stock');
+      }, 1000);
+    } catch (error) {
+      console.error('Error deleting article:', error);
+      setToast({
+        type: 'error',
+        text: 'Erreur lors de la suppression de l\'article'
+      });
+    }
   }
 
   async function handleMarkAsSold(saleData: {
@@ -234,6 +284,15 @@ export function PreviewPage() {
           />
         </>
       )}
+      <ConfirmModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleDelete}
+        title="Supprimer l'article"
+        message="Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible et supprimera également toutes les photos associées."
+        confirmLabel="Supprimer"
+        variant="danger"
+      />
       <div className="max-w-5xl mx-auto">
         <div className="mb-8">
           
@@ -577,6 +636,15 @@ export function PreviewPage() {
             </div>
 
             <div className="flex flex-col md:flex-row items-stretch md:items-center justify-center md:justify-end gap-3">
+              <Button
+                variant="secondary"
+                onClick={() => setDeleteModalOpen(true)}
+                className="px-6 w-full md:w-auto bg-white text-red-700 hover:bg-red-50 border-red-300 hover:border-red-400"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Supprimer
+              </Button>
+
               {article.status !== 'sold' && (
                 <Button
                   variant="secondary"
