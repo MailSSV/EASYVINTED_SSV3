@@ -397,10 +397,7 @@ export function PlannerPage() {
                     {readyArticles.length + scheduledArticles.length} annonces prêtes
                   </span>
                 </div>
-              </div>
-              <p className="text-sm text-gray-600 mb-6">Votre stock prêt à être publié</p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+             
                 {/* Brouillons - Articles Prêts */}
                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
                   <h3 className="text-sm font-semibold text-gray-700 mb-3">Prêts</h3>
