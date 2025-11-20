@@ -80,7 +80,11 @@ export function PlannerPage() {
         })
       );
 
-      setSuggestions(suggestionsWithArticles);
+      const filteredSuggestions = suggestionsWithArticles.filter(
+        (suggestion) => suggestion.article && suggestion.article.status !== 'sold'
+      );
+
+      setSuggestions(filteredSuggestions);
     } catch (error) {
       console.error('Error loading suggestions:', error);
       setToast({ type: 'error', text: 'Erreur lors du chargement des suggestions' });
