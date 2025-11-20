@@ -561,17 +561,17 @@ export function DashboardPage() {
                   {/* Métadonnées */}
                   <div className="px-3 py-2 bg-gray-50 flex items-center justify-between gap-3 border-t border-gray-100">
                     <div className="flex items-center gap-2">
+                      {/* Saison */}
+                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white border border-gray-200">
+                        {renderSeasonIcon(article.season, 'sm')}
+                      </span>
+
                       {/* Statut */}
                       <span
                         className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[article.status]}`}
                       >
                         {renderStatusIcon(article.status)}
                         {STATUS_LABELS[article.status]}
-                      </span>
-
-                      {/* Saison */}
-                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white border border-gray-200">
-                        {renderSeasonIcon(article.season, 'sm')}
                       </span>
                     </div>
 
