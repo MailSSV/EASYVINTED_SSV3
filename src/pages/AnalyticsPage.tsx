@@ -134,16 +134,7 @@ export function AnalyticsPage() {
               >
                 30 jours
               </button>
-              <button
-                onClick={() => setTimeRange('90d')}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
-                  timeRange === '90d'
-                    ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md'
-                    : 'text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                90 jours
-              </button>
+             
               <button
                 onClick={() => setTimeRange('all')}
                 className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
