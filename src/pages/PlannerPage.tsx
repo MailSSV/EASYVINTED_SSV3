@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, TrendingUp, Clock, CheckCircle, X, Sparkles } from 'lucide-react';
+import { Calendar, TrendingUp, Clock, CheckCircle, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { Toast } from '../components/ui/Toast';
@@ -45,7 +45,6 @@ export function PlannerPage() {
   const navigate = useNavigate();
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [loading, setLoading] = useState(true);
-  const [generating, setGenerating] = useState(false);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
@@ -104,13 +103,10 @@ export function PlannerPage() {
     if (!user) return;
 
     try {
-      setGenerating(true);
-
       const { data: sessionData } = await supabase.auth.getSession();
       const token = sessionData?.session?.access_token;
 
       if (!token) {
-        setToast({ type: 'error', text: 'Non authentifié' });
         return;
       }
 
@@ -126,16 +122,8 @@ export function PlannerPage() {
       if (!response.ok) {
         throw new Error('Erreur lors de la génération des suggestions');
       }
-
-      const result = await response.json();
-
-      if (result.created > 0) {
-        setToast({ type: 'success', text: `${result.created} nouvelle(s) suggestion(s) générée(s)` });
-      }
     } catch (error) {
       console.error('Error generating suggestions:', error);
-    } finally {
-      setGenerating(false);
     }
   }
 
@@ -273,21 +261,11 @@ export function PlannerPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-6 space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Planificateur Intelligent</h1>
-              <p className="text-sm text-gray-600 mt-1">
-                Optimisez vos ventes en publiant vos articles au bon moment
-              </p>
-            </div>
-            <Button
-              onClick={generateSuggestions}
-              disabled={generating}
-              className="flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all w-full sm:w-auto"
-            >
-              <Sparkles className="w-4 h-4" />
-              {generating ? 'Génération...' : 'Générer suggestions'}
-            </Button>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Planificateur Intelligent</h1>
+            <p className="text-sm text-gray-600 mt-1">
+              Optimisez vos ventes en publiant vos articles au bon moment
+            </p>
           </div>
         </div>
 
