@@ -376,7 +376,7 @@ export function PlannerPage() {
                               </span>
                             </div>
                           </div>
-                          <span className="bg-emerald-100 text-emerald-700 text-xs font-semibold px-2 py-1 rounded">
+                          <span className="hidden sm:inline-flex bg-emerald-100 text-emerald-700 text-xs font-semibold px-2 py-1 rounded">
                             Planifié
                           </span>
                         </div>
