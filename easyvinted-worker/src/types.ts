@@ -5,6 +5,9 @@ export interface Article {
   description: string | null;
   price: string;
   category: string;
+  main_category?: string | null;
+  subcategory?: string | null;
+  item_category?: string | null;
   brand: string | null;
   size: string | null;
   condition: string;

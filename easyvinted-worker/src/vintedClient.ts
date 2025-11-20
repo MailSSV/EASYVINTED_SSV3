@@ -1,7 +1,9 @@
 import { Browser, Page, chromium } from 'playwright';
 import { Article, VintedCredentials, PublicationResult } from './types.js';
 import { promises as fs } from 'fs';
+import { unlink, writeFile } from 'fs/promises';
 import path from 'path';
+import { tmpdir } from 'os';
 
 const SESSION_FILE = './playwright-state/vinted-session.json';
 
@@ -135,6 +137,8 @@ export class VintedClient {
   async publishArticle(article: Article): Promise<PublicationResult> {
     if (!this.page) throw new Error('Browser not initialized');
 
+    const downloadedPhotos: string[] = [];
+
     try {
       console.log(`\n📦 Publishing article: ${article.title}`);
 
@@ -152,7 +156,14 @@ export class VintedClient {
       await this.page.waitForTimeout(2000);
 
       if (article.photos && article.photos.length > 0) {
-        await this.uploadPhotos(article.photos);
+        console.log(`📥 Downloading ${article.photos.length} photos from Supabase...`);
+
+        for (const photoUrl of article.photos) {
+          const localPath = await this.downloadPhotoToTemp(photoUrl);
+          downloadedPhotos.push(localPath);
+        }
+
+        await this.uploadPhotos(downloadedPhotos);
       }
 
       await this.fillArticleForm(article);
@@ -161,11 +172,15 @@ export class VintedClient {
 
       console.log(`✅ Article published successfully: ${vintedUrl}`);
 
+      await this.cleanupTempFiles(downloadedPhotos);
+
       return {
         success: true,
         vintedUrl,
       };
     } catch (error) {
+      await this.cleanupTempFiles(downloadedPhotos);
+
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       console.error(`❌ Failed to publish article: ${errorMessage}`);
 
@@ -202,45 +217,147 @@ export class VintedClient {
     console.log('✍️  Filling article form...');
 
     try {
-      await this.page.fill('input[name="title"]', article.title);
-      await this.page.waitForTimeout(500);
+      console.log('  📝 Setting title...');
+      await this.fillFieldSafely('input[name="title"], input[id*="title"], input[placeholder*="Titre"]', article.title);
 
       if (article.description) {
-        await this.page.fill('textarea[name="description"]', article.description);
-        await this.page.waitForTimeout(500);
+        console.log('  📝 Setting description...');
+        await this.fillFieldSafely('textarea[name="description"], textarea[id*="description"], textarea[placeholder*="Description"]', article.description);
       }
 
       if (article.brand) {
-        await this.page.fill('input[name="brand"]', article.brand);
-        await this.page.waitForTimeout(500);
+        console.log('  📝 Setting brand...');
+        await this.fillFieldSafely('input[name="brand"], input[id*="brand"], input[placeholder*="Marque"]', article.brand);
+      }
+
+      if (article.main_category || article.subcategory || article.item_category) {
+        console.log('  📂 Setting categories...');
+        await this.fillCategories(article);
       }
 
       if (article.size) {
-        await this.page.fill('input[name="size"]', article.size);
-        await this.page.waitForTimeout(500);
+        console.log('  📝 Setting size...');
+        await this.fillFieldSafely('input[name="size"], select[name="size"], input[id*="size"]', article.size);
       }
 
-      await this.page.selectOption('select[name="status"]', article.condition);
-      await this.page.waitForTimeout(500);
+      console.log('  📝 Setting condition...');
+      await this.selectOptionSafely('select[name="status"], select[id*="status"], select[name="item_status"]', article.condition);
 
       if (article.color) {
-        await this.page.fill('input[name="color"]', article.color);
-        await this.page.waitForTimeout(500);
+        console.log('  🎨 Setting color...');
+        await this.fillFieldSafely('input[name="color"], select[name="color"], input[id*="color"]', article.color);
       }
 
       if (article.material) {
-        await this.page.fill('input[name="material"]', article.material);
-        await this.page.waitForTimeout(500);
+        console.log('  🧵 Setting material...');
+        await this.fillFieldSafely('input[name="material"], select[name="material"], input[id*="material"]', article.material);
       }
 
+      console.log('  💰 Setting price...');
       const priceValue = parseFloat(article.price).toFixed(2);
-      await this.page.fill('input[name="price"]', priceValue);
-      await this.page.waitForTimeout(500);
+      await this.fillFieldSafely('input[name="price"], input[id*="price"], input[type="number"]', priceValue);
 
       console.log('✓ Form filled successfully');
     } catch (error) {
       console.error('⚠ Form filling failed:', error);
       throw new Error(`Form filling failed: ${error}`);
+    }
+  }
+
+  private async fillFieldSafely(selectors: string, value: string): Promise<void> {
+    const selectorList = selectors.split(',').map(s => s.trim());
+
+    for (const selector of selectorList) {
+      try {
+        const element = this.page!.locator(selector).first();
+        const isVisible = await element.isVisible({ timeout: 2000 });
+
+        if (isVisible) {
+          await element.fill(value);
+          await this.page!.waitForTimeout(500);
+          return;
+        }
+      } catch (error) {
+        continue;
+      }
+    }
+
+    console.warn(`⚠️  Could not find field with selectors: ${selectors}`);
+  }
+
+  private async selectOptionSafely(selectors: string, value: string): Promise<void> {
+    const selectorList = selectors.split(',').map(s => s.trim());
+
+    for (const selector of selectorList) {
+      try {
+        const element = this.page!.locator(selector).first();
+        const isVisible = await element.isVisible({ timeout: 2000 });
+
+        if (isVisible) {
+          await element.selectOption(value);
+          await this.page!.waitForTimeout(500);
+          return;
+        }
+      } catch (error) {
+        continue;
+      }
+    }
+
+    console.warn(`⚠️  Could not find select with selectors: ${selectors}`);
+  }
+
+  private async fillCategories(article: Article): Promise<void> {
+    try {
+      if (article.main_category) {
+        const categorySelectors = [
+          'select[name="catalog_id"]',
+          'select[id*="catalog"]',
+          'select[name="category"]',
+          '[data-testid="category-select"]'
+        ];
+
+        for (const selector of categorySelectors) {
+          try {
+            const element = this.page!.locator(selector).first();
+            const isVisible = await element.isVisible({ timeout: 2000 });
+
+            if (isVisible) {
+              await element.selectOption({ label: article.main_category });
+              await this.page!.waitForTimeout(1000);
+              break;
+            }
+          } catch (error) {
+            continue;
+          }
+        }
+      }
+
+      if (article.subcategory) {
+        await this.page!.waitForTimeout(1000);
+
+        const subcategorySelectors = [
+          'select[name="category_id"]',
+          'select[id*="subcategory"]',
+          '[data-testid="subcategory-select"]'
+        ];
+
+        for (const selector of subcategorySelectors) {
+          try {
+            const element = this.page!.locator(selector).first();
+            const isVisible = await element.isVisible({ timeout: 2000 });
+
+            if (isVisible) {
+              await element.selectOption({ label: article.subcategory });
+              await this.page!.waitForTimeout(500);
+              break;
+            }
+          } catch (error) {
+            continue;
+          }
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️  Could not set categories:', error);
     }
   }
 
@@ -267,6 +384,40 @@ export class VintedClient {
     } catch (error) {
       console.error('⚠ Submission failed:', error);
       throw new Error(`Article submission failed: ${error}`);
+    }
+  }
+
+  private async downloadPhotoToTemp(photoUrl: string): Promise<string> {
+    console.log(`📥 Downloading photo: ${photoUrl}`);
+
+    try {
+      const response = await fetch(photoUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to download photo: ${response.statusText}`);
+      }
+
+      const buffer = await response.arrayBuffer();
+      const fileName = `vinted-${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
+      const tempPath = path.join(tmpdir(), fileName);
+
+      await writeFile(tempPath, Buffer.from(buffer));
+      console.log(`✓ Photo saved to: ${tempPath}`);
+
+      return tempPath;
+    } catch (error) {
+      console.error(`❌ Failed to download photo ${photoUrl}:`, error);
+      throw error;
+    }
+  }
+
+  private async cleanupTempFiles(files: string[]): Promise<void> {
+    for (const file of files) {
+      try {
+        await unlink(file);
+        console.log(`🗑️  Deleted temp file: ${path.basename(file)}`);
+      } catch (error) {
+        console.warn(`⚠️  Could not delete temp file ${file}`);
+      }
     }
   }
 
