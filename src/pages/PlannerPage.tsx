@@ -389,7 +389,7 @@ export function PlannerPage() {
                 <div className="flex items-center gap-2 text-emerald-600">
                   <CheckCircle className="w-5 h-5" />
                   <span className="text-sm font-semibold">
-                    {readyArticles.length + scheduledArticles.length} annonces programées - prêtes à être publiées
+                    {readyArticles.length + scheduledArticles.length} annonces programées
                   </span>
                 </div>
               </div>
