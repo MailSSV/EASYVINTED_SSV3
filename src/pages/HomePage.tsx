@@ -34,7 +34,7 @@ export function HomePage() {
             </p>
           </div>
 
-          <div className="bg-grey-50/70 rounded-2xl p-5 border border-sky-100">
+          <div className="bg-gray-50/70 rounded-2xl p-5 border border-sky-100">
             <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-3 shadow-sm">
               <Calendar className="w-5 h-5 text-sky-600" />
             </div>
