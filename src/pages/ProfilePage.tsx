@@ -382,7 +382,7 @@ export function ProfilePage() {
             <div>
               <div className="flex items-center justify-between mb-3">
                 <label className="block text-sm font-medium text-gray-700">
-                  Choisis ton Persona
+                  Choisis ton Persona ou crée en un personnalisé :)
                 </label>
                 <Button
                   type="button"
