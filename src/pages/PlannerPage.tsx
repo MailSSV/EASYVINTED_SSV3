@@ -441,7 +441,8 @@ export function PlannerPage() {
                               <span className="font-medium">
                                 {new Date(suggestion.suggested_date).toLocaleDateString('fr-FR', {
                                   day: 'numeric',
-                                  month: 'short',
+                                  month: 'long',
+                                  year: 'numeric',
                                 })}
                               </span>
                             </button>
