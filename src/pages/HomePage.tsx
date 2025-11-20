@@ -24,7 +24,7 @@ export function HomePage() {
         <div className="grid md:grid-cols-3 gap-6 mb-10">
           <div className="bg-emerald-50/70 rounded-2xl p-5 border border-emerald-100">
             <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-3 shadow-sm">
-              <Sparkles className="w-5 h-5 text-emerald-600" />
+              <WandSparkles className="w-5 h-5 text-emerald-600" />
             </div>
             <h3 className="text-base font-semibold text-gray-900 mb-1.5">
               Création automatique
