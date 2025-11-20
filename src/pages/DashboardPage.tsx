@@ -203,20 +203,22 @@ export function DashboardPage() {
     }
   };
 
-  const renderSeasonIcon = (season?: Season) => {
+  const renderSeasonIcon = (season?: Season, size: 'sm' | 'md' = 'md') => {
+    const sizeClass = size === 'sm' ? 'w-4 h-4' : 'w-5 h-5';
+
     switch (season) {
       case 'spring':
-        return <Flower2 className="w-5 h-5 text-pink-500" title="Printemps" />;
+        return <Flower2 className={`${sizeClass} text-pink-500`} title="Printemps" />;
       case 'summer':
-        return <Sun className="w-5 h-5 text-orange-500" title="Été" />;
+        return <Sun className={`${sizeClass} text-orange-500`} title="Été" />;
       case 'autumn':
-        return <Leaf className="w-5 h-5 text-amber-600" title="Automne" />;
+        return <Leaf className={`${sizeClass} text-amber-600`} title="Automne" />;
       case 'winter':
-        return <Snowflake className="w-5 h-5 text-blue-500" title="Hiver" />;
+        return <Snowflake className={`${sizeClass} text-blue-500`} title="Hiver" />;
       case 'all-seasons':
-        return <CloudSun className="w-5 h-5 text-gray-600" title="Toutes saisons" />;
+        return <CloudSun className={`${sizeClass} text-gray-600`} title="Toutes saisons" />;
       default:
-        return <CloudSun className="w-5 h-5 text-gray-400" title="Non défini" />;
+        return <CloudSun className={`${sizeClass} text-gray-400`} title="Non défini" />;
     }
   };
 
@@ -563,8 +565,8 @@ export function DashboardPage() {
 
                     {/* Saison + planification alignées à droite */}
                     <div className="mt-2 flex flex-wrap items-center justify-end gap-2">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] bg-gray-100 text-gray-700">
-                        {article.season ? SEASON_LABELS[article.season] : SEASON_LABELS['undefined']}
+                      <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gray-50">
+                        {renderSeasonIcon(article.season, 'sm')}
                       </span>
 
                       {article.status === 'scheduled' && article.scheduled_for ? (
