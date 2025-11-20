@@ -364,6 +364,18 @@ export function ProfilePage() {
               </div>
             </div>
 
+            <div className="flex justify-end">
+              <Button type="submit" disabled={saving}>
+                {saving ? 'Enregistrement...' : 'Enregistrer'}
+              </Button>
+            </div>
+          </form>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Mon Style</h2>
+
+          <form onSubmit={handleProfileSubmit} className="space-y-4">
             <div>
               <div className="flex items-center justify-between mb-3">
                 <label className="block text-sm font-medium text-gray-700">
