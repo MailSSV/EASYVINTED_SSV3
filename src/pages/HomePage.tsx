@@ -9,14 +9,11 @@ export function HomePage() {
         {/* HERO */}
         <div className="mb-12">
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-            Automatisez votre<br />business <span className="text-emerald-600">Vinted</span>
+            Automatisez votre business <span className="text-emerald-600">Vinted</span>
           </h1>
 
           <p className="text-lg text-gray-600 max-w-2xl leading-relaxed">
-            Centralisez vos fiches produits, planifiez vos publications<br className="hidden sm:block" />
-            et laissez EasyVinted publier vos annonces au meilleur<br className="hidden sm:block" />
-            moment, sans vous connecter à Vinted toutes les 5<br className="hidden sm:block" />
-            minutes.
+            Centralisez vos fiches produits, planifiez vos publications et laissez EasyVinted publier vos annonces au meilleur moment, sans vous connecter à Vinted toutes les 5 minutes.
           </p>
         </div>
 
