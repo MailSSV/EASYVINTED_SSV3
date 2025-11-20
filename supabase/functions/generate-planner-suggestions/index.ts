@@ -100,9 +100,10 @@ Deno.serve(async (req: Request) => {
         .from("selling_suggestions")
         .select("id, status, priority, reason, suggested_date")
         .eq("article_id", article.id)
+        .eq("status", "pending")
         .maybeSingle();
 
-      if (existingSuggestion && existingSuggestion.status === "pending") {
+      if (existingSuggestion) {
         const { error: updateError } = await supabase
           .from("selling_suggestions")
           .update({
@@ -114,7 +115,7 @@ Deno.serve(async (req: Request) => {
           .eq("id", existingSuggestion.id);
 
         if (updateError) throw updateError;
-      } else if (!existingSuggestion) {
+      } else {
         suggestions.push({
           article_id: article.id,
           user_id: article.user_id,
