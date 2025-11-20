@@ -300,9 +300,6 @@ export function PlannerPage() {
   }
 
   const pendingSuggestions = suggestions.filter((s) => s.status === 'pending');
-  const acceptedSuggestions = suggestions.filter(
-    (s) => s.status === 'accepted' && s.article && s.article.status === 'scheduled'
-  );
 
   const [readyArticles, setReadyArticles] = useState<Article[]>([]);
   const [scheduledArticles, setScheduledArticles] = useState<Article[]>([]);
@@ -648,82 +645,6 @@ export function PlannerPage() {
                 )}
               </div>
             </div>
-
-            {acceptedSuggestions.length > 0 && (
-              <div className="bg-gradient-to-br from-white to-green-50 rounded-2xl shadow-md border border-green-200 overflow-hidden">
-                <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-4">
-                  <h2 className="text-xl font-bold text-white flex items-center gap-3">
-                    <CheckCircle className="w-6 h-6" />
-                    Suggestions acceptées
-                    <span className="ml-auto bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-semibold">
-                      {acceptedSuggestions.length}
-                    </span>
-                  </h2>
-                </div>
-                <div className="p-4 sm:p-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {acceptedSuggestions.map((suggestion) => (
-                      <div
-                        key={suggestion.id}
-                        onClick={() => {
-                          if (suggestion.article) {
-                            handleOpenPreviewModal(suggestion.article);
-                          }
-                        }}
-                        className="group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-emerald-200 hover:border-emerald-300 cursor-pointer"
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                        <div className="relative p-4">
-                          <div className="flex items-start gap-3 mb-3">
-                            {suggestion.article?.photos?.[0] ? (
-                              <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 shadow-sm ring-1 ring-emerald-100">
-                                <img
-                                  src={suggestion.article.photos[0]}
-                                  alt={suggestion.article.title}
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                            ) : (
-                              <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-emerald-50 to-emerald-100 flex items-center justify-center flex-shrink-0 shadow-sm">
-                                <Calendar className="w-6 h-6 text-emerald-600" />
-                              </div>
-                            )}
-
-                            <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2 leading-tight">
-                                {suggestion.article?.title || 'Article inconnu'}
-                              </h3>
-                              {suggestion.article && (
-                                <div className="text-sm font-semibold text-emerald-600">
-                                  {suggestion.article.price}€
-                                </div>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                            <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                              <Calendar className="w-3.5 h-3.5" />
-                              <span className="font-medium">
-                                Planifié le {new Date(suggestion.suggested_date).toLocaleDateString('fr-FR', {
-                                  day: 'numeric',
-                                  month: 'short',
-                                  year: 'numeric',
-                                })}
-                              </span>
-                            </div>
-                            <div className="flex-shrink-0 w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center">
-                              <CheckCircle className="w-4 h-4 text-emerald-600" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         )}
       </div>
