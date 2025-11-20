@@ -264,7 +264,7 @@ export function DashboardPage() {
   };
 
   const handleDelete = async () => {
-    if (!deleteModal.articleId) return;
+    if (!deleteModal.articleId || !user) return;
 
     try {
       const { data: article, error: fetchError } = await supabase
@@ -292,6 +292,20 @@ export function DashboardPage() {
             console.error('Error deleting photos from storage:', storageError);
           }
         }
+      }
+
+      try {
+        const folderPath = `${user.id}/${deleteModal.articleId}`;
+        const { data: folderContents } = await supabase.storage
+          .from('article-photos')
+          .list(folderPath);
+
+        if (folderContents && folderContents.length > 0) {
+          const filesToDelete = folderContents.map(file => `${folderPath}/${file.name}`);
+          await supabase.storage.from('article-photos').remove(filesToDelete);
+        }
+      } catch (folderError) {
+        console.log('No folder to clean up or error cleaning folder:', folderError);
       }
 
       const { error } = await supabase

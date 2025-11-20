@@ -506,7 +506,7 @@ export function ArticleFormPage() {
   };
 
   const handleDelete = async () => {
-    if (!id) return;
+    if (!id || !user) return;
 
     try {
       const { data: article, error: fetchError } = await supabase
@@ -534,6 +534,20 @@ export function ArticleFormPage() {
             console.error('Error deleting photos from storage:', storageError);
           }
         }
+      }
+
+      try {
+        const folderPath = `${user.id}/${id}`;
+        const { data: folderContents } = await supabase.storage
+          .from('article-photos')
+          .list(folderPath);
+
+        if (folderContents && folderContents.length > 0) {
+          const filesToDelete = folderContents.map(file => `${folderPath}/${file.name}`);
+          await supabase.storage.from('article-photos').remove(filesToDelete);
+        }
+      } catch (folderError) {
+        console.log('No folder to clean up or error cleaning folder:', folderError);
       }
 
       const { error } = await supabase.from('articles').delete().eq('id', id);
@@ -827,6 +841,8 @@ export function ArticleFormPage() {
                 onPhotosChange={(photos) => setFormData({ ...formData, photos })}
                 onAnalyzeClick={handleAnalyzeWithAI}
                 analyzing={analyzingWithAI}
+                userId={user?.id || ''}
+                articleId={id}
               />
             </div>
 

@@ -9,9 +9,11 @@ interface PhotoUploadProps {
   maxPhotos?: number;
   onAnalyzeClick?: () => void;
   analyzing?: boolean;
+  userId: string;
+  articleId?: string;
 }
 
-export function PhotoUpload({ photos, onPhotosChange, maxPhotos = 8, onAnalyzeClick, analyzing = false }: PhotoUploadProps) {
+export function PhotoUpload({ photos, onPhotosChange, maxPhotos = 8, onAnalyzeClick, analyzing = false, userId, articleId }: PhotoUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -85,7 +87,8 @@ export function PhotoUpload({ photos, onPhotosChange, maxPhotos = 8, onAnalyzeCl
 
       const fileExt = 'jpg';
       const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
-      const filePath = fileName;
+      const tempArticleId = articleId || 'temp-' + Date.now();
+      const filePath = `${userId}/${tempArticleId}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('article-photos')

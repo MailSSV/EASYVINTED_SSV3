@@ -124,7 +124,7 @@ export function PreviewPage() {
   }
 
   async function handleDelete() {
-    if (!id || !article) return;
+    if (!id || !article || !user) return;
 
     try {
       if (article.photos && article.photos.length > 0) {
@@ -144,6 +144,20 @@ export function PreviewPage() {
             console.error('Error deleting photos from storage:', storageError);
           }
         }
+      }
+
+      try {
+        const folderPath = `${user.id}/${id}`;
+        const { data: folderContents } = await supabase.storage
+          .from('article-photos')
+          .list(folderPath);
+
+        if (folderContents && folderContents.length > 0) {
+          const filesToDelete = folderContents.map(file => `${folderPath}/${file.name}`);
+          await supabase.storage.from('article-photos').remove(filesToDelete);
+        }
+      } catch (folderError) {
+        console.log('No folder to clean up or error cleaning folder:', folderError);
       }
 
       const { error } = await supabase
