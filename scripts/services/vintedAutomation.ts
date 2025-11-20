@@ -121,10 +121,15 @@ export class VintedAutomation {
 
     const arrayBuffer = await response.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    const filename = path.basename(new URL(url).pathname);
-    const tempPath = path.join(os.tmpdir(), filename);
+
+    const urlObj = new URL(url);
+    const filename = path.basename(urlObj.pathname);
+    const timestamp = Date.now();
+    const uniqueFilename = `vinted-${timestamp}-${filename}`;
+    const tempPath = path.join(os.tmpdir(), uniqueFilename);
 
     await fs.writeFile(tempPath, buffer);
+    console.log(`✓ Photo downloaded to: ${tempPath}`);
     return tempPath;
   }
 
