@@ -23,7 +23,7 @@ export function SaleDetailModal({ sale, onClose }: SaleDetailModalProps) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
       day: 'numeric',
-      month: 'long',
+      month: 'numeric',
       year: 'numeric',
       
     
