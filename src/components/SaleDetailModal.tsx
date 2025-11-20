@@ -161,14 +161,6 @@ export function SaleDetailModal({ sale, onClose }: SaleDetailModalProps) {
             )}
           </div>
         </div>
-
-        <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm text-gray-500">
-            <Calendar className="w-4 h-4" />
-            <span>Référence: {sale.id.slice(0, 8)}</span>
-          </div>
-          
-        </div>
       </div>
     </div>
   );
