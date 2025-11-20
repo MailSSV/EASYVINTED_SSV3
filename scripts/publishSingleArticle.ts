@@ -36,6 +36,7 @@ async function publishSingleArticle(articleId: string) {
 
     console.log(`📝 Article: ${article.title}`);
     console.log(`👤 User: ${userSettings.vinted_email}`);
+    console.log(`📷 Photos (${article.photos?.length || 0}):`, JSON.stringify(article.photos, null, 2));
 
     automation = new VintedAutomation();
     await automation.initialize();

@@ -144,6 +144,14 @@ export class VintedAutomation {
         console.log(`📥 Downloading photo from: ${photoPath}`);
         localPath = await this.downloadPhoto(photoPath);
         localPaths.push(localPath);
+      } else {
+        console.log(`⚠️  Local path detected, attempting to download as URL: ${photoPath}`);
+        try {
+          localPath = await this.downloadPhoto(photoPath);
+          localPaths.push(localPath);
+        } catch (error) {
+          throw new Error(`Cannot access local file path: ${photoPath}. Please ensure photos are stored as URLs in the database.`);
+        }
       }
 
       await fileInput.setInputFiles(localPath);
