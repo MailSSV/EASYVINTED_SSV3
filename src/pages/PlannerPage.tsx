@@ -497,7 +497,7 @@ export function PlannerPage() {
               <div className="bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-4">
                 <h2 className="text-xl font-bold text-white flex items-center gap-3">
                   <TrendingUp className="w-6 h-6" />
-                  Suggestions de plannification en attente
+                  Suggestions de plannification
                   <span className="ml-auto bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-semibold">
                     {pendingSuggestions.length}
                   </span>
