@@ -55,7 +55,7 @@ export function SaleDetailModal({ sale, onClose }: SaleDetailModalProps) {
 
         <div className="flex-1 overflow-y-auto">
           <div className="p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-1">
                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
                   {sale.photos.length > 0 ? (
@@ -90,7 +90,7 @@ export function SaleDetailModal({ sale, onClose }: SaleDetailModalProps) {
                 </div>
               </div>
 
-              <div className="lg:col-span-2 space-y-6">
+              <div className="lg:col-span-2">
                 <div className="bg-white border border-gray-200 rounded-xl p-6">
                   <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Détail de la transaction</h4>
 
@@ -147,7 +147,7 @@ export function SaleDetailModal({ sale, onClose }: SaleDetailModalProps) {
             </div>
 
             {sale.sale_notes && (
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mt-6">
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <FileText className="w-5 h-5 text-amber-600" />
