@@ -1,5 +1,5 @@
-import { Link, useLocation } from 'react-router-dom';
-import { Package, Settings, BarChart3, ShoppingBag, Calendar, Menu, X } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Package, Settings, BarChart3, ShoppingBag, Calendar, Menu, X, LogOut } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
@@ -10,9 +10,11 @@ interface AppLayoutProps {
 
 export function AppLayout({ children }: AppLayoutProps) {
   const location = useLocation();
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const [dressingName, setDressingName] = useState<string>('Mon Dressing');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -46,6 +48,11 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   const getInitials = (email: string) => {
     return email.substring(0, 2).toUpperCase();
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/login');
   };
 
   return (
@@ -120,15 +127,45 @@ export function AppLayout({ children }: AppLayoutProps) {
               >
                 <Settings className="w-5 h-5" />
               </Link>
-              <Link
-                to="/profile"
-                className="hidden sm:flex w-10 h-10 rounded-full bg-emerald-600 items-center justify-center hover:bg-emerald-700 transition-colors"
-                title="Mon profil"
-              >
-                <span className="text-sm font-semibold text-white">
-                  {user?.email ? getInitials(user.email) : 'U'}
-                </span>
-              </Link>
+
+              <div className="hidden sm:block relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex w-10 h-10 rounded-full bg-emerald-600 items-center justify-center hover:bg-emerald-700 transition-colors"
+                  title="Mon profil"
+                >
+                  <span className="text-sm font-semibold text-white">
+                    {user?.email ? getInitials(user.email) : 'U'}
+                  </span>
+                </button>
+
+                {showUserMenu && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                    <div className="px-4 py-2 border-b border-gray-100">
+                      <p className="text-sm font-medium text-gray-900 truncate">{user?.email}</p>
+                    </div>
+                    <Link
+                      to="/profile"
+                      onClick={() => setShowUserMenu(false)}
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="w-5 h-5 rounded-full bg-emerald-600 flex items-center justify-center">
+                        <span className="text-xs font-semibold text-white">
+                          {user?.email ? getInitials(user.email) : 'U'}
+                        </span>
+                      </div>
+                      Mon profil
+                    </Link>
+                    <button
+                      onClick={handleSignOut}
+                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Se déconnecter
+                    </button>
+                  </div>
+                )}
+              </div>
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -236,6 +273,19 @@ export function AppLayout({ children }: AppLayoutProps) {
                 </div>
                 Mon Profil
               </Link>
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  handleSignOut();
+                }}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 transform ${
+                  mobileMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
+                } text-red-600 hover:bg-red-50`}
+                style={{ transitionDelay: mobileMenuOpen ? '350ms' : '0ms' }}
+              >
+                <LogOut className="w-5 h-5" />
+                Se déconnecter
+              </button>
             </div>
           </nav>
         </div>
