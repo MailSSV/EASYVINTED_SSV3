@@ -80,7 +80,7 @@ export function HomePage() {
 
         {/* Bas de page */}
         <div className="mt-6 text-center text-xs text-gray-500">
-          EasyVinted · Automatisez vos ventes sur Vinted tout en restant maitres de votre flemmardise :) 
+          EasyVinted · Automatisez vos ventes sur Vinted tout en restant maitres de votre flemme stratégique 😌 
 
         </div>
       </div>
