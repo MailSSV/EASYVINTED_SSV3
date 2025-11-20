@@ -43,17 +43,18 @@ async function publishSingleArticle(articleId: string) {
     const isAuthenticated = await automation.checkAuthentication();
 
     if (!isAuthenticated) {
-      console.log('\n🔐 Not authenticated. Attempting to login...');
-      console.log('⚠️  You will need to log in manually in the browser that opens');
+      console.log('\n🔐 Not authenticated. Logging in with credentials...');
 
-      await automation.navigateToNewItemPage();
-
-      console.log('\nPress ENTER after you have logged in...');
-      await new Promise(resolve => {
-        process.stdin.once('data', () => resolve(null));
-      });
-
-      await automation.saveSession();
+      try {
+        await automation.loginWithCredentials(
+          userSettings.vinted_email,
+          userSettings.vinted_password
+        );
+        await automation.saveSession();
+        console.log('✓ Session saved');
+      } catch (error) {
+        throw new Error(`Failed to authenticate: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
     }
 
     const articleToPublish: ArticleToPublish = {

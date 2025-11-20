@@ -15,7 +15,7 @@ export class VintedAutomation {
 
   async initialize(): Promise<void> {
     this.browser = await chromium.launch({
-      headless: false,
+      headless: true,
       slowMo: 100,
     });
 
@@ -84,6 +84,33 @@ export class VintedAutomation {
     });
 
     return isLoggedIn;
+  }
+
+  async loginWithCredentials(email: string, password: string): Promise<void> {
+    if (!this.page) {
+      throw new Error('Page not initialized');
+    }
+
+    await this.page.goto('https://www.vinted.fr/member/login', {
+      waitUntil: 'networkidle',
+    });
+
+    await this.page.waitForTimeout(2000);
+
+    await this.page.fill('input[name="login"]', email);
+    await this.page.fill('input[name="password"]', password);
+
+    await this.page.click('button[type="submit"]');
+
+    await this.page.waitForTimeout(5000);
+
+    const isLoggedIn = await this.checkAuthentication();
+
+    if (!isLoggedIn) {
+      throw new Error('Failed to login with provided credentials');
+    }
+
+    console.log('✓ Successfully logged in');
   }
 
   private async downloadPhoto(url: string): Promise<string> {
