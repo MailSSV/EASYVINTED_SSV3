@@ -388,7 +388,9 @@ export function PlannerPage() {
             {/* Section Aperçu */}
             <div className="bg-white rounded-2xl shadow-md border border-emerald-100 p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-gray-900">APERÇU EASYVINTED</h2>
+                <h2 className="text-lg font-bold text-gray-900">Stock prêt à être publié
+
+</h2>
                 <div className="flex items-center gap-2 text-emerald-600">
                   <CheckCircle className="w-5 h-5" />
                   <span className="text-sm font-semibold">
