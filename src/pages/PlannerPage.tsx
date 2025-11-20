@@ -81,7 +81,10 @@ export function PlannerPage() {
       );
 
       const filteredSuggestions = suggestionsWithArticles.filter(
-        (suggestion) => suggestion.article && suggestion.article.status !== 'sold'
+        (suggestion) =>
+          suggestion.article &&
+          suggestion.article.status !== 'sold' &&
+          suggestion.article.status !== 'draft'
       );
 
       setSuggestions(filteredSuggestions);
