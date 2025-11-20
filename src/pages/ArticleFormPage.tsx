@@ -14,6 +14,7 @@ import { ScheduleModal } from '../components/ScheduleModal';
 import { ArticleSoldModal } from '../components/ArticleSoldModal';
 import { VINTED_CATEGORIES } from '../constants/categories';
 import { COLORS, MATERIALS } from '../constants/articleAttributes';
+import { migratePhotosFromTempFolder } from '../lib/photoMigration';
 
 const CONDITION_LABELS: Record<Condition, string> = {
   new_with_tag: 'Neuf avec étiquette',
@@ -407,6 +408,14 @@ export function ArticleFormPage() {
       };
 
       if (id) {
+        if (user?.id) {
+          articleData.photos = await migratePhotosFromTempFolder(
+            formData.photos,
+            user.id,
+            id
+          );
+        }
+
         const { error } = await supabase.from('articles').update(articleData).eq('id', id);
         if (error) throw error;
 
@@ -485,8 +494,28 @@ export function ArticleFormPage() {
           }
         }
       } else {
-        const { error } = await supabase.from('articles').insert([articleData]);
+        const { data: newArticle, error } = await supabase
+          .from('articles')
+          .insert([articleData])
+          .select()
+          .single();
+
         if (error) throw error;
+
+        if (newArticle && formData.photos.length > 0 && user?.id) {
+          const migratedPhotos = await migratePhotosFromTempFolder(
+            formData.photos,
+            user.id,
+            newArticle.id
+          );
+
+          if (migratedPhotos.some((url, index) => url !== formData.photos[index])) {
+            await supabase
+              .from('articles')
+              .update({ photos: migratedPhotos })
+              .eq('id', newArticle.id);
+          }
+        }
       }
 
       setToast({
