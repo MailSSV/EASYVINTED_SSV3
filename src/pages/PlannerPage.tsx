@@ -404,8 +404,8 @@ export function PlannerPage() {
                   </p>
 
                   {readyArticles.length > 0 && (
-                    <div className="space-y-2">
-                      {readyArticles.slice(0, 3).map((article) => (
+                    <div className="space-y-2 max-h-80 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                      {readyArticles.map((article) => (
                         <div
                           key={article.id}
                           onClick={() => navigate(`/articles/${article.id}/preview`)}
@@ -439,11 +439,6 @@ export function PlannerPage() {
                           </button>
                         </div>
                       ))}
-                      {readyArticles.length > 3 && (
-                        <p className="text-xs text-gray-500 text-center pt-1">
-                          +{readyArticles.length - 3} autre(s)
-                        </p>
-                      )}
                     </div>
                   )}
                 </div>
@@ -457,8 +452,8 @@ export function PlannerPage() {
                   </p>
 
                   {scheduledArticles.length > 0 && (
-                    <div className="space-y-2">
-                      {scheduledArticles.slice(0, 3).map((article) => (
+                    <div className="space-y-2 max-h-80 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-emerald-300 scrollbar-track-emerald-50">
+                      {scheduledArticles.map((article) => (
                         <div
                           key={article.id}
                           onClick={() => navigate(`/articles/${article.id}/preview`)}
@@ -492,11 +487,6 @@ export function PlannerPage() {
                           </span>
                         </div>
                       ))}
-                      {scheduledArticles.length > 3 && (
-                        <p className="text-xs text-gray-500 text-center pt-1">
-                          +{scheduledArticles.length - 3} autre(s)
-                        </p>
-                      )}
                     </div>
                   )}
                 </div>
