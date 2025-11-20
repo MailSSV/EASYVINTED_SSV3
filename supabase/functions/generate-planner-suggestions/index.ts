@@ -50,16 +50,6 @@ Deno.serve(async (req: Request) => {
     const currentMonth = now.getMonth();
 
     for (const article of articles as Article[]) {
-      const { data: existingSuggestion } = await supabase
-        .from("selling_suggestions")
-        .select("id")
-        .eq("article_id", article.id)
-        .maybeSingle();
-
-      if (existingSuggestion) {
-        continue;
-      }
-
       let targetMonth = currentMonth;
       let priority: "high" | "medium" | "low" = "medium";
       let reason = "";
@@ -106,14 +96,34 @@ Deno.serve(async (req: Request) => {
         }
       }
 
-      suggestions.push({
-        article_id: article.id,
-        user_id: article.user_id,
-        suggested_date: suggestedDate.toISOString().split("T")[0],
-        priority,
-        reason,
-        status: "pending",
-      });
+      const { data: existingSuggestion } = await supabase
+        .from("selling_suggestions")
+        .select("id, status, priority, reason, suggested_date")
+        .eq("article_id", article.id)
+        .maybeSingle();
+
+      if (existingSuggestion && existingSuggestion.status === "pending") {
+        const { error: updateError } = await supabase
+          .from("selling_suggestions")
+          .update({
+            suggested_date: suggestedDate.toISOString().split("T")[0],
+            priority,
+            reason,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", existingSuggestion.id);
+
+        if (updateError) throw updateError;
+      } else if (!existingSuggestion) {
+        suggestions.push({
+          article_id: article.id,
+          user_id: article.user_id,
+          suggested_date: suggestedDate.toISOString().split("T")[0],
+          priority,
+          reason,
+          status: "pending",
+        });
+      }
     }
 
     if (suggestions.length > 0) {
@@ -127,7 +137,8 @@ Deno.serve(async (req: Request) => {
     return new Response(
       JSON.stringify({
         message: "Suggestions generated successfully",
-        processed: suggestions.length,
+        created: suggestions.length,
+        total_processed: articles.length,
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
