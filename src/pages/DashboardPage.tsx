@@ -521,94 +521,103 @@ export function DashboardPage() {
               {filteredArticles.map((article) => (
                 <div
                   key={article.id}
-                  className="bg-white rounded-xl shadow-sm border border-gray-100 px-3 py-3 flex gap-3 relative"
+                  className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
                 >
-                  <div
-                    className="w-20 h-20 rounded-lg bg-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0 cursor-pointer"
-                    onClick={() => navigate(`/articles/${article.id}/preview`)}
-                  >
-                    {article.photos && article.photos.length > 0 ? (
-                      <img
-                        src={article.photos[0]}
-                        alt={article.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <ImageIcon className="w-8 h-8 text-gray-400" />
-                    )}
-                  </div>
+                  {/* Image et titre */}
+                  <div className="flex gap-3 p-3">
+                    <div
+                      className="w-24 h-24 rounded-lg bg-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0 cursor-pointer"
+                      onClick={() => navigate(`/articles/${article.id}/preview`)}
+                    >
+                      {article.photos && article.photos.length > 0 ? (
+                        <img
+                          src={article.photos[0]}
+                          alt={article.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <ImageIcon className="w-8 h-8 text-gray-400" />
+                      )}
+                    </div>
 
-                  <div className="flex-1 min-w-0 flex flex-col">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0">
-                        <div className="text-sm font-semibold text-gray-900 truncate">
+                    <div className="flex-1 min-w-0 flex flex-col justify-between">
+                      {/* Titre et marque */}
+                      <div>
+                        <h3 className="text-base font-semibold text-gray-900 truncate mb-1">
                           {article.title}
-                        </div>
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
-                          <span className="truncate">
-                            {article.brand || 'Non spécifié'}
-                          </span>
-                          <span className="w-1 h-1 rounded-full bg-gray-300" />
-                          <span className="font-semibold text-gray-800">
-                            {article.price.toFixed(0)}€
-                          </span>
-                        </div>
+                        </h3>
+                        <p className="text-sm text-gray-500 truncate">
+                          {article.brand || 'Non spécifié'}
+                        </p>
                       </div>
 
+                      {/* Prix */}
+                      <div className="text-lg font-bold text-emerald-600">
+                        {article.price.toFixed(0)}€
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Métadonnées */}
+                  <div className="px-3 py-2 bg-gray-50 flex items-center justify-between gap-3 border-t border-gray-100">
+                    <div className="flex items-center gap-2">
+                      {/* Statut */}
                       <span
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium whitespace-nowrap ${STATUS_COLORS[article.status]}`}
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[article.status]}`}
                       >
                         {renderStatusIcon(article.status)}
                         {STATUS_LABELS[article.status]}
                       </span>
-                    </div>
 
-                    {/* Saison + planification alignées à droite */}
-                    <div className="mt-2 flex flex-wrap items-center justify-end gap-2">
-                      <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gray-50">
+                      {/* Saison */}
+                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white border border-gray-200">
                         {renderSeasonIcon(article.season, 'sm')}
                       </span>
-
-                      {article.status === 'scheduled' && article.scheduled_for ? (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] bg-yellow-50 text-yellow-700 border border-yellow-100">
-                          <Clock className="w-3 h-3 mr-1" />
-                          {formatDate(article.scheduled_for)}
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] bg-gray-50 text-gray-500 border border-gray-100">
-                          Non planifié
-                        </span>
-                      )}
                     </div>
 
-                    {/* Actions mobile */}
-                    <div className="mt-3 pt-2 border-t border-gray-100 flex items-center justify-between">
-                      <span className="text-[11px] text-gray-400">
-                        Créé le {formatDate(article.created_at)}
-                      </span>
+                    {/* Actions */}
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/articles/${article.id}/preview`);
+                        }}
+                        className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
+                        title="Voir"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/articles/${article.id}/edit`);
+                        }}
+                        className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
+                        title="Modifier"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
 
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/articles/${article.id}/preview`);
-                          }}
-                          className="p-1.5 rounded-full hover:bg-gray-100 text-gray-600"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/articles/${article.id}/edit`);
-                          }}
-                          className="p-1.5 rounded-full hover:bg-gray-100 text-gray-600"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </button>
+                  {/* Planification si présente */}
+                  {article.status === 'scheduled' && article.scheduled_for && (
+                    <div className="px-3 py-2 bg-yellow-50 border-t border-yellow-100 flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-xs text-yellow-800">
+                        <Clock className="w-4 h-4" />
+                        <span className="font-medium">Planifié pour le</span>
                       </div>
+                      <span className="text-xs font-semibold text-yellow-900">
+                        {formatDate(article.scheduled_for)}
+                      </span>
                     </div>
+                  )}
 
+                  {/* Date de création */}
+                  <div className="px-3 py-1.5 bg-gray-50 border-t border-gray-100">
+                    <span className="text-xs text-gray-500">
+                      Créé le {formatDate(article.created_at)}
+                    </span>
                   </div>
                 </div>
               ))}
