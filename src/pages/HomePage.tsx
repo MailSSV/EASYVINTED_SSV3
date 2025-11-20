@@ -15,7 +15,7 @@ export function HomePage() {
           </h1>
 
           <p className="text-base sm:text-lg text-gray-700/90 max-w-xl mx-auto leading-relaxed font-light tracking-wide">
-  Créez vos fiches produits avec l’IA, planifiez vos publications et publiez vos annonces au meilleur moment, sans prise de tête.
+  Créez vos fiches produits avec l’IA, planifiez vos publications et publiez vos annonces au meilleur moment.
 </p>
 
         </div>
