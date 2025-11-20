@@ -42,7 +42,7 @@ export function HomePage() {
               Planification intelligente
             </h3>
             <p className="text-sm text-gray-600">
-              Programmez vos annonces selon les meilleures périodes de vente.
+              Programmez vos annonces selon les meilleures périodes de vente et la saison.
             </p>
           </div>
 
