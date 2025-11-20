@@ -35,22 +35,36 @@ export function SaleDetailModal({ sale, onClose }: SaleDetailModalProps) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-        <div className="sticky top-0 bg-gray-100 px-6 py-5 flex items-center justify-between border-b border-gray-200">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center">
-              <BadgeCheck className="w-6 h-6 text-white" />
+        <div className="sticky top-0 bg-gray-100 px-6 py-5 border-b border-gray-200">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center">
+                <BadgeCheck className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Vente réalisée</h2>
+                <p className="text-sm text-gray-600">{formatDate(sale.sold_at)}</p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-xl font-bold text-gray-900">Vente réalisée</h2>
-              <p className="text-sm text-gray-600">{formatDate(sale.sold_at)}</p>
-            </div>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+            >
+              <X className="w-6 h-6 text-gray-600" />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
-          >
-            <X className="w-6 h-6 text-gray-600" />
-          </button>
+          <div className="flex items-center gap-4">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+              <ShoppingBag className="w-4 h-4" />
+              {sale.platform}
+            </span>
+            {sale.buyer_name && (
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <User className="w-4 h-4" />
+                <span className="font-medium">{sale.buyer_name}</span>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto">
@@ -73,19 +87,6 @@ export function SaleDetailModal({ sale, onClose }: SaleDetailModalProps) {
                   <div className="space-y-2">
                     <h3 className="text-lg font-bold text-gray-900">{sale.title}</h3>
                     <p className="text-sm text-gray-600 font-medium">{sale.brand}</p>
-
-                    <div className="pt-3 flex items-center justify-between">
-                      <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
-                        <ShoppingBag className="w-4 h-4" />
-                        {sale.platform}
-                      </span>
-                      {sale.buyer_name && (
-                        <div className="flex items-center gap-2 text-xs text-gray-600">
-                          <User className="w-4 h-4" />
-                          <span className="font-medium">{sale.buyer_name}</span>
-                        </div>
-                      )}
-                    </div>
                   </div>
                 </div>
               </div>
