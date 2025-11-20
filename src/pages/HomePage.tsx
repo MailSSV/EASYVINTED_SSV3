@@ -11,7 +11,7 @@ export function HomePage() {
        
 
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
-            Automatisez votre business Vinted
+            Automatisez votre business <span className="text-emerald-600">Vinted</span>
           </h1>
 
           <p className="text-base sm:text-lg text-gray-600 max-w-xl mx-auto leading-relaxed">
