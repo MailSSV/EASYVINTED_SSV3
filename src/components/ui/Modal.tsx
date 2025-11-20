@@ -7,12 +7,13 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  message: string;
+  message?: string;
   type?: ModalType;
   confirmLabel?: string;
   cancelLabel?: string;
   onConfirm?: () => void;
   showCancel?: boolean;
+  children?: ReactNode;
 }
 
 const ICON_MAP: Record<ModalType, ReactNode> = {
@@ -46,6 +47,7 @@ export function Modal({
   cancelLabel = 'Annuler',
   onConfirm,
   showCancel = false,
+  children,
 }: ModalProps) {
   if (!isOpen) return null;
 
@@ -70,15 +72,21 @@ export function Modal({
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full animate-in fade-in zoom-in duration-200">
         <div className="p-6">
           <div className="flex items-start justify-between mb-4">
-            <div className="flex items-start gap-4">
-              <div className={`flex-shrink-0 w-12 h-12 rounded-full ${BG_COLOR_MAP[type]} flex items-center justify-center`}>
-                {ICON_MAP[type]}
-              </div>
+            {children ? (
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">{message}</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>
               </div>
-            </div>
+            ) : (
+              <div className="flex items-start gap-4">
+                <div className={`flex-shrink-0 w-12 h-12 rounded-full ${BG_COLOR_MAP[type]} flex items-center justify-center`}>
+                  {ICON_MAP[type]}
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">{message}</p>
+                </div>
+              </div>
+            )}
             <button
               onClick={onClose}
               className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
@@ -87,22 +95,26 @@ export function Modal({
             </button>
           </div>
 
-          <div className="flex gap-3 mt-6">
-            {showCancel && (
+          {children ? (
+            <div className="mt-4">{children}</div>
+          ) : (
+            <div className="flex gap-3 mt-6">
+              {showCancel && (
+                <button
+                  onClick={onClose}
+                  className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  {cancelLabel}
+                </button>
+              )}
               <button
-                onClick={onClose}
-                className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                onClick={handleConfirm}
+                className={`flex-1 px-4 py-2.5 text-sm font-medium text-white rounded-lg transition-colors ${BUTTON_COLOR_MAP[type]}`}
               >
-                {cancelLabel}
+                {confirmLabel}
               </button>
-            )}
-            <button
-              onClick={handleConfirm}
-              className={`flex-1 px-4 py-2.5 text-sm font-medium text-white rounded-lg transition-colors ${BUTTON_COLOR_MAP[type]}`}
-            >
-              {confirmLabel}
-            </button>
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
