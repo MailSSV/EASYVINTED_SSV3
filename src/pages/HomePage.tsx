@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { parkles, Calendar, Upload } from "lucide-react";
+import { Sparkles, Calendar, Upload } from "lucide-react";
 
 export function HomePage() {
   return (
