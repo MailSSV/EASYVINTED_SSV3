@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Package } from 'lucide-react';
+import { Package, Eye } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { SaleDetailModal } from '../components/SaleDetailModal';
@@ -85,7 +85,7 @@ export function SalesPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
       </div>
     );
   }
@@ -99,123 +99,189 @@ export function SalesPage() {
         </p>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        {salesHistory.length === 0 ? (
-          <div className="px-6 py-12 text-center">
-            <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucune vente enregistrée</h3>
-            <p className="text-gray-600">
-              Vos ventes apparaîtront ici une fois que vous aurez marqué des articles comme vendus
-            </p>
-          </div>
-        ) : (
-          <>
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+      {salesHistory.length === 0 ? (
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200/50 px-6 py-16 text-center">
+          <Package className="w-20 h-20 text-gray-300 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucune vente enregistrée</h3>
+          <p className="text-gray-600">
+            Vos ventes apparaîtront ici une fois que vous aurez marqué des articles comme vendus
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* Desktop View */}
+          <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-200/50 overflow-hidden">
+            <div className="overflow-x-auto overflow-y-visible">
+              <table className="min-w-full">
+                <thead>
+                  <tr className="bg-gradient-to-r from-gray-50 to-gray-50/50 border-b border-gray-200/50">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
                       Article
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
                       Date de vente
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wide">
                       Prix vendu
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wide">
                       Frais
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wide">
                       Bénéfice
+                    </th>
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                      Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white divide-y divide-gray-100">
                   {salesHistory.map((sale) => (
                     <tr
                       key={sale.id}
-                      className="hover:bg-gray-50 transition-colors cursor-pointer"
+                      className="group hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent cursor-pointer transition-all duration-200"
                       onDoubleClick={() => setSelectedSale(sale)}
                     >
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          {sale.photos.length > 0 ? (
-                            <img
-                              src={sale.photos[0]}
-                              alt={sale.title}
-                              className="w-12 h-12 rounded-lg object-cover"
-                            />
-                          ) : (
-                            <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                              <Package className="w-6 h-6 text-gray-400" />
-                            </div>
-                          )}
-                          <div>
-                            <p className="text-sm font-medium text-gray-900">{sale.title}</p>
-                            <p className="text-xs text-gray-500">{sale.brand}</p>
+                        <div className="flex items-center gap-4">
+                          <div className="relative w-16 h-16 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex items-center justify-center ring-1 ring-gray-200/50 group-hover:ring-emerald-300 transition-all flex-shrink-0">
+                            {sale.photos.length > 0 ? (
+                              <img
+                                src={sale.photos[0]}
+                                alt={sale.title}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <Package className="w-7 h-7 text-gray-300" />
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-semibold text-gray-900 truncate group-hover:text-emerald-600 transition-colors">
+                              {sale.title}
+                            </p>
+                            <p className="text-xs text-gray-500 truncate">{sale.brand}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
-                        {formatDate(sale.sold_at)}
+                      <td className="px-6 py-4">
+                        <span className="inline-flex items-center px-3 py-1.5 bg-gray-50 border border-gray-200/50 rounded-lg text-xs font-medium text-gray-700">
+                          {formatDate(sale.sold_at)}
+                        </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-right font-medium text-gray-900">
-                        {sale.sold_price.toFixed(2)} €
+                      <td className="px-6 py-4 text-right">
+                        <span className="text-sm font-bold bg-gradient-to-r from-emerald-600 to-emerald-700 bg-clip-text text-transparent">
+                          {sale.sold_price.toFixed(2)} €
+                        </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-right text-gray-600">
-                        {(sale.fees + sale.shipping_cost).toFixed(2)} €
+                      <td className="px-6 py-4 text-right">
+                        <span className="text-sm text-gray-600 font-medium">
+                          {(sale.fees + sale.shipping_cost).toFixed(2)} €
+                        </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-right">
-                        <span className={`font-semibold ${sale.net_profit >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                      <td className="px-6 py-4 text-right">
+                        <span className={`inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-bold ${
+                          sale.net_profit >= 0
+                            ? 'bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700'
+                            : 'bg-gradient-to-r from-red-50 to-orange-50 text-red-700'
+                        }`}>
                           {sale.net_profit >= 0 ? '+' : ''}{sale.net_profit.toFixed(2)} €
                         </span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedSale(sale);
+                          }}
+                          className="p-2.5 rounded-xl text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all active:scale-90"
+                          title="Voir les détails"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+          </div>
 
-            <div className="md:hidden divide-y divide-gray-200">
-              {salesHistory.map((sale) => (
-                <div
-                  key={sale.id}
-                  className="px-4 py-4 hover:bg-gray-50 transition-colors cursor-pointer"
-                  onClick={() => setSelectedSale(sale)}
-                >
-                  <div className="flex items-start gap-3">
+          {/* Mobile View */}
+          <div className="md:hidden space-y-2 px-0.5">
+            {salesHistory.map((sale) => (
+              <div
+                key={sale.id}
+                className="group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:scale-[1.01] cursor-pointer"
+                onClick={() => setSelectedSale(sale)}
+              >
+                <div className="flex gap-4 p-4">
+                  <div className="relative w-24 h-24 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0 ring-1 ring-gray-200/50">
                     {sale.photos.length > 0 ? (
                       <img
                         src={sale.photos[0]}
                         alt={sale.title}
-                        className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                        className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Package className="w-8 h-8 text-gray-400" />
-                      </div>
+                      <Package className="w-10 h-10 text-gray-300" />
                     )}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-medium text-gray-900 truncate mb-1">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+
+                  <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-900 truncate mb-1 group-hover:text-emerald-600 transition-colors">
                         {sale.title}
                       </h3>
-                      <div className="flex items-center justify-between gap-2 mb-2">
-                        <span className="text-xs text-gray-500">
-                          {formatDate(sale.sold_at)}
-                        </span>
-                        <span className={`text-sm font-semibold ${sale.net_profit >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                          {sale.net_profit >= 0 ? '+' : ''}{sale.net_profit.toFixed(2)} €
-                        </span>
-                      </div>
+                      <p className="text-xs text-gray-500 truncate mb-2">
+                        {sale.brand}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-gray-500 font-medium">
+                        {formatDate(sale.sold_at)}
+                      </span>
+                      <span className={`text-base font-bold ${
+                        sale.net_profit >= 0
+                          ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 bg-clip-text text-transparent'
+                          : 'text-red-600'
+                      }`}>
+                        {sale.net_profit >= 0 ? '+' : ''}{sale.net_profit.toFixed(2)} €
+                      </span>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
+
+                <div className="px-4 pb-3 pt-2 bg-gradient-to-r from-gray-50 to-transparent border-t border-gray-100 flex items-center justify-between">
+                  <div className="flex items-center gap-3 text-xs">
+                    <div>
+                      <span className="text-gray-500">Vendu:</span>
+                      <span className="ml-1 font-semibold text-gray-900">{sale.sold_price.toFixed(2)} €</span>
+                    </div>
+                    <div className="w-px h-4 bg-gray-300"></div>
+                    <div>
+                      <span className="text-gray-500">Frais:</span>
+                      <span className="ml-1 font-semibold text-gray-900">{(sale.fees + sale.shipping_cost).toFixed(2)} €</span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedSale(sale);
+                    }}
+                    className="p-2 rounded-xl hover:bg-white text-gray-500 hover:text-emerald-600 transition-all active:scale-90"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       {selectedSale && (
         <SaleDetailModal
