@@ -15,7 +15,7 @@ export class VintedAutomation {
 
   async initialize(): Promise<void> {
     this.browser = await chromium.launch({
-      headless: true,
+      headless: false,
       slowMo: 100,
     });
 
@@ -138,15 +138,21 @@ export class VintedAutomation {
       throw new Error('Page not initialized');
     }
 
-    const fileInput = await this.page.locator('input[type="file"][accept*="image"]').first();
+    console.log(`📸 Attempting to upload ${photoPaths.length} photos...`);
+
+    const fileInput = this.page.locator('input[type="file"]').first();
+    const isVisible = await fileInput.isVisible().catch(() => false);
+    console.log(`File input visible: ${isVisible}`);
 
     const localPaths: string[] = [];
 
-    for (const photoPath of photoPaths) {
+    for (let i = 0; i < photoPaths.length; i++) {
+      const photoPath = photoPaths[i];
+      console.log(`\n📷 Processing photo ${i + 1}/${photoPaths.length}`);
       let localPath = photoPath;
 
       if (photoPath.startsWith('http://') || photoPath.startsWith('https://')) {
-        console.log(`📥 Downloading photo from: ${photoPath}`);
+        console.log(`📥 Downloading from: ${photoPath.substring(0, 80)}...`);
         localPath = await this.downloadPhoto(photoPath);
         localPaths.push(localPath);
       } else {
@@ -159,19 +165,23 @@ export class VintedAutomation {
         }
       }
 
+      console.log(`⬆️  Uploading file: ${localPath}`);
       await fileInput.setInputFiles(localPath);
-      await this.page.waitForTimeout(1500);
+      console.log(`✓ File set, waiting for upload...`);
+      await this.page.waitForTimeout(2000);
     }
 
+    console.log(`\n🧹 Cleaning up temporary files...`);
     for (const localPath of localPaths) {
       try {
         await fs.unlink(localPath);
+        console.log(`✓ Deleted: ${localPath}`);
       } catch (error) {
         console.warn(`⚠ Failed to delete temp file: ${localPath}`);
       }
     }
 
-    console.log(`✓ Uploaded ${photoPaths.length} photos`);
+    console.log(`\n✓ Successfully uploaded ${photoPaths.length} photos`);
   }
 
   async fillArticleForm(article: ArticleToPublish): Promise<void> {
@@ -179,36 +189,18 @@ export class VintedAutomation {
       throw new Error('Page not initialized');
     }
 
-    await this.page.fill('input[name="title"]', article.title);
-    await this.page.waitForTimeout(500);
+    console.log('\n📝 Filling article form...');
 
-    await this.page.fill('textarea[name="description"]', article.description);
-    await this.page.waitForTimeout(500);
+    console.log('⏸️  PAUSED - Please fill the form manually in the browser');
+    console.log('Once done, return here and press Enter to continue...\n');
 
-    await this.page.fill('input[name="brand"]', article.brand);
-    await this.page.waitForTimeout(500);
+    await new Promise<void>((resolve) => {
+      process.stdin.once('data', () => {
+        resolve();
+      });
+    });
 
-    await this.page.fill('input[name="size"]', article.size);
-    await this.page.waitForTimeout(500);
-
-    await this.page.selectOption('select[name="status"]', article.condition);
-    await this.page.waitForTimeout(500);
-
-    if (article.color) {
-      await this.page.fill('input[name="color"]', article.color);
-      await this.page.waitForTimeout(500);
-    }
-
-    if (article.material) {
-      await this.page.fill('input[name="material"]', article.material);
-      await this.page.waitForTimeout(500);
-    }
-
-    const priceString = article.price.toFixed(2);
-    await this.page.fill('input[name="price"]', priceString);
-    await this.page.waitForTimeout(500);
-
-    console.log('✓ Form filled successfully');
+    console.log('✓ Continuing...');
   }
 
   async submitArticle(): Promise<string> {
