@@ -358,7 +358,7 @@ export function ArticleFormPage() {
         material: analysisResult.material || formData.material,
       });
 
-v      setModalState({
+      setModalState({
         isOpen: true,
         title: 'Analyse terminée',
         message: "Les informations de l'article ont été remplies automatiquement. Vous pouvez les modifier si nécessaire.",
