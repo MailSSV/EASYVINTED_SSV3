@@ -40,6 +40,7 @@ export function StructureFormPage() {
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [markingAsPublished, setMarkingAsPublished] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -84,6 +85,34 @@ export function StructureFormPage() {
     const category = VINTED_CATEGORIES.find(c => c.id === categoryId);
     const subcategory = category?.subcategories?.find(s => s.id === subcategoryId);
     return subcategory?.title || 'Non définie';
+  };
+
+  const markAsPublished = async () => {
+    if (!id || !user) return;
+
+    setMarkingAsPublished(true);
+    try {
+      const { error } = await supabase
+        .from('articles')
+        .update({
+          status: 'published',
+          published_at: new Date().toISOString()
+        })
+        .eq('id', id)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      setToast({ message: 'Article marqué comme publié !', type: 'success' });
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
+    } catch (error) {
+      console.error('Error marking article as published:', error);
+      setToast({ message: 'Erreur lors de la mise à jour', type: 'error' });
+    } finally {
+      setMarkingAsPublished(false);
+    }
   };
 
   if (loading) {
@@ -280,10 +309,27 @@ export function StructureFormPage() {
       </div>
 
       <div className="mt-8 p-4 bg-green-50 border border-green-200 rounded-lg">
-        <h3 className="font-semibold text-green-900 mb-2">Une fois terminé</h3>
-        <p className="text-green-800 text-sm">
+        <h3 className="font-semibold text-green-900 mb-3">Une fois terminé</h3>
+        <p className="text-green-800 text-sm mb-4">
           Après avoir publié l'article sur Vinted, n'oubliez pas de marquer cet article comme "Publié" dans votre tableau de bord EasyVinted.
         </p>
+        <Button
+          onClick={markAsPublished}
+          disabled={markingAsPublished}
+          className="w-full sm:w-auto"
+        >
+          {markingAsPublished ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+              Enregistrement...
+            </>
+          ) : (
+            <>
+              <CheckCircle className="w-4 h-4 mr-2" />
+              Marquer cet article comme Publié
+            </>
+          )}
+        </Button>
       </div>
     </div>
   );
