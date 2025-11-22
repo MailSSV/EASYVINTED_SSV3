@@ -227,19 +227,7 @@ export function StructureFormPage() {
           <li>Cliquez sur le bouton Copier pour chaque champ</li>
           <li>Collez la valeur dans le champ correspondant sur Vinted</li>
               </ol>
-        <div className="flex flex-col gap-2 mt-3">
-          <a
-            href="https://www.vinted.fr/items/new"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium"
-          >
-            <ExternalLink className="w-4 h-4 mr-1" />
-            Ouvrir Vinted (nouvel onglet)
-          </a>
-         
-          
-        </div>
+        
       </div>
 
       <div className="space-y-4">
