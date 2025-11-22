@@ -237,8 +237,7 @@ export function StructureFormPage() {
             <ExternalLink className="w-4 h-4 mr-1" />
             Ouvrir Vinted (nouvel onglet)
           </a>
-          Conseil : Selectionnez la vue Fractionnée dans les options d'affichage de votre onglet pour afficher les 2 fenêtres cote à cote.
-          <p className="text-gray-600">
+         
           <a
             href="https://www.vinted.fr/items/new"
             target="_blank"
@@ -252,7 +251,6 @@ export function StructureFormPage() {
             <SplitSquareHorizontal className="w-4 h-4 mr-1" />
             Ouvrir Vinted dans un Pop up
           </a>
-        </p>
         </div>
       </div>
 
