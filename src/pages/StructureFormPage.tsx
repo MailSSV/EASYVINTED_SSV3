@@ -222,7 +222,14 @@ export function StructureFormPage() {
         <h2 className="font-semibold text-blue-900 mb-2">Mode d'emploi</h2>
         <ol className="list-decimal list-inside space-y-1 text-blue-800 text-sm">
           <li>Ouvrez Vinted dans un nouvel onglet (et identifiez vous si besoin)</li>
-          <div className="flex flex-col gap-2 mt-3">
+          
+             <li>Recommandé : Placez l'onglet Vinted sur la barre latérale droite de votre navigateur pour l'afficher "Côte à Côte" avec celui-ci et faciliter les manips</li>
+          <li>Glissez-Déposez vos Photos dans la section "+ Ajoute des Photos" de Vinted </li>
+          <li>Cliquez sur le bouton Copier pour chaque champ</li>
+          <li>Collez la valeur dans le champ correspondant sur Vinted</li>
+           
+              </ol>
+        <div className="flex flex-col gap-2 mt-3">
           <a
             href="https://www.vinted.fr/items/new"
             target="_blank"
@@ -233,13 +240,6 @@ export function StructureFormPage() {
             Ouvrir Vinted (nouvel onglet)
           </a>
         </div>
-             <li>Recommandé : Placez l'onglet Vinted sur la barre latérale droite de votre navigateur pour l'afficher "Côte à Côte" avec celui-ci et faciliter les manips</li>
-          <li>Glissez-Déposez vos Photos dans la section "+ Ajoute des Photos" de Vinted </li>
-          <li>Cliquez sur le bouton Copier pour chaque champ</li>
-          <li>Collez la valeur dans le champ correspondant sur Vinted</li>
-           
-              </ol>
-        
       </div>
 
       <div className="space-y-4">
