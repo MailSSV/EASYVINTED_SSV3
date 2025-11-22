@@ -237,6 +237,7 @@ export function StructureFormPage() {
             <ExternalLink className="w-4 h-4 mr-1" />
             Ouvrir Vinted (nouvel onglet)
           </a>
+          Texte...
           <a
             href="https://www.vinted.fr/items/new"
             target="_blank"
