@@ -224,7 +224,7 @@ export function StructureFormPage() {
           <li>Ouvrez Vinted dans un nouvel onglet (et identifiez vous si besoin)</li>
           <li>Placez l'onglet Vinted sur la barre latérale de votre navigateur pour plus de confort (Clic droit sur l'onglet + Placer dans la barre latérale) </li>
            <li>Copiez-Collez les valeurs des champs de Easyvinted vers Vinted dans l'ordre souhaité</li>
-          <li>Pour les photos : Glissez-Déposez les dans la section Ajoute des Photos</li>
+          <li>Pour les photos : Glissez-Déposez les dans la section // Ajoute des Photos// </li>
           <li>Cliquez sur le bouton Copier pour chaque champ</li>
           <li>Collez la valeur dans le champ correspondant sur Vinted</li>
               </ol>
