@@ -318,7 +318,7 @@ export function StructureFormPage() {
       <div className="mt-8 p-4 bg-green-50 border border-green-200 rounded-lg">
         <h3 className="font-semibold text-green-900 mb-3">Une fois terminé</h3>
         <p className="text-green-800 text-sm mb-4">
-          Après avoir publié l'article sur Vinted, n'oubliez pas de marquer cet article comme "Publié" dans votre tableau de bord EasyVinted.
+          Après avoir publié l'article sur Vinted, n'oubliez pas de marquer cet article comme "Publié" afin de mettre à jour automatiquement votre tableau de bord EasyVinted.
         </p>
         <Button
           onClick={markAsPublished}
