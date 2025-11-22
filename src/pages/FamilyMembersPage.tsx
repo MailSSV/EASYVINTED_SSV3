@@ -74,6 +74,7 @@ export function FamilyMembersPage() {
   }
 
   function openModal(member?: FamilyMember) {
+    console.log('openModal called', member);
     if (member) {
       setEditingMember(member);
       setFormData({
@@ -94,6 +95,7 @@ export function FamilyMembersPage() {
       });
     }
     setShowModal(true);
+    console.log('showModal set to true');
   }
 
   function closeModal() {
@@ -229,8 +231,8 @@ export function FamilyMembersPage() {
             <p className="text-sm text-gray-600">Gérez les vendeurs de votre compte</p>
           </div>
         </div>
-        <Button onClick={() => openModal()}>
-          <Plus className="w-5 h-5 mr-2" />
+        <Button type="button" onClick={() => openModal()}>
+          <Plus className="w-5 h-5" />
           Ajouter un membre
         </Button>
       </div>
@@ -242,8 +244,8 @@ export function FamilyMembersPage() {
           <p className="text-gray-600 mb-6">
             Créez des profils pour les différents vendeurs de votre famille
           </p>
-          <Button onClick={() => openModal()}>
-            <Plus className="w-5 h-5 mr-2" />
+          <Button type="button" onClick={() => openModal()}>
+            <Plus className="w-5 h-5" />
             Créer le premier membre
           </Button>
         </div>
