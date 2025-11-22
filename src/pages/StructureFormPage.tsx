@@ -223,8 +223,7 @@ export function StructureFormPage() {
         <ol className="list-decimal list-inside space-y-1 text-blue-800 text-sm">
           <li>Ouvrez Vinted dans un nouvel onglet (et identifiez vous si besoin)</li>
           
-             <li>Recommandé : Placez l'onglet Vinted sur la barre latérale droite de votre navigateur pour l'afficher "Côte à Côte" avec celui-ci et faciliter les manips</li>
-           <b>Collez la valeur dans le champ correspondant sur Vinted</b>
+             <i>Recommandé : Placez l'onglet Vinted sur la barre latérale droite de votre navigateur pour l'afficher "Côte à Côte" avec celui-ci et faciliter les manips</i>
           <li>Glissez-Déposez vos Photos dans la section "+ Ajoute des Photos" de Vinted </li>
           <li>Cliquez sur le bouton Copier pour chaque champ</li>
           <li>Collez la valeur dans le champ correspondant sur Vinted</li>
