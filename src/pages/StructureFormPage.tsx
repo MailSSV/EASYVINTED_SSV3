@@ -229,7 +229,7 @@ export function StructureFormPage() {
           <li>Collez la valeur dans le champ correspondant sur Vinted</li>
            <i>Conseil : Suivez les suggestions de valeurs proposées par Vinted</i>
            <li>Enregistrez votre annonce et c'est tout :)</li>
-          <i> près avoir publié l'article sur Vinted, n'oubliez pas de marquer cet article comme "Publié"</i>
+          <i> Après avoir publié l'article sur Vinted, n'oubliez pas de marquer cet article comme "Publié"</i>
               </ol>
         <div className="flex flex-col gap-2 mt-3">
           <a
