@@ -21,6 +21,7 @@ import {
   Snowflake,
   CloudSun,
   ClipboardList,
+  Upload,
 } from 'lucide-react';
 import { Article, ArticleStatus, Season } from '../types/article';
 import { Button } from '../components/ui/Button';
@@ -604,10 +605,10 @@ export function DashboardPage() {
                           e.stopPropagation();
                           navigate(`/articles/${article.id}/structure`);
                         }}
-                        className="p-2 rounded-xl hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all active:scale-90"
-                        title="Formulaire copier/coller"
+                        className="p-2 rounded-xl hover:bg-gray-100 text-gray-500 hover:text-emerald-600 transition-all active:scale-90"
+                        title="Envoyer à Vinted"
                       >
-                        <ClipboardList className="w-4 h-4" />
+                        <Upload className="w-4 h-4" />
                       </button>
                       <button
                         onClick={(e) => {
@@ -783,10 +784,10 @@ export function DashboardPage() {
                             e.stopPropagation();
                             navigate(`/articles/${article.id}/structure`);
                           }}
-                          className="p-2.5 rounded-xl text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all active:scale-90"
-                          title="Formulaire copier/coller"
+                          className="p-2.5 rounded-xl text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all active:scale-90"
+                          title="Envoyer à Vinted"
                         >
-                          <ClipboardList className="w-4 h-4" />
+                          <Upload className="w-4 h-4" />
                         </button>
                         <button
                           onClick={(e) => {
