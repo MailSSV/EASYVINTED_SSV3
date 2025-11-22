@@ -18,6 +18,8 @@ interface SaleRecord {
   photos: string[];
   buyer_name?: string;
   sale_notes?: string;
+  seller_id?: string;
+  seller_name?: string;
 }
 
 export function SalesPage() {
@@ -40,7 +42,10 @@ export function SalesPage() {
 
       const { data: articles, error } = await supabase
         .from('articles')
-        .select('*')
+        .select(`
+          *,
+          family_members:seller_id (name)
+        `)
         .eq('user_id', user.id)
         .eq('status', 'sold')
         .not('sold_at', 'is', null)
@@ -64,6 +69,8 @@ export function SalesPage() {
             photos: a.photos || [],
             buyer_name: a.buyer_name,
             sale_notes: a.sale_notes,
+            seller_id: a.seller_id,
+            seller_name: a.family_members?.name || null,
           }))
         );
       }

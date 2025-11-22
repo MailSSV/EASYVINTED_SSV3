@@ -14,7 +14,8 @@ import { PlannerPage } from './pages/PlannerPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import { HomePage } from './pages/HomePage';
-import { StructureFormPage } from './pages/StructureFormPage';   // ⬅️ nouveau
+import { StructureFormPage } from './pages/StructureFormPage';
+import { FamilyMembersPage } from './pages/FamilyMembersPage';
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
                     <Route path="/sales" element={<SalesPage />} />
                     <Route path="/planner" element={<PlannerPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/family" element={<FamilyMembersPage />} />
                     <Route path="/settings" element={<SettingsPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>

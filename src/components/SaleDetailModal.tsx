@@ -15,6 +15,7 @@ interface SaleDetailModalProps {
     photos: string[];
     buyer_name?: string;
     sale_notes?: string;
+    seller_name?: string;
   };
   onClose: () => void;
 }
@@ -48,11 +49,18 @@ export function SaleDetailModal({ sale, onClose }: SaleDetailModalProps) {
                     <Calendar className="w-4 h-4" />
                     <span>{formatDate(sale.sold_at)}</span>
                   </div>
-                 
+
                   {sale.buyer_name && (
                     <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-white text-gray-700 border border-gray-200 shadow-sm">
                       <User className="w-3.5 h-3.5" />
-                      <span>{sale.buyer_name}</span>
+                      <span>Vendu à : {sale.buyer_name}</span>
+                    </div>
+                  )}
+
+                  {sale.seller_name && (
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm">
+                      <User className="w-3.5 h-3.5" />
+                      <span>Vendu par : {sale.seller_name}</span>
                     </div>
                   )}
                 </div>

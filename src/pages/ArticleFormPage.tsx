@@ -90,13 +90,16 @@ export function ArticleFormPage() {
     photos: [] as string[],
     color: '',
     material: '',
+    seller_id: null as string | null,
   });
 
   const selectedCategory = VINTED_CATEGORIES.find((c) => c.name === formData.main_category);
   const selectedSubcategory = selectedCategory?.subcategories.find((s) => s.name === formData.subcategory);
+  const [familyMembers, setFamilyMembers] = useState<Array<{id: string; name: string; is_default: boolean}>>([]);
 
   useEffect(() => {
     loadUserProfile();
+    loadFamilyMembers();
     if (id) {
       fetchArticle();
     }
@@ -136,6 +139,30 @@ export function ArticleFormPage() {
     }
   }
 
+  async function loadFamilyMembers() {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('family_members')
+        .select('id, name, is_default')
+        .eq('user_id', user.id)
+        .order('name');
+
+      if (error) throw error;
+      setFamilyMembers(data || []);
+
+      if (!id && data && data.length > 0) {
+        const defaultMember = data.find(m => m.is_default);
+        if (defaultMember) {
+          setFormData(prev => ({ ...prev, seller_id: defaultMember.id }));
+        }
+      }
+    } catch (error) {
+      console.error('Error loading family members:', error);
+    }
+  }
+
   async function fetchArticle() {
     if (!id) return;
 
@@ -166,6 +193,7 @@ export function ArticleFormPage() {
           photos: data.photos || [],
           color: data.color || '',
           material: data.material || '',
+          seller_id: data.seller_id || null,
         });
         setArticleStatus(data.status as ArticleStatus);
       }
@@ -402,6 +430,7 @@ export function ArticleFormPage() {
         photos: formData.photos,
         color: formData.color || null,
         material: formData.material || null,
+        seller_id: formData.seller_id || null,
         status,
         updated_at: new Date().toISOString(),
         ...(id ? {} : { user_id: user?.id }),
@@ -986,6 +1015,29 @@ export function ArticleFormPage() {
                     </select>
                   </div>
                 </div>
+
+                {familyMembers.length > 0 && (
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Vendu par
+                      <span className="ml-1 text-xs text-gray-500 font-normal">
+                        (optionnel - laissez vide pour vous)
+                      </span>
+                    </label>
+                    <select
+                      value={formData.seller_id || ''}
+                      onChange={(e) => setFormData({ ...formData, seller_id: e.target.value || null })}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    >
+                      <option value="">Moi (compte principal)</option>
+                      {familyMembers.map((member) => (
+                        <option key={member.id} value={member.id}>
+                          {member.name} {member.is_default ? '(par défaut)' : ''}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">État *</label>

@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Package, Settings, BarChart3, ShoppingBag, Calendar, Menu, X, LogOut } from 'lucide-react';
+import { Package, Settings, BarChart3, ShoppingBag, Calendar, Menu, X, LogOut, Users } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
@@ -173,6 +173,14 @@ export function AppLayout({ children }: AppLayoutProps) {
                       </div>
                       Mon profil
                     </Link>
+                    <Link
+                      to="/family"
+                      onClick={() => setShowUserMenu(false)}
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      <Users className="w-4 h-4" />
+                      Membres famille
+                    </Link>
                     <button
                       onClick={handleSignOut}
                       className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
@@ -290,6 +298,17 @@ export function AppLayout({ children }: AppLayoutProps) {
                 </div>
                 Mon Profil
               </Link>
+              <Link
+                to="/family"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 transform ${
+                  mobileMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
+                } text-gray-700 hover:bg-gray-50`}
+                style={{ transitionDelay: mobileMenuOpen ? '350ms' : '0ms' }}
+              >
+                <Users className="w-5 h-5" />
+                Membres famille
+              </Link>
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
@@ -298,7 +317,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 transform ${
                   mobileMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
                 } text-red-600 hover:bg-red-50`}
-                style={{ transitionDelay: mobileMenuOpen ? '350ms' : '0ms' }}
+                style={{ transitionDelay: mobileMenuOpen ? '400ms' : '0ms' }}
               >
                 <LogOut className="w-5 h-5" />
                 Se déconnecter
