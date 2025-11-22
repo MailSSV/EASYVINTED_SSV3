@@ -221,7 +221,7 @@ export function StructureFormPage() {
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
         <h2 className="font-semibold text-blue-900 mb-2">Mode d'emploi</h2>
         <ol className="list-decimal list-inside space-y-1 text-blue-800 text-sm">
-          <li>Ouvrez Vinted dans un nouvel onglet et créez un nouvel article</li>
+          <li>Ouvrez Vinted dans un nouvel onglet (et identifiez vous si besoin)</li>
           <li>Suivez l'ordre des champs ci-dessous</li>
           <li>Cliquez sur le bouton Copier pour chaque champ</li>
           <li>Collez la valeur dans le champ correspondant sur Vinted</li>
