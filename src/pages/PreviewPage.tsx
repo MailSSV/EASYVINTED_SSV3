@@ -349,9 +349,16 @@ export function PreviewPage() {
                         100% complété
                       </span>
                     </div>
-                    <p className="text-sm text-emerald-800 leading-relaxed">
+                    <p className="text-sm text-emerald-800 leading-relaxed mb-3">
                       Tous les champs requis sont remplis. Vous pouvez maintenant envoyer cette annonce sur la plateforme Vinted.
                     </p>
+                    <Button
+                      onClick={() => navigate(`/articles/${article.id}/structure`)}
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                    >
+                      <Send className="w-4 h-4 mr-2" />
+                      Envoyer à Vinted
+                    </Button>
                   </div>
                 </div>
               </div>
