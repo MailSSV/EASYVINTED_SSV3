@@ -82,15 +82,51 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const { data: profile } = await supabase
-      .from("user_profiles")
-      .select("writing_style")
-      .eq("id", user.id)
-      .maybeSingle();
+    const { imageUrls, sellerId } = await req.json();
 
-    const writingStyle = profile?.writing_style || "Description détaillée et attractive";
+    let writingStyle = "Description détaillée et attractive";
 
-    const { imageUrls } = await req.json();
+    if (sellerId) {
+      const { data: familyMember } = await supabase
+        .from("family_members")
+        .select("persona_id, custom_persona_id")
+        .eq("id", sellerId)
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (familyMember) {
+        if (familyMember.custom_persona_id) {
+          const { data: customPersona } = await supabase
+            .from("custom_personas")
+            .select("instructions")
+            .eq("id", familyMember.custom_persona_id)
+            .maybeSingle();
+
+          if (customPersona?.instructions) {
+            writingStyle = customPersona.instructions;
+          }
+        } else if (familyMember.persona_id) {
+          const personaStyles: Record<string, string> = {
+            minimalist: "Descriptions courtes, claires et efficaces",
+            enthusiast: "Dynamique, positive et pleine d'énergie",
+            pro: "Experte, technique et détaillée",
+            friendly: "Chaleureuse, accessible et décontractée",
+            elegant: "Raffinée, sophistiquée et chic",
+            eco: "Responsable avec focus sur la durabilité",
+            jcvd: "Unique, philosophique et inspirante style Jean-Claude Van Damme"
+          };
+          writingStyle = personaStyles[familyMember.persona_id] || writingStyle;
+        }
+      }
+    } else {
+      const { data: profile } = await supabase
+        .from("user_profiles")
+        .select("writing_style")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      writingStyle = profile?.writing_style || "Description détaillée et attractive";
+    }
     console.log("Received imageUrls:", imageUrls);
 
     if (!imageUrls || !Array.isArray(imageUrls) || imageUrls.length === 0) {
