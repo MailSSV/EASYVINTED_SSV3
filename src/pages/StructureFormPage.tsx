@@ -222,7 +222,7 @@ export function StructureFormPage() {
         <h2 className="font-semibold text-blue-900 mb-2">Mode d'emploi</h2>
         <ol className="list-decimal list-inside space-y-1 text-blue-800 text-sm">
           <li>Ouvrez Vinted dans un nouvel onglet (et identifiez vous si besoin)</li>
-          <li>Placez l'onglet Vinted sur la droite de votre navigateur pour plus de confort(Clic droit sur l'onglet +) </li>
+          <li>Placez l'onglet Vinted sur la droite de votre navigateur pour plus de confort(Clic droit sur l'onglet + Placer dans la barre latérale) </li>
           <li>Pour les photos, Glissez-Déposez les dans l'ordre souhaité</li>
           <li>Cliquez sur le bouton Copier pour chaque champ</li>
           <li>Collez la valeur dans le champ correspondant sur Vinted</li>
