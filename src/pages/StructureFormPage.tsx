@@ -227,7 +227,7 @@ export function StructureFormPage() {
           <li>Collez la valeur dans le champ correspondant sur Vinted</li>
           <li>Pour les photos, Glissez-Déposez les dans le même ordre</li>
         </ol>
-        <div className="flex flex-col sm:flex-row gap-2 mt-3">
+        <div className="flex flex-col gap-2 mt-3">
           <a
             href="https://www.vinted.fr/items/new"
             target="_blank"
