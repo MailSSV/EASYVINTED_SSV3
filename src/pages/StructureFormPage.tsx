@@ -236,6 +236,7 @@ export function StructureFormPage() {
           <ExternalLink className="w-4 h-4 mr-1" />
           Ouvrir Vinted (nouvel onglet)
         </a>
+        <ol className="list-decimal list-inside space-y-1 text-blue-800 text-sm">
       </div>
 
       <div className="space-y-4">
