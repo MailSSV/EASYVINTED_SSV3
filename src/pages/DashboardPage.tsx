@@ -600,16 +600,18 @@ export function DashboardPage() {
                     </button>
 
                     <div className="flex items-center gap-1">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/articles/${article.id}/structure`);
-                        }}
-                        className="p-2 rounded-xl hover:bg-gray-100 text-gray-500 hover:text-emerald-600 transition-all active:scale-90"
-                        title="Envoyer à Vinted"
-                      >
-                        <Upload className="w-4 h-4" />
-                      </button>
+                      {(article.status === 'ready' || article.status === 'scheduled') && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/articles/${article.id}/structure`);
+                          }}
+                          className="p-2 rounded-xl hover:bg-gray-100 text-gray-500 hover:text-emerald-600 transition-all active:scale-90"
+                          title="Envoyer à Vinted"
+                        >
+                          <Upload className="w-4 h-4" />
+                        </button>
+                      )}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -779,16 +781,18 @@ export function DashboardPage() {
 
                     <td className="px-6 py-4 whitespace-nowrap relative">
                       <div className="flex items-center justify-end gap-1">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/articles/${article.id}/structure`);
-                          }}
-                          className="p-2.5 rounded-xl text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all active:scale-90"
-                          title="Envoyer à Vinted"
-                        >
-                          <Upload className="w-4 h-4" />
-                        </button>
+                        {(article.status === 'ready' || article.status === 'scheduled') && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/articles/${article.id}/structure`);
+                            }}
+                            className="p-2.5 rounded-xl text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all active:scale-90"
+                            title="Envoyer à Vinted"
+                          >
+                            <Upload className="w-4 h-4" />
+                          </button>
+                        )}
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
