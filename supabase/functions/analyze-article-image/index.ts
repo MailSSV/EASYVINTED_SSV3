@@ -89,43 +89,29 @@ Deno.serve(async (req: Request) => {
     if (sellerId) {
       const { data: familyMember } = await supabase
         .from("family_members")
-        .select("persona_id, custom_persona_id")
+        .select("persona_id, writing_style")
         .eq("id", sellerId)
         .eq("user_id", user.id)
         .maybeSingle();
 
       if (familyMember) {
-        if (familyMember.custom_persona_id) {
-          const { data: customPersona } = await supabase
-            .from("custom_personas")
-            .select("instructions")
-            .eq("id", familyMember.custom_persona_id)
-            .maybeSingle();
-
-          if (customPersona?.instructions) {
-            writingStyle = customPersona.instructions;
-          }
+        if (familyMember.writing_style) {
+          writingStyle = familyMember.writing_style;
         } else if (familyMember.persona_id) {
           const personaStyles: Record<string, string> = {
-            minimalist: "Descriptions courtes, claires et efficaces",
-            enthusiast: "Dynamique, positive et pleine d'énergie",
-            pro: "Experte, technique et détaillée",
-            friendly: "Chaleureuse, accessible et décontractée",
-            elegant: "Raffinée, sophistiquée et chic",
-            eco: "Responsable avec focus sur la durabilité",
-            jcvd: "Unique, philosophique et inspirante style Jean-Claude Van Damme"
+            minimalist: "Descriptions courtes, claires et efficaces. Style minimaliste avec uniquement l'essentiel.",
+            enthusiast: "Dynamique, positive et pleine d'énergie ! Utilise des points d'exclamation et un ton enthousiaste.",
+            professional: "Experte, technique et détaillée. Descriptions précises et professionnelles.",
+            friendly: "Chaleureuse, accessible et décontractée. Ton amical comme entre amis.",
+            elegant: "Raffinée, sophistiquée et chic. Vocabulaire élégant et noble.",
+            eco_conscious: "Responsable avec focus sur la durabilité. Met en avant l'éco-responsabilité et la seconde vie des vêtements.",
+            trendy: "Tendance et à la pointe de la mode. Utilise un vocabulaire fashion et actuel.",
+            storyteller: "Raconte une histoire autour de l'article. Crée une connexion émotionnelle avec le vêtement.",
+            custom: writingStyle
           };
           writingStyle = personaStyles[familyMember.persona_id] || writingStyle;
         }
       }
-    } else {
-      const { data: profile } = await supabase
-        .from("user_profiles")
-        .select("writing_style")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      writingStyle = profile?.writing_style || "Description détaillée et attractive";
     }
     console.log("Received imageUrls:", imageUrls);
 

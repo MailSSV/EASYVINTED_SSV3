@@ -7,38 +7,33 @@ import { Toast } from '../components/ui/Toast';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { PERSONAS } from '../constants/personas';
+import { CustomPersonaModal, CustomPersonaData } from '../components/CustomPersonaModal';
 
 interface FamilyMember {
   id: string;
   name: string;
   age: number;
   persona_id: string;
-  custom_persona_id: string | null;
+  writing_style: string | null;
   is_default: boolean;
-}
-
-interface CustomPersona {
-  id: string;
-  name: string;
-  emoji: string;
-  color: string;
 }
 
 export function FamilyMembersPage() {
   const { user } = useAuth();
   const [members, setMembers] = useState<FamilyMember[]>([]);
-  const [customPersonas, setCustomPersonas] = useState<CustomPersona[]>([]);
   const [loading, setLoading] = useState(true);
   const [memberToDelete, setMemberToDelete] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [editingMember, setEditingMember] = useState<FamilyMember | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [isPersonaModalOpen, setIsPersonaModalOpen] = useState(false);
+  const [customPersonaData, setCustomPersonaData] = useState<CustomPersonaData | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
     age: '',
     persona_id: 'friendly',
-    custom_persona_id: null as string | null,
+    writing_style: '',
     is_default: false,
   });
 
@@ -50,23 +45,14 @@ export function FamilyMembersPage() {
     if (!user) return;
 
     try {
-      const [membersResult, personasResult] = await Promise.all([
-        supabase
-          .from('family_members')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: true }),
-        supabase
-          .from('custom_personas')
-          .select('id, name, emoji, color')
-          .eq('user_id', user.id),
-      ]);
+      const { data, error } = await supabase
+        .from('family_members')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: true });
 
-      if (membersResult.error) throw membersResult.error;
-      if (personasResult.error) throw personasResult.error;
-
-      setMembers(membersResult.data || []);
-      setCustomPersonas(personasResult.data || []);
+      if (error) throw error;
+      setMembers(data || []);
     } catch (error) {
       console.error('Error loading data:', error);
       setToast({ message: 'Erreur lors du chargement des données', type: 'error' });
@@ -82,7 +68,7 @@ export function FamilyMembersPage() {
         name: member.name,
         age: member.age.toString(),
         persona_id: member.persona_id,
-        custom_persona_id: member.custom_persona_id,
+        writing_style: member.writing_style || '',
         is_default: member.is_default,
       });
     } else {
@@ -91,7 +77,7 @@ export function FamilyMembersPage() {
         name: '',
         age: '',
         persona_id: 'friendly',
-        custom_persona_id: null,
+        writing_style: '',
         is_default: false,
       });
     }
@@ -119,7 +105,7 @@ export function FamilyMembersPage() {
         name: formData.name.trim(),
         age,
         persona_id: formData.persona_id,
-        custom_persona_id: formData.custom_persona_id,
+        writing_style: formData.writing_style || null,
         is_default: formData.is_default,
       };
 
@@ -192,26 +178,26 @@ export function FamilyMembersPage() {
   }
 
   function getPersonaInfo(member: FamilyMember) {
-    if (member.custom_persona_id) {
-      const customPersona = customPersonas.find(p => p.id === member.custom_persona_id);
-      if (customPersona) {
-        return {
-          name: customPersona.name,
-          emoji: customPersona.emoji,
-          color: customPersona.color,
-        };
-      }
-    }
     const persona = PERSONAS.find(p => p.id === member.persona_id);
     return persona ? {
       name: persona.name,
       emoji: persona.emoji,
       color: persona.color,
     } : {
-      name: 'Aucun',
-      emoji: '❓',
-      color: 'bg-gray-100 border-gray-300',
+      name: 'Personnalisé',
+      emoji: '✨',
+      color: 'bg-purple-100 border-purple-300',
     };
+  }
+
+  function handleCreateCustomPersona(personaData: CustomPersonaData) {
+    setCustomPersonaData(personaData);
+    setFormData({
+      ...formData,
+      persona_id: 'custom',
+      writing_style: personaData.writing_style,
+    });
+    setIsPersonaModalOpen(false);
   }
 
   if (loading) {
@@ -360,15 +346,26 @@ export function FamilyMembersPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Style rédactionnel
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Style rédactionnel
+                </label>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setIsPersonaModalOpen(true)}
+                  className="text-xs"
+                >
+                  <Plus className="w-3 h-3" />
+                  Créer un style personnalisé
+                </Button>
+              </div>
               <div className="space-y-2">
                 {PERSONAS.map(persona => (
                   <label
                     key={persona.id}
                     className={`flex items-start p-3 border rounded-lg cursor-pointer transition-colors ${
-                      formData.persona_id === persona.id && !formData.custom_persona_id
+                      formData.persona_id === persona.id
                         ? 'border-teal-500 bg-teal-50'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
@@ -377,8 +374,8 @@ export function FamilyMembersPage() {
                       type="radio"
                       name="persona"
                       value={persona.id}
-                      checked={formData.persona_id === persona.id && !formData.custom_persona_id}
-                      onChange={() => setFormData({ ...formData, persona_id: persona.id, custom_persona_id: null })}
+                      checked={formData.persona_id === persona.id}
+                      onChange={() => setFormData({ ...formData, persona_id: persona.id, writing_style: persona.writingStyle })}
                       className="mt-1 mr-3"
                     />
                     <div className="flex-1">
@@ -390,35 +387,28 @@ export function FamilyMembersPage() {
                     </div>
                   </label>
                 ))}
-
-                {customPersonas.map(persona => (
-                  <label
-                    key={persona.id}
-                    className={`flex items-start p-3 border rounded-lg cursor-pointer transition-colors ${
-                      formData.custom_persona_id === persona.id
-                        ? 'border-teal-500 bg-teal-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
+                {customPersonaData && formData.persona_id === 'custom' && (
+                  <label className="flex items-start p-3 border-2 border-teal-500 bg-teal-50 rounded-lg">
                     <input
                       type="radio"
                       name="persona"
-                      value={persona.id}
-                      checked={formData.custom_persona_id === persona.id}
-                      onChange={() => setFormData({ ...formData, custom_persona_id: persona.id })}
+                      value="custom"
+                      checked
+                      readOnly
                       className="mt-1 mr-3"
                     />
                     <div className="flex-1">
                       <div className="flex items-center mb-1">
-                        <span className="mr-2">{persona.emoji}</span>
-                        <span className="font-medium text-gray-900">{persona.name}</span>
+                        <span className="mr-2">{customPersonaData.emoji}</span>
+                        <span className="font-medium text-gray-900">{customPersonaData.name}</span>
                         <span className="ml-2 text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded">
                           Personnalisé
                         </span>
                       </div>
+                      <p className="text-sm text-gray-600">{customPersonaData.description}</p>
                     </div>
                   </label>
-                ))}
+                )}
               </div>
             </div>
 
@@ -456,6 +446,12 @@ export function FamilyMembersPage() {
           onClose={() => setToast(null)}
         />
       )}
+
+      <CustomPersonaModal
+        isOpen={isPersonaModalOpen}
+        onClose={() => setIsPersonaModalOpen(false)}
+        onSave={handleCreateCustomPersona}
+      />
     </div>
   );
 }
