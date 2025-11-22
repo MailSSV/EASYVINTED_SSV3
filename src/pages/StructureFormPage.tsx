@@ -194,7 +194,7 @@ export function StructureFormPage() {
         <ol className="list-decimal list-inside space-y-1 text-blue-800 text-sm">
           <li>Ouvrez Vinted dans un nouvel onglet et créez un nouvel article</li>
           <li>Suivez l'ordre des champs ci-dessous</li>
-          <li>Cliquez sur le bouton "Copier" pour chaque champ</li>
+          <li>Cliquez sur le bouton Copier pour chaque champ</li>
           <li>Collez la valeur dans le champ correspondant sur Vinted</li>
           <li>Pour les photos, Glissez >> Déposez les dans le même ordre</li>
         </ol>
