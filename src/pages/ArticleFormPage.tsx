@@ -1178,6 +1178,10 @@ export function ArticleFormPage() {
                 </div>
               </div>
             </div>
+
+
+
+            
 {familyMembers.length > 0 && (
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
@@ -1200,6 +1204,9 @@ export function ArticleFormPage() {
                     </select>
                   </div>
                 )}
+
+
+            
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Saison & période conseillée
