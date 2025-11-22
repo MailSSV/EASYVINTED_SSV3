@@ -310,8 +310,22 @@ export function FamilyMembersPage() {
       )}
 
       {showModal && (
-        <Modal isOpen={showModal} onClose={closeModal} title={editingMember ? 'Modifier le membre' : 'Ajouter un membre'}>
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <Modal
+          isOpen={showModal}
+          onClose={closeModal}
+          title={editingMember ? 'Modifier le membre' : 'Ajouter un membre'}
+          footer={
+            <div className="flex space-x-3">
+              <Button type="button" variant="secondary" onClick={closeModal} className="flex-1">
+                Annuler
+              </Button>
+              <Button type="submit" form="family-member-form" className="flex-1">
+                {editingMember ? 'Modifier' : 'Ajouter'}
+              </Button>
+            </div>
+          }
+        >
+          <form id="family-member-form" onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Nom / Pseudo
@@ -416,15 +430,6 @@ export function FamilyMembersPage() {
               <label htmlFor="is_default" className="text-sm text-gray-700">
                 Définir comme vendeur par défaut
               </label>
-            </div>
-
-            <div className="flex space-x-3 pt-4">
-              <Button type="button" variant="secondary" onClick={closeModal} className="flex-1">
-                Annuler
-              </Button>
-              <Button type="submit" className="flex-1">
-                {editingMember ? 'Modifier' : 'Ajouter'}
-              </Button>
             </div>
           </form>
         </Modal>
