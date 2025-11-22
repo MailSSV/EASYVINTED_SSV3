@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Users, Plus, Edit2, Trash2, Star } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
+import { ConfirmModal } from '../components/ui/ConfirmModal';
 import { Toast } from '../components/ui/Toast';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
@@ -28,6 +29,7 @@ export function FamilyMembersPage() {
   const [members, setMembers] = useState<FamilyMember[]>([]);
   const [customPersonas, setCustomPersonas] = useState<CustomPersona[]>([]);
   const [loading, setLoading] = useState(true);
+  const [memberToDelete, setMemberToDelete] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [editingMember, setEditingMember] = useState<FamilyMember | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -146,17 +148,18 @@ export function FamilyMembersPage() {
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce membre ?')) return;
+  async function handleDelete() {
+    if (!memberToDelete) return;
 
     try {
       const { error } = await supabase
         .from('family_members')
         .delete()
-        .eq('id', id);
+        .eq('id', memberToDelete);
 
       if (error) throw error;
       setToast({ message: 'Membre supprimé avec succès', type: 'success' });
+      setMemberToDelete(null);
       loadData();
     } catch (error) {
       console.error('Error deleting member:', error);
@@ -295,7 +298,7 @@ export function FamilyMembersPage() {
                       <Edit2 className="w-5 h-5" />
                     </button>
                     <button
-                      onClick={() => handleDelete(member.id)}
+                      onClick={() => setMemberToDelete(member.id)}
                       className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                       title="Supprimer"
                     >
@@ -434,6 +437,17 @@ export function FamilyMembersPage() {
           </form>
         </Modal>
       )}
+
+      <ConfirmModal
+        isOpen={memberToDelete !== null}
+        onClose={() => setMemberToDelete(null)}
+        onConfirm={handleDelete}
+        title="Supprimer le membre"
+        message="Êtes-vous sûr de vouloir supprimer ce membre ? Cette action est irréversible."
+        confirmLabel="Supprimer"
+        cancelLabel="Annuler"
+        variant="danger"
+      />
 
       {toast && (
         <Toast
