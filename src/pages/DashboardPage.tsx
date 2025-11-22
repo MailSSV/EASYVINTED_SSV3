@@ -781,6 +781,16 @@ export function DashboardPage() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
+                            navigate(`/articles/${article.id}/structure`);
+                          }}
+                          className="p-2.5 rounded-xl text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all active:scale-90"
+                          title="Formulaire copier/coller"
+                        >
+                          <ClipboardList className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
                             navigate(`/articles/${article.id}/preview`);
                           }}
                           className="p-2.5 rounded-xl text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all active:scale-90"
