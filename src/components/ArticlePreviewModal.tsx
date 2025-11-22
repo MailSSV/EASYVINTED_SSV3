@@ -523,12 +523,14 @@ export function ArticlePreviewModal({ article, onClose }: ArticlePreviewModalPro
 
               {(article.status === 'ready' || article.status === 'scheduled') && (
                 <Button
-                  onClick={handleValidateAndSend}
-                  disabled={publishing}
+                  onClick={() => {
+                    onClose();
+                    navigate(`/articles/${article.id}/structure`);
+                  }}
                   className="w-full sm:w-auto"
                 >
                   <Send className="w-4 h-4 mr-2" />
-                  {publishing ? 'Préparation...' : 'Envoyer à Vinted'}
+                  Envoyer à Vinted
                 </Button>
               )}
             </div>

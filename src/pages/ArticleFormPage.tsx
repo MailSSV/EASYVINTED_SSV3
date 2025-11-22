@@ -1271,13 +1271,13 @@ export function ArticleFormPage() {
                   {(articleStatus === 'ready' || articleStatus === 'scheduled') && (
                     <Button
                       type="button"
-                      onClick={handlePublishToVinted}
-                      disabled={loading || publishing}
+                      onClick={() => navigate(`/articles/${id}/structure`)}
+                      disabled={loading}
                       className="flex-1 min-w-[200px] justify-center bg-emerald-600 hover:bg-emerald-700 text-white"
                     >
                       <Send className="w-4 h-4" />
                       <span>
-                        {publishing ? 'Publication...' : 'Envoyer à Vinted'}
+                        Envoyer à Vinted
                       </span>
                     </Button>
                   )}

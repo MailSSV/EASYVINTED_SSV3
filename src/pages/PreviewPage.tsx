@@ -706,12 +706,11 @@ export function PreviewPage() {
 
               {(article.status === 'ready' || article.status === 'scheduled') && (
                 <Button
-                  onClick={handleValidateAndSend}
-                  disabled={publishing}
+                  onClick={() => navigate(`/articles/${article.id}/structure`)}
                   className="px-6 w-full md:w-auto bg-emerald-600 hover:bg-emerald-700"
                 >
                   <Send className="w-4 h-4 mr-2" />
-                  {publishing ? 'Préparation...' : 'Envoyer à Vinted'}
+                  Envoyer à Vinted
                 </Button>
               )}
             </div>
