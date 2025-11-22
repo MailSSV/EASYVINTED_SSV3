@@ -248,7 +248,7 @@ export function StructureFormPage() {
             className="inline-flex items-center text-emerald-600 hover:text-emerald-800 font-medium"
           >
             <SplitSquareHorizontal className="w-4 h-4 mr-1" />
-            Ouvrir dans un pop up
+            Ouvrir Vinted dans un Pop up
           </a>
         </div>
       </div>
