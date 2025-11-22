@@ -227,7 +227,7 @@ export function StructureFormPage() {
           <li>Glissez-Déposez vos Photos dans la section "+ Ajoute des Photos" de Vinted </li>
           <li>Cliquez sur le bouton Copier pour chaque champ</li>
           <li>Collez la valeur dans le champ correspondant sur Vinted</li>
-           <i>Collez la valeur dans le champ correspondant sur Vinted</i>
+           <i>Conseil : Suivez les suggestions de valeurs proposées par Vinted</i>
            
               </ol>
         <div className="flex flex-col gap-2 mt-3">
