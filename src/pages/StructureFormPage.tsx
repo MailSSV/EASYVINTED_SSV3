@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Copy, CheckCircle, ArrowLeft, ExternalLink } from 'lucide-react';
+import { Copy, CheckCircle, ArrowLeft, ExternalLink, SplitSquareHorizontal } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Toast } from '../components/ui/Toast';
 import { supabase } from '../lib/supabase';
@@ -227,15 +227,30 @@ export function StructureFormPage() {
           <li>Collez la valeur dans le champ correspondant sur Vinted</li>
           <li>Pour les photos, Glissez-Déposez les dans le même ordre</li>
         </ol>
-        <a
-          href="https://www.vinted.fr/items/new"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center mt-3 text-blue-600 hover:text-blue-800 font-medium"
-        >
-          <ExternalLink className="w-4 h-4 mr-1" />
-          Ouvrir Vinted (nouvel onglet)
-        </a>
+        <div className="flex flex-col sm:flex-row gap-2 mt-3">
+          <a
+            href="https://www.vinted.fr/items/new"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium"
+          >
+            <ExternalLink className="w-4 h-4 mr-1" />
+            Ouvrir Vinted (nouvel onglet)
+          </a>
+          <a
+            href="https://www.vinted.fr/items/new"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => {
+              e.preventDefault();
+              window.open('https://www.vinted.fr/items/new', '_blank', 'width=800,height=600');
+            }}
+            className="inline-flex items-center text-emerald-600 hover:text-emerald-800 font-medium"
+          >
+            <SplitSquareHorizontal className="w-4 h-4 mr-1" />
+            Ouvrir en écran fractionné
+          </a>
+        </div>
       </div>
 
       <div className="space-y-4">
