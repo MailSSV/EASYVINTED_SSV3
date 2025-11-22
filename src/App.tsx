@@ -13,7 +13,8 @@ import { SalesPage } from './pages/SalesPage';
 import { PlannerPage } from './pages/PlannerPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
-import { HomePage } from './pages/HomePage';   // ⬅️ nouveau
+import { HomePage } from './pages/HomePage';
+import { StructureFormPage } from './pages/StructureFormPage';   // ⬅️ nouveau
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
                     <Route path="/articles/new" element={<ArticleFormPage />} />
                     <Route path="/articles/:id/edit" element={<ArticleFormPage />} />
                     <Route path="/articles/:id/preview" element={<PreviewPage />} />
+                    <Route path="/articles/:id/structure" element={<StructureFormPage />} />
                     <Route path="/analytics" element={<AnalyticsPage />} />
                     <Route path="/sales" element={<SalesPage />} />
                     <Route path="/planner" element={<PlannerPage />} />
