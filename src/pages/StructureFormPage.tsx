@@ -159,42 +159,6 @@ export function StructureFormPage() {
       value: `${article.price.toFixed(2)} €`,
       description: 'Prix de vente',
     },
-    {
-      name: 'Taille du colis / Format d\'envoi',
-      value: 'À renseigner manuellement',
-      description: 'Sélectionnez le format selon les dimensions de votre colis',
-      copyable: false,
-    },
-    {
-      name: 'Modes de livraison',
-      value: 'À sélectionner',
-      description: 'Choisissez les modes de livraison proposés',
-      copyable: false,
-    },
-    {
-      name: 'Remise en main propre',
-      value: 'À décider',
-      description: 'Indiquez si vous proposez la remise en main propre',
-      copyable: false,
-    },
-    {
-      name: 'Localisation',
-      value: 'Votre localisation',
-      description: 'Votre ville ou code postal',
-      copyable: false,
-    },
-    {
-      name: 'Réduction pour lots',
-      value: 'À configurer',
-      description: 'Proposez une réduction si achat multiple',
-      copyable: false,
-    },
-    {
-      name: 'Informations vendeur professionnel',
-      value: 'Si applicable',
-      description: 'À remplir uniquement si vous êtes un vendeur professionnel',
-      copyable: false,
-    },
   ];
 
   return (
