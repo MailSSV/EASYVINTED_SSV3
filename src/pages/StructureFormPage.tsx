@@ -236,7 +236,6 @@ export function StructureFormPage() {
           <ExternalLink className="w-4 h-4 mr-1" />
           Ouvrir Vinted (nouvel onglet)
         </a>
-        <ol className="list-decimal list-inside space-y-1 text-blue-800 text-sm">
       </div>
 
       <div className="space-y-4">
@@ -244,7 +243,7 @@ export function StructureFormPage() {
           <div
             key={field.name}
             className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-          >
+          >)
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-start space-x-3 flex-1">
                 <span className="flex-shrink-0 w-8 h-8 bg-teal-100 text-teal-700 rounded-full flex items-center justify-center font-semibold text-sm">
