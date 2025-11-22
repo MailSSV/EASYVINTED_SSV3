@@ -74,7 +74,6 @@ export function FamilyMembersPage() {
   }
 
   function openModal(member?: FamilyMember) {
-    console.log('openModal called', member);
     if (member) {
       setEditingMember(member);
       setFormData({
@@ -95,7 +94,6 @@ export function FamilyMembersPage() {
       });
     }
     setShowModal(true);
-    console.log('showModal set to true');
   }
 
   function closeModal() {
@@ -312,7 +310,7 @@ export function FamilyMembersPage() {
       )}
 
       {showModal && (
-        <Modal onClose={closeModal} title={editingMember ? 'Modifier le membre' : 'Ajouter un membre'}>
+        <Modal isOpen={showModal} onClose={closeModal} title={editingMember ? 'Modifier le membre' : 'Ajouter un membre'}>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
