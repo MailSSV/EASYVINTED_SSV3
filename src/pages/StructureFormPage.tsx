@@ -238,19 +238,7 @@ export function StructureFormPage() {
             Ouvrir Vinted (nouvel onglet)
           </a>
          
-          <a
-            href="https://www.vinted.fr/items/new"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => {
-              e.preventDefault();
-              window.open('https://www.vinted.fr/items/new', '_blank', 'width=800,height=600');
-            }}
-            className="inline-flex items-center text-emerald-600 hover:text-emerald-800 font-medium"
-          >
-            <SplitSquareHorizontal className="w-4 h-4 mr-1" />
-            Ouvrir Vinted dans un Pop up
-          </a>
+          
         </div>
       </div>
 
