@@ -99,13 +99,11 @@ export function Modal({
           </div>
         </div>
 
-        <div className="overflow-y-auto flex-1 p-6">
-          {children ? (
+        {children && (
+          <div className="overflow-y-auto flex-1 p-6">
             <div>{children}</div>
-          ) : (
-            <p className="text-sm text-gray-600 leading-relaxed">{message}</p>
-          )}
-        </div>
+          </div>
+        )}
 
         {(footer || !children) && (
           <div className="p-6 border-t border-gray-200 flex-shrink-0">
