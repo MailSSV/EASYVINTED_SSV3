@@ -235,7 +235,7 @@ export function StructureFormPage() {
          
           
         </div>
-          <li>Placez l'onglet Vinted sur la barre latérale de votre navigateur pour l'afficher "Cote à Cote" (Clic droit sur l'onglet + Placer dans la barre latérale) </li>
+          <li>Placez l'onglet Vinted sur la barre latérale de votre navigateur pour l'afficher "Cote à Cote" avec celui-ci(Clic droit sur l'onglet + Placer dans la barre latérale) </li>
           <li>Glissez-Déposez vos Photos dans la section "+ Ajoute des Photos" de Vinted </li>
           <li>Cliquez sur le bouton Copier pour chaque champ</li>
           <li>Collez la valeur dans le champ correspondant sur Vinted</li>
