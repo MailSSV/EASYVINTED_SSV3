@@ -196,7 +196,7 @@ export function StructureFormPage() {
           <li>Suivez l'ordre des champs ci-dessous</li>
           <li>Cliquez sur le bouton "Copier" pour chaque champ</li>
           <li>Collez la valeur dans le champ correspondant sur Vinted</li>
-          <li>Pour les photos, téléchargez-les manuellement dans le même ordre</li>
+          <li>Pour les photos, Glissez >> Déposez les dans le même ordre</li>
         </ol>
         <a
           href="https://www.vinted.fr/items/new"
