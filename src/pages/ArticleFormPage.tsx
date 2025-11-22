@@ -889,6 +889,28 @@ export function ArticleFormPage() {
             Remplissez les informations de votre article pour le préparer à la publication
           </p>
         </div>
+{familyMembers.length > 0 && (
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Vendu par
+                      <span className="ml-1 text-xs text-gray-500 font-normal">
+                        (optionnel - laissez vide pour vous)
+                      </span>
+                    </label>
+                    <select
+                      value={formData.seller_id || ''}
+                      onChange={(e) => setFormData({ ...formData, seller_id: e.target.value || null })}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    >
+                      <option value="">Moi (compte principal)</option>
+                      {familyMembers.map((member) => (
+                        <option key={member.id} value={member.id}>
+                          {member.name} {member.is_default ? '(par défaut)' : ''}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
 
         <form className="space-y-6">
           <div className="space-y-6">
