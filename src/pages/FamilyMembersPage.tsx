@@ -179,14 +179,20 @@ export function FamilyMembersPage() {
 
   function getPersonaInfo(member: FamilyMember) {
     const persona = PERSONAS.find(p => p.id === member.persona_id);
-    return persona ? {
-      name: persona.name,
-      emoji: persona.emoji,
-      color: persona.color,
-    } : {
+    if (persona) {
+      return {
+        name: persona.name,
+        emoji: persona.emoji,
+        color: persona.color,
+        description: persona.description,
+      };
+    }
+
+    return {
       name: 'Personnalisé',
       emoji: '✨',
       color: 'bg-purple-100 border-purple-300',
+      description: member.writing_style || 'Style d\'écriture personnalisé',
     };
   }
 
@@ -259,9 +265,14 @@ export function FamilyMembersPage() {
                     <p className="text-sm text-gray-600 mb-3">
                       {member.age} ans
                     </p>
-                    <div className={`inline-flex items-center px-3 py-1.5 rounded-lg border ${personaInfo.color}`}>
-                      <span className="mr-2">{personaInfo.emoji}</span>
-                      <span className="text-sm font-medium">{personaInfo.name}</span>
+                    <div className="space-y-2">
+                      <div className={`inline-flex items-center px-3 py-1.5 rounded-lg border ${personaInfo.color}`}>
+                        <span className="mr-2">{personaInfo.emoji}</span>
+                        <span className="text-sm font-medium">{personaInfo.name}</span>
+                      </div>
+                      <p className="text-xs text-gray-500 leading-relaxed">
+                        {personaInfo.description}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
