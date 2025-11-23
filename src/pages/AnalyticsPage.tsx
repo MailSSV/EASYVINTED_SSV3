@@ -409,8 +409,8 @@ export function AnalyticsPage() {
                       </div>
                     </div>
                     {isTop3 && (
-                      <div className="absolute top-2 right-2">
-                        <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${medalColors[index]} flex items-center justify-center shadow-lg`}>
+                      <div className="absolute -top-2 -right-2">
+                        <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${medalColors[index]} flex items-center justify-center shadow-lg ring-2 ring-white`}>
                           <span className="text-white font-bold text-sm">{index + 1}</span>
                         </div>
                       </div>
