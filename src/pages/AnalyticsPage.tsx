@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { TrendingUp, Package, ShoppingBag, Euro, BarChart3, TrendingDown } from 'lucide-react';
+import { TrendingUp, Package, ShoppingBag, Euro, BarChart3, TrendingDown, Trophy, Medal, Award, Target } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -15,6 +15,18 @@ interface SalesMetrics {
   totalNetProfit: number;
   averageSalePrice: number;
   conversionRate: number;
+}
+
+interface SellerStats {
+  id: string;
+  name: string;
+  totalSales: number;
+  totalRevenue: number;
+  totalProfit: number;
+  averagePrice: number;
+  conversionRate: number;
+  articlesPublished: number;
+  articlesSold: number;
 }
 
 export function AnalyticsPage() {
@@ -33,6 +45,7 @@ export function AnalyticsPage() {
     averageSalePrice: 0,
     conversionRate: 0,
   });
+  const [sellerStats, setSellerStats] = useState<SellerStats[]>([]);
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | 'all'>('30d');
 
   useEffect(() => {
@@ -47,13 +60,23 @@ export function AnalyticsPage() {
     try {
       setLoading(true);
 
-      const { data: articles, error } = await supabase
-        .from('articles')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+      const [articlesResult, membersResult] = await Promise.all([
+        supabase
+          .from('articles')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('family_members')
+          .select('id, name')
+          .eq('user_id', user.id)
+      ]);
 
-      if (error) throw error;
+      if (articlesResult.error) throw articlesResult.error;
+      if (membersResult.error) throw membersResult.error;
+
+      const articles = articlesResult.data;
+      const members = membersResult.data || [];
 
       if (articles) {
         const now = new Date();
@@ -86,6 +109,55 @@ export function AnalyticsPage() {
           averageSalePrice: soldArticles.length > 0 ? totalRevenue / soldArticles.length : 0,
           conversionRate,
         });
+
+        const sellerStatsMap = new Map<string, SellerStats>();
+
+        members.forEach(member => {
+          const memberArticles = filteredArticles.filter(a => a.seller_id === member.id);
+          const memberSold = memberArticles.filter(a => a.status === 'sold' && a.sold_at);
+          const memberPublished = memberArticles.filter(a => a.status === 'published' || a.status === 'scheduled' || a.status === 'sold');
+          const memberRevenue = memberSold.reduce((sum, a) => sum + (parseFloat(a.sold_price) || 0), 0);
+          const memberProfit = memberSold.reduce((sum, a) => sum + (parseFloat(a.net_profit) || 0), 0);
+          const memberConversion = memberPublished.length > 0 ? (memberSold.length / memberPublished.length) * 100 : 0;
+
+          sellerStatsMap.set(member.id, {
+            id: member.id,
+            name: member.name,
+            totalSales: memberSold.length,
+            totalRevenue: memberRevenue,
+            totalProfit: memberProfit,
+            averagePrice: memberSold.length > 0 ? memberRevenue / memberSold.length : 0,
+            conversionRate: memberConversion,
+            articlesPublished: memberPublished.length,
+            articlesSold: memberSold.length,
+          });
+        });
+
+        const articlesWithoutSeller = filteredArticles.filter(a => !a.seller_id);
+        if (articlesWithoutSeller.length > 0) {
+          const soldWithoutSeller = articlesWithoutSeller.filter(a => a.status === 'sold' && a.sold_at);
+          const publishedWithoutSeller = articlesWithoutSeller.filter(a => a.status === 'published' || a.status === 'scheduled' || a.status === 'sold');
+          const revenueWithoutSeller = soldWithoutSeller.reduce((sum, a) => sum + (parseFloat(a.sold_price) || 0), 0);
+          const profitWithoutSeller = soldWithoutSeller.reduce((sum, a) => sum + (parseFloat(a.net_profit) || 0), 0);
+          const conversionWithoutSeller = publishedWithoutSeller.length > 0 ? (soldWithoutSeller.length / publishedWithoutSeller.length) * 100 : 0;
+
+          sellerStatsMap.set('no-seller', {
+            id: 'no-seller',
+            name: 'Sans vendeur',
+            totalSales: soldWithoutSeller.length,
+            totalRevenue: revenueWithoutSeller,
+            totalProfit: profitWithoutSeller,
+            averagePrice: soldWithoutSeller.length > 0 ? revenueWithoutSeller / soldWithoutSeller.length : 0,
+            conversionRate: conversionWithoutSeller,
+            articlesPublished: publishedWithoutSeller.length,
+            articlesSold: soldWithoutSeller.length,
+          });
+        }
+
+        const sortedSellerStats = Array.from(sellerStatsMap.values())
+          .sort((a, b) => b.totalRevenue - a.totalRevenue);
+
+        setSellerStats(sortedSellerStats);
       }
     } catch (error) {
       console.error('Error loading analytics:', error);
@@ -246,7 +318,7 @@ export function AnalyticsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-gray-200 p-4">
           <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Brouillons</p>
           <p className="text-xl font-bold text-gray-900">{metrics.draftArticles}</p>
@@ -267,6 +339,138 @@ export function AnalyticsPage() {
           <p className="text-xl font-bold text-orange-900">{metrics.soldArticles}</p>
         </div>
       </div>
+
+      {sellerStats.length > 0 && (
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
+              <Trophy className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Classement des Vendeurs</h2>
+              <p className="text-sm text-gray-600">Qui génère le plus de ventes ?</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              {sellerStats.map((seller, index) => {
+                const isTop3 = index < 3;
+                const medalColors = [
+                  'from-yellow-400 to-yellow-600',
+                  'from-gray-300 to-gray-500',
+                  'from-orange-400 to-orange-600'
+                ];
+                const borderColors = [
+                  'border-yellow-400',
+                  'border-gray-400',
+                  'border-orange-400'
+                ];
+
+                return (
+                  <div
+                    key={seller.id}
+                    className={`relative bg-white rounded-xl shadow-md border-2 ${
+                      isTop3 ? borderColors[index] : 'border-gray-200'
+                    } p-5 hover:shadow-lg transition-all`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`flex-shrink-0 w-14 h-14 rounded-xl flex items-center justify-center ${
+                        isTop3
+                          ? `bg-gradient-to-br ${medalColors[index]} shadow-lg`
+                          : 'bg-gray-100'
+                      }`}>
+                        {index === 0 && <Trophy className="w-8 h-8 text-white" />}
+                        {index === 1 && <Medal className="w-8 h-8 text-white" />}
+                        {index === 2 && <Award className="w-8 h-8 text-white" />}
+                        {index > 2 && <span className="text-xl font-bold text-gray-600">#{index + 1}</span>}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="text-lg font-bold text-gray-900 truncate">{seller.name}</h3>
+                          <span className="text-2xl font-bold text-emerald-600">
+                            {seller.totalRevenue.toFixed(0)} €
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 text-xs">
+                          <div>
+                            <p className="text-gray-500">Ventes</p>
+                            <p className="font-semibold text-gray-900">{seller.totalSales}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-500">Prix moyen</p>
+                            <p className="font-semibold text-gray-900">{seller.averagePrice.toFixed(0)} €</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-500">Taux</p>
+                            <p className="font-semibold text-gray-900">{seller.conversionRate.toFixed(0)}%</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {isTop3 && (
+                      <div className="absolute top-2 right-2">
+                        <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${medalColors[index]} flex items-center justify-center shadow-lg`}>
+                          <span className="text-white font-bold text-sm">{index + 1}</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="space-y-4">
+              <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border-2 border-emerald-200 p-6 shadow-md">
+                <div className="flex items-center gap-3 mb-4">
+                  <Target className="w-8 h-8 text-emerald-600" />
+                  <h3 className="text-lg font-bold text-gray-900">Performance Détaillée</h3>
+                </div>
+                <div className="space-y-4">
+                  {sellerStats.slice(0, 3).map((seller, index) => (
+                    <div key={seller.id} className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold text-gray-900">{seller.name}</span>
+                        <span className="text-xs text-gray-600">
+                          {seller.articlesSold}/{seller.articlesPublished} articles
+                        </span>
+                      </div>
+                      <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                          className={`absolute inset-y-0 left-0 rounded-full ${
+                            index === 0 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600' :
+                            index === 1 ? 'bg-gradient-to-r from-gray-400 to-gray-600' :
+                            'bg-gradient-to-r from-orange-400 to-orange-600'
+                          }`}
+                          style={{ width: `${Math.min(seller.conversionRate, 100)}%` }}
+                        />
+                      </div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-gray-600">Taux de conversion</span>
+                        <span className="font-semibold text-gray-900">{seller.conversionRate.toFixed(1)}%</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200 p-6 shadow-md">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Bénéfices par Vendeur</h3>
+                <div className="space-y-3">
+                  {sellerStats.slice(0, 5).map((seller) => (
+                    <div key={seller.id} className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-700">{seller.name}</span>
+                      <span className="text-sm font-bold text-emerald-600">
+                        {seller.totalProfit.toFixed(2)} €
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
