@@ -14,6 +14,7 @@ interface FamilyMember {
   name: string;
   age: number;
   persona_id: string;
+  custom_persona_id: string | null;
   writing_style: string | null;
   is_default: boolean;
 }
@@ -29,7 +30,9 @@ export function FamilyMembersPage() {
   const [isPersonaModalOpen, setIsPersonaModalOpen] = useState(false);
   const [customPersonaData, setCustomPersonaData] = useState<CustomPersonaData | null>(null);
   const [editingBasePersonaId, setEditingBasePersonaId] = useState<string | null>(null);
-  const [customPersonas, setCustomPersonas] = useState<Record<string, CustomPersonaData>>({});
+  const [editingCustomPersonaId, setEditingCustomPersonaId] = useState<string | null>(null);
+  const [customPersonas, setCustomPersonas] = useState<Record<string, CustomPersonaData & { id: string }>>({});
+  const [standaloneCustomPersonas, setStandaloneCustomPersonas] = useState<Array<CustomPersonaData & { id: string }>>([]);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -75,20 +78,28 @@ export function FamilyMembersPage() {
 
       if (error) throw error;
 
-      const personasMap: Record<string, CustomPersonaData> = {};
+      const personasMap: Record<string, CustomPersonaData & { id: string }> = {};
+      const standalone: Array<CustomPersonaData & { id: string }> = [];
+
       data?.forEach(persona => {
+        const personaData = {
+          id: persona.id,
+          name: persona.name,
+          emoji: persona.emoji,
+          description: persona.description,
+          color: persona.color,
+          writing_style: persona.writing_style,
+        };
+
         if (persona.base_persona_id) {
-          personasMap[persona.base_persona_id] = {
-            name: persona.name,
-            emoji: persona.emoji,
-            description: persona.description,
-            color: persona.color,
-            writing_style: persona.writing_style,
-          };
+          personasMap[persona.base_persona_id] = personaData;
+        } else {
+          standalone.push(personaData);
         }
       });
 
       setCustomPersonas(personasMap);
+      setStandaloneCustomPersonas(standalone);
     } catch (error) {
       console.error('Error loading custom personas:', error);
     }
@@ -211,6 +222,18 @@ export function FamilyMembersPage() {
   }
 
   function getPersonaInfo(member: FamilyMember) {
+    if (member.persona_id === 'custom' && member.custom_persona_id) {
+      const standalonePersona = standaloneCustomPersonas.find(p => p.id === member.custom_persona_id);
+      if (standalonePersona) {
+        return {
+          name: standalonePersona.name,
+          emoji: standalonePersona.emoji,
+          color: standalonePersona.color,
+          description: standalonePersona.description,
+        };
+      }
+    }
+
     const customPersona = customPersonas[member.persona_id];
     if (customPersona) {
       return {
@@ -243,7 +266,24 @@ export function FamilyMembersPage() {
     if (!user) return;
 
     try {
-      if (editingBasePersonaId) {
+      if (editingCustomPersonaId) {
+        const { error } = await supabase
+          .from('custom_personas')
+          .update({
+            name: personaData.name,
+            emoji: personaData.emoji,
+            description: personaData.description,
+            color: personaData.color,
+            writing_style: personaData.writing_style,
+          })
+          .eq('id', editingCustomPersonaId)
+          .eq('user_id', user.id);
+
+        if (error) throw error;
+
+        await loadCustomPersonas();
+        setToast({ message: 'Persona modifié avec succès', type: 'success' });
+      } else if (editingBasePersonaId) {
         const { error } = await supabase
           .from('custom_personas')
           .upsert({
@@ -263,16 +303,37 @@ export function FamilyMembersPage() {
         await loadCustomPersonas();
         setToast({ message: 'Persona modifié avec succès', type: 'success' });
       } else {
-        setCustomPersonaData(personaData);
+        const { data, error } = await supabase
+          .from('custom_personas')
+          .insert({
+            user_id: user.id,
+            base_persona_id: null,
+            name: personaData.name,
+            emoji: personaData.emoji,
+            description: personaData.description,
+            color: personaData.color,
+            writing_style: personaData.writing_style,
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        await loadCustomPersonas();
+
         setFormData({
           ...formData,
           persona_id: 'custom',
           writing_style: personaData.writing_style,
         });
+
+        setToast({ message: 'Persona créé avec succès', type: 'success' });
       }
 
       setIsPersonaModalOpen(false);
       setEditingBasePersonaId(null);
+      setEditingCustomPersonaId(null);
+      setCustomPersonaData(null);
     } catch (error) {
       console.error('Error saving persona:', error);
       setToast({ message: 'Erreur lors de la sauvegarde du persona', type: 'error' });
@@ -507,36 +568,61 @@ export function FamilyMembersPage() {
                     </div>
                   );
                 })}
-                {customPersonaData && formData.persona_id === 'custom' && (
-                  <div className="flex items-start p-3 border-2 border-teal-500 bg-teal-50 rounded-lg">
+                {standaloneCustomPersonas.map(customPersona => (
+                  <div
+                    key={customPersona.id}
+                    className={`flex items-start p-3 border rounded-lg transition-colors ${
+                      formData.persona_id === 'custom'
+                        ? 'border-teal-500 bg-teal-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
                     <input
                       type="radio"
                       name="persona"
                       value="custom"
-                      checked
-                      readOnly
-                      className="mt-1 mr-3"
+                      checked={formData.persona_id === 'custom'}
+                      onChange={() => setFormData({
+                        ...formData,
+                        persona_id: 'custom',
+                        writing_style: customPersona.writing_style
+                      })}
+                      className="mt-1 mr-3 cursor-pointer"
                     />
-                    <div className="flex-1">
+                    <div className="flex-1 cursor-pointer" onClick={() => setFormData({
+                      ...formData,
+                      persona_id: 'custom',
+                      writing_style: customPersona.writing_style
+                    })}>
                       <div className="flex items-center mb-1">
-                        <span className="mr-2">{customPersonaData.emoji}</span>
-                        <span className="font-medium text-gray-900">{customPersonaData.name}</span>
+                        <span className="mr-2">{customPersona.emoji}</span>
+                        <span className="font-medium text-gray-900">{customPersona.name}</span>
                         <span className="ml-2 text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded">
                           Personnalisé
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600">{customPersonaData.description}</p>
+                      <p className="text-sm text-gray-600">{customPersona.description}</p>
                     </div>
                     <button
                       type="button"
-                      onClick={() => setIsPersonaModalOpen(true)}
+                      onClick={() => {
+                        setEditingCustomPersonaId(customPersona.id);
+                        setCustomPersonaData({
+                          name: customPersona.name,
+                          emoji: customPersona.emoji,
+                          description: customPersona.description,
+                          color: customPersona.color,
+                          writing_style: customPersona.writing_style,
+                        });
+                        setIsPersonaModalOpen(true);
+                      }}
                       className="ml-2 p-1.5 text-gray-400 hover:text-teal-600 hover:bg-teal-100 rounded transition-colors"
                       title="Modifier ce persona"
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
                   </div>
-                )}
+                ))}
               </div>
             </div>
 
@@ -580,6 +666,7 @@ export function FamilyMembersPage() {
         onClose={() => {
           setIsPersonaModalOpen(false);
           setEditingBasePersonaId(null);
+          setEditingCustomPersonaId(null);
           setCustomPersonaData(null);
         }}
         onSave={handleSavePersona}
