@@ -17,6 +17,8 @@ interface FamilyMember {
   custom_persona_id: string | null;
   writing_style: string | null;
   is_default: boolean;
+  clothing_size: string | null;
+  shoe_size: string | null;
 }
 
 export function FamilyMembersPage() {
@@ -40,6 +42,8 @@ export function FamilyMembersPage() {
     persona_id: 'friendly',
     writing_style: '',
     is_default: false,
+    clothing_size: '',
+    shoe_size: '',
   });
 
   useEffect(() => {
@@ -114,6 +118,8 @@ export function FamilyMembersPage() {
         persona_id: member.persona_id,
         writing_style: member.writing_style || '',
         is_default: member.is_default,
+        clothing_size: member.clothing_size || '',
+        shoe_size: member.shoe_size || '',
       });
     } else {
       setEditingMember(null);
@@ -123,6 +129,8 @@ export function FamilyMembersPage() {
         persona_id: 'friendly',
         writing_style: '',
         is_default: false,
+        clothing_size: '',
+        shoe_size: '',
       });
     }
     setShowModal(true);
@@ -151,6 +159,8 @@ export function FamilyMembersPage() {
         persona_id: formData.persona_id,
         writing_style: formData.writing_style || null,
         is_default: formData.is_default,
+        clothing_size: formData.clothing_size || null,
+        shoe_size: formData.shoe_size || null,
       };
 
       if (editingMember) {
@@ -396,6 +406,22 @@ export function FamilyMembersPage() {
                     <p className="text-sm text-gray-600 mb-3">
                       {member.age} ans
                     </p>
+                    {(member.clothing_size || member.shoe_size) && (
+                      <div className="flex gap-3 mb-3 text-sm text-gray-700">
+                        {member.clothing_size && (
+                          <div>
+                            <span className="text-gray-500">Taille: </span>
+                            <span className="font-medium">{member.clothing_size}</span>
+                          </div>
+                        )}
+                        {member.shoe_size && (
+                          <div>
+                            <span className="text-gray-500">Pointure: </span>
+                            <span className="font-medium">{member.shoe_size}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                     <div className={`flex items-center justify-between p-3 rounded-lg border ${personaInfo.color}`}>
                       <div className="flex items-center flex-1 min-w-0">
                         <span className="mr-2 text-lg flex-shrink-0">{personaInfo.emoji}</span>
@@ -501,6 +527,42 @@ export function FamilyMembersPage() {
                 max="120"
                 required
               />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="clothing_size" className="block text-sm font-medium text-gray-700 mb-1">
+                  Taille de vêtements
+                </label>
+                <select
+                  id="clothing_size"
+                  value={formData.clothing_size}
+                  onChange={(e) => setFormData({ ...formData, clothing_size: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                >
+                  <option value="">Sélectionner</option>
+                  <option value="XS">XS</option>
+                  <option value="S">S</option>
+                  <option value="M">M</option>
+                  <option value="L">L</option>
+                  <option value="XL">XL</option>
+                  <option value="XXL">XXL</option>
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="shoe_size" className="block text-sm font-medium text-gray-700 mb-1">
+                  Pointure
+                </label>
+                <input
+                  type="text"
+                  id="shoe_size"
+                  value={formData.shoe_size}
+                  onChange={(e) => setFormData({ ...formData, shoe_size: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  placeholder="Ex: 38, 42"
+                />
+              </div>
             </div>
 
             <div>

@@ -240,42 +240,6 @@ export function ProfilePage() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="clothing_size" className="block text-sm font-medium text-gray-700 mb-1">
-                  Taille de vêtements
-                </label>
-                <select
-                  id="clothing_size"
-                  value={profile.clothing_size}
-                  onChange={(e) => setProfile({ ...profile, clothing_size: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                >
-                  <option value="">Sélectionner</option>
-                  <option value="XS">XS</option>
-                  <option value="S">S</option>
-                  <option value="M">M</option>
-                  <option value="L">L</option>
-                  <option value="XL">XL</option>
-                  <option value="XXL">XXL</option>
-                </select>
-              </div>
-
-              <div>
-                <label htmlFor="shoe_size" className="block text-sm font-medium text-gray-700 mb-1">
-                  Pointure
-                </label>
-                <input
-                  type="text"
-                  id="shoe_size"
-                  value={profile.shoe_size}
-                  onChange={(e) => setProfile({ ...profile, shoe_size: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                  placeholder="Ex: 38, 42"
-                />
-              </div>
-            </div>
-
             <div className="flex justify-end">
               <Button type="submit" disabled={saving}>
                 {saving ? 'Enregistrement...' : 'Enregistrer'}
