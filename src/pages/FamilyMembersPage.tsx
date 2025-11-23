@@ -354,7 +354,7 @@ export function FamilyMembersPage() {
         <div className="flex items-center space-x-3">
           <Users className="w-8 h-8 text-teal-600" />
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Membres de votre équipe</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Membres</h1>
             <p className="text-sm text-gray-600">Gérez les vendeurs de votre compte</p>
           </div>
         </div>
