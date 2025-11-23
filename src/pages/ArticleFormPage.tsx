@@ -95,7 +95,7 @@ export function ArticleFormPage() {
 
   const selectedCategory = VINTED_CATEGORIES.find((c) => c.name === formData.main_category);
   const selectedSubcategory = selectedCategory?.subcategories.find((s) => s.name === formData.subcategory);
-  const [familyMembers, setFamilyMembers] = useState<Array<{id: string; name: string; is_default: boolean}>>([]);
+  const [familyMembers, setFamilyMembers] = useState<Array<{id: string; name: string; is_default: boolean; clothing_size: string | null; shoe_size: string | null}>>([]);
 
   useEffect(() => {
     loadUserProfile();
@@ -139,13 +139,32 @@ export function ArticleFormPage() {
     }
   }
 
+  function updateSizeFromSeller(seller: { clothing_size: string | null; shoe_size: string | null }) {
+    if (!id) {
+      const isShoeCategory = formData.subcategory === 'Chaussures';
+      if (isShoeCategory && seller.shoe_size) {
+        setFormData(prev => ({ ...prev, size: seller.shoe_size || '' }));
+      } else if (!isShoeCategory && seller.clothing_size) {
+        setFormData(prev => ({ ...prev, size: seller.clothing_size || '' }));
+      }
+    }
+  }
+
+  function handleSellerChange(sellerId: string) {
+    setFormData(prev => ({ ...prev, seller_id: sellerId }));
+    const selectedSeller = familyMembers.find(m => m.id === sellerId);
+    if (selectedSeller) {
+      updateSizeFromSeller(selectedSeller);
+    }
+  }
+
   async function loadFamilyMembers() {
     if (!user) return;
 
     try {
       const { data, error } = await supabase
         .from('family_members')
-        .select('id, name, is_default')
+        .select('id, name, is_default, clothing_size, shoe_size')
         .eq('user_id', user.id)
         .order('name');
 
@@ -156,6 +175,7 @@ export function ArticleFormPage() {
         const defaultMember = data.find(m => m.is_default);
         if (defaultMember) {
           setFormData(prev => ({ ...prev, seller_id: defaultMember.id }));
+          updateSizeFromSeller(defaultMember);
         }
       }
     } catch (error) {
@@ -908,7 +928,7 @@ export function ArticleFormPage() {
                   </label>
                   <select
                     value={formData.seller_id || ''}
-                    onChange={(e) => setFormData({ ...formData, seller_id: e.target.value || null })}
+                    onChange={(e) => handleSellerChange(e.target.value)}
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   >
                     <option value="">Sélectionnez un vendeur</option>
