@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Users, Plus, Edit2, Trash2, Star } from 'lucide-react';
+import { Users, Plus, Edit2, Trash2, Star, Pencil } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { ConfirmModal } from '../components/ui/ConfirmModal';
@@ -373,9 +373,9 @@ export function FamilyMembersPage() {
               </div>
               <div className="space-y-2">
                 {PERSONAS.map(persona => (
-                  <label
+                  <div
                     key={persona.id}
-                    className={`flex items-start p-3 border rounded-lg cursor-pointer transition-colors ${
+                    className={`flex items-start p-3 border rounded-lg transition-colors ${
                       formData.persona_id === persona.id
                         ? 'border-teal-500 bg-teal-50'
                         : 'border-gray-200 hover:border-gray-300'
@@ -387,19 +387,36 @@ export function FamilyMembersPage() {
                       value={persona.id}
                       checked={formData.persona_id === persona.id}
                       onChange={() => setFormData({ ...formData, persona_id: persona.id, writing_style: persona.writingStyle })}
-                      className="mt-1 mr-3"
+                      className="mt-1 mr-3 cursor-pointer"
                     />
-                    <div className="flex-1">
+                    <div className="flex-1 cursor-pointer" onClick={() => setFormData({ ...formData, persona_id: persona.id, writing_style: persona.writingStyle })}>
                       <div className="flex items-center mb-1">
                         <span className="mr-2">{persona.emoji}</span>
                         <span className="font-medium text-gray-900">{persona.name}</span>
                       </div>
                       <p className="text-sm text-gray-600">{persona.description}</p>
                     </div>
-                  </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCustomPersonaData({
+                          name: persona.name,
+                          emoji: persona.emoji,
+                          description: persona.description,
+                          color: persona.color,
+                          writing_style: persona.writingStyle,
+                        });
+                        setIsPersonaModalOpen(true);
+                      }}
+                      className="ml-2 p-1.5 text-gray-400 hover:text-teal-600 hover:bg-teal-100 rounded transition-colors"
+                      title="Modifier ce persona"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                  </div>
                 ))}
                 {customPersonaData && formData.persona_id === 'custom' && (
-                  <label className="flex items-start p-3 border-2 border-teal-500 bg-teal-50 rounded-lg">
+                  <div className="flex items-start p-3 border-2 border-teal-500 bg-teal-50 rounded-lg">
                     <input
                       type="radio"
                       name="persona"
@@ -418,7 +435,15 @@ export function FamilyMembersPage() {
                       </div>
                       <p className="text-sm text-gray-600">{customPersonaData.description}</p>
                     </div>
-                  </label>
+                    <button
+                      type="button"
+                      onClick={() => setIsPersonaModalOpen(true)}
+                      className="ml-2 p-1.5 text-gray-400 hover:text-teal-600 hover:bg-teal-100 rounded transition-colors"
+                      title="Modifier ce persona"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
