@@ -6,7 +6,8 @@ interface CustomPersonaModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (persona: CustomPersonaData) => void;
-  editingPersona?: CustomPersonaData & { id: string };
+  initialData?: CustomPersonaData | null;
+  basePersonaId?: string;
 }
 
 export interface CustomPersonaData {
@@ -32,7 +33,7 @@ const COLOR_OPTIONS = [
 
 const EMOJI_SUGGESTIONS = ['🎨', '✨', '🌟', '💫', '🎭', '🎪', '🎬', '🎤', '🎸', '🎯', '🎲', '🎮', '🚀', '💎', '🌈', '⚡', '🔥', '💝', '🌺', '🦋'];
 
-export function CustomPersonaModal({ isOpen, onClose, onSave, editingPersona }: CustomPersonaModalProps) {
+export function CustomPersonaModal({ isOpen, onClose, onSave, initialData, basePersonaId }: CustomPersonaModalProps) {
   const [formData, setFormData] = useState<CustomPersonaData>({
     name: '',
     description: '',
@@ -42,13 +43,13 @@ export function CustomPersonaModal({ isOpen, onClose, onSave, editingPersona }: 
   });
 
   useEffect(() => {
-    if (editingPersona) {
+    if (initialData) {
       setFormData({
-        name: editingPersona.name,
-        description: editingPersona.description,
-        writing_style: editingPersona.writing_style,
-        emoji: editingPersona.emoji,
-        color: editingPersona.color,
+        name: initialData.name,
+        description: initialData.description,
+        writing_style: initialData.writing_style,
+        emoji: initialData.emoji,
+        color: initialData.color,
       });
     } else {
       setFormData({
@@ -59,7 +60,7 @@ export function CustomPersonaModal({ isOpen, onClose, onSave, editingPersona }: 
         color: 'bg-blue-100 border-blue-300 hover:border-blue-500',
       });
     }
-  }, [editingPersona, isOpen]);
+  }, [initialData, isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,7 +81,7 @@ export function CustomPersonaModal({ isOpen, onClose, onSave, editingPersona }: 
       <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
           <h2 className="text-xl font-semibold text-gray-900">
-            {editingPersona ? 'Modifier' : 'Créer'} un Persona personnalisé
+            {initialData ? 'Modifier le' : 'Créer un'} Persona{initialData && basePersonaId ? '' : ' personnalisé'}
           </h2>
           <button
             onClick={onClose}
@@ -208,7 +209,7 @@ export function CustomPersonaModal({ isOpen, onClose, onSave, editingPersona }: 
               Annuler
             </Button>
             <Button type="submit">
-              {editingPersona ? 'Modifier' : 'Créer'} le Persona
+              {initialData ? 'Enregistrer' : 'Créer'} le Persona
             </Button>
           </div>
         </form>

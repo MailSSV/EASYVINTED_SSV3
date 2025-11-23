@@ -28,6 +28,8 @@ export function FamilyMembersPage() {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [isPersonaModalOpen, setIsPersonaModalOpen] = useState(false);
   const [customPersonaData, setCustomPersonaData] = useState<CustomPersonaData | null>(null);
+  const [editingBasePersonaId, setEditingBasePersonaId] = useState<string | null>(null);
+  const [customPersonas, setCustomPersonas] = useState<Record<string, CustomPersonaData>>({});
 
   const [formData, setFormData] = useState({
     name: '',
@@ -39,6 +41,7 @@ export function FamilyMembersPage() {
 
   useEffect(() => {
     loadData();
+    loadCustomPersonas();
   }, [user]);
 
   async function loadData() {
@@ -58,6 +61,36 @@ export function FamilyMembersPage() {
       setToast({ message: 'Erreur lors du chargement des données', type: 'error' });
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function loadCustomPersonas() {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('custom_personas')
+        .select('*')
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      const personasMap: Record<string, CustomPersonaData> = {};
+      data?.forEach(persona => {
+        if (persona.base_persona_id) {
+          personasMap[persona.base_persona_id] = {
+            name: persona.name,
+            emoji: persona.emoji,
+            description: persona.description,
+            color: persona.color,
+            writing_style: persona.writing_style,
+          };
+        }
+      });
+
+      setCustomPersonas(personasMap);
+    } catch (error) {
+      console.error('Error loading custom personas:', error);
     }
   }
 
@@ -178,6 +211,16 @@ export function FamilyMembersPage() {
   }
 
   function getPersonaInfo(member: FamilyMember) {
+    const customPersona = customPersonas[member.persona_id];
+    if (customPersona) {
+      return {
+        name: customPersona.name,
+        emoji: customPersona.emoji,
+        color: customPersona.color,
+        description: customPersona.description,
+      };
+    }
+
     const persona = PERSONAS.find(p => p.id === member.persona_id);
     if (persona) {
       return {
@@ -196,14 +239,44 @@ export function FamilyMembersPage() {
     };
   }
 
-  function handleCreateCustomPersona(personaData: CustomPersonaData) {
-    setCustomPersonaData(personaData);
-    setFormData({
-      ...formData,
-      persona_id: 'custom',
-      writing_style: personaData.writing_style,
-    });
-    setIsPersonaModalOpen(false);
+  async function handleSavePersona(personaData: CustomPersonaData) {
+    if (!user) return;
+
+    try {
+      if (editingBasePersonaId) {
+        const { error } = await supabase
+          .from('custom_personas')
+          .upsert({
+            user_id: user.id,
+            base_persona_id: editingBasePersonaId,
+            name: personaData.name,
+            emoji: personaData.emoji,
+            description: personaData.description,
+            color: personaData.color,
+            writing_style: personaData.writing_style,
+          }, {
+            onConflict: 'user_id,base_persona_id'
+          });
+
+        if (error) throw error;
+
+        await loadCustomPersonas();
+        setToast({ message: 'Persona modifié avec succès', type: 'success' });
+      } else {
+        setCustomPersonaData(personaData);
+        setFormData({
+          ...formData,
+          persona_id: 'custom',
+          writing_style: personaData.writing_style,
+        });
+      }
+
+      setIsPersonaModalOpen(false);
+      setEditingBasePersonaId(null);
+    } catch (error) {
+      console.error('Error saving persona:', error);
+      setToast({ message: 'Erreur lors de la sauvegarde du persona', type: 'error' });
+    }
   }
 
   if (loading) {
@@ -372,49 +445,68 @@ export function FamilyMembersPage() {
                 </Button>
               </div>
               <div className="space-y-2">
-                {PERSONAS.map(persona => (
-                  <div
-                    key={persona.id}
-                    className={`flex items-start p-3 border rounded-lg transition-colors ${
-                      formData.persona_id === persona.id
-                        ? 'border-teal-500 bg-teal-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="persona"
-                      value={persona.id}
-                      checked={formData.persona_id === persona.id}
-                      onChange={() => setFormData({ ...formData, persona_id: persona.id, writing_style: persona.writingStyle })}
-                      className="mt-1 mr-3 cursor-pointer"
-                    />
-                    <div className="flex-1 cursor-pointer" onClick={() => setFormData({ ...formData, persona_id: persona.id, writing_style: persona.writingStyle })}>
-                      <div className="flex items-center mb-1">
-                        <span className="mr-2">{persona.emoji}</span>
-                        <span className="font-medium text-gray-900">{persona.name}</span>
-                      </div>
-                      <p className="text-sm text-gray-600">{persona.description}</p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setCustomPersonaData({
-                          name: persona.name,
-                          emoji: persona.emoji,
-                          description: persona.description,
-                          color: persona.color,
-                          writing_style: persona.writingStyle,
-                        });
-                        setIsPersonaModalOpen(true);
-                      }}
-                      className="ml-2 p-1.5 text-gray-400 hover:text-teal-600 hover:bg-teal-100 rounded transition-colors"
-                      title="Modifier ce persona"
+                {PERSONAS.map(persona => {
+                  const customPersona = customPersonas[persona.id];
+                  const displayPersona = customPersona || persona;
+
+                  return (
+                    <div
+                      key={persona.id}
+                      className={`flex items-start p-3 border rounded-lg transition-colors ${
+                        formData.persona_id === persona.id
+                          ? 'border-teal-500 bg-teal-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
                     >
-                      <Pencil className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
+                      <input
+                        type="radio"
+                        name="persona"
+                        value={persona.id}
+                        checked={formData.persona_id === persona.id}
+                        onChange={() => setFormData({
+                          ...formData,
+                          persona_id: persona.id,
+                          writing_style: customPersona?.writing_style || persona.writingStyle
+                        })}
+                        className="mt-1 mr-3 cursor-pointer"
+                      />
+                      <div className="flex-1 cursor-pointer" onClick={() => setFormData({
+                        ...formData,
+                        persona_id: persona.id,
+                        writing_style: customPersona?.writing_style || persona.writingStyle
+                      })}>
+                        <div className="flex items-center mb-1">
+                          <span className="mr-2">{displayPersona.emoji}</span>
+                          <span className="font-medium text-gray-900">{displayPersona.name}</span>
+                          {customPersona && (
+                            <span className="ml-2 text-xs bg-teal-100 text-teal-800 px-2 py-0.5 rounded">
+                              Personnalisé
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-600">{displayPersona.description}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingBasePersonaId(persona.id);
+                          setCustomPersonaData(customPersona || {
+                            name: persona.name,
+                            emoji: persona.emoji,
+                            description: persona.description,
+                            color: persona.color,
+                            writing_style: persona.writingStyle,
+                          });
+                          setIsPersonaModalOpen(true);
+                        }}
+                        className="ml-2 p-1.5 text-gray-400 hover:text-teal-600 hover:bg-teal-100 rounded transition-colors"
+                        title="Modifier ce persona"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                    </div>
+                  );
+                })}
                 {customPersonaData && formData.persona_id === 'custom' && (
                   <div className="flex items-start p-3 border-2 border-teal-500 bg-teal-50 rounded-lg">
                     <input
@@ -485,8 +577,14 @@ export function FamilyMembersPage() {
 
       <CustomPersonaModal
         isOpen={isPersonaModalOpen}
-        onClose={() => setIsPersonaModalOpen(false)}
-        onSave={handleCreateCustomPersona}
+        onClose={() => {
+          setIsPersonaModalOpen(false);
+          setEditingBasePersonaId(null);
+          setCustomPersonaData(null);
+        }}
+        onSave={handleSavePersona}
+        initialData={customPersonaData}
+        basePersonaId={editingBasePersonaId || undefined}
       />
     </div>
   );
