@@ -396,14 +396,59 @@ export function FamilyMembersPage() {
                     <p className="text-sm text-gray-600 mb-3">
                       {member.age} ans
                     </p>
-                    <div className="space-y-2">
-                      <div className={`inline-flex items-center px-3 py-1.5 rounded-lg border ${personaInfo.color}`}>
-                        <span className="mr-2">{personaInfo.emoji}</span>
-                        <span className="text-sm font-medium">{personaInfo.name}</span>
+                    <div className={`flex items-center justify-between p-3 rounded-lg border ${personaInfo.color}`}>
+                      <div className="flex items-center flex-1 min-w-0">
+                        <span className="mr-2 text-lg flex-shrink-0">{personaInfo.emoji}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-sm font-medium text-gray-900">{personaInfo.name}</span>
+                            {(member.persona_id === 'custom' || customPersonas[member.persona_id]) && (
+                              <span className="text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded">
+                                Personnalisé
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-600 mt-0.5 line-clamp-1">
+                            {personaInfo.description}
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-xs text-gray-500 leading-relaxed">
-                        {personaInfo.description}
-                      </p>
+                      <button
+                        onClick={() => {
+                          if (member.persona_id === 'custom' && member.custom_persona_id) {
+                            const standalonePersona = standaloneCustomPersonas.find(p => p.id === member.custom_persona_id);
+                            if (standalonePersona) {
+                              setEditingCustomPersonaId(standalonePersona.id);
+                              setCustomPersonaData({
+                                name: standalonePersona.name,
+                                emoji: standalonePersona.emoji,
+                                description: standalonePersona.description,
+                                color: standalonePersona.color,
+                                writing_style: standalonePersona.writing_style,
+                              });
+                              setIsPersonaModalOpen(true);
+                            }
+                          } else {
+                            const customPersona = customPersonas[member.persona_id];
+                            const persona = PERSONAS.find(p => p.id === member.persona_id);
+                            if (persona) {
+                              setEditingBasePersonaId(persona.id);
+                              setCustomPersonaData(customPersona || {
+                                name: persona.name,
+                                emoji: persona.emoji,
+                                description: persona.description,
+                                color: persona.color,
+                                writing_style: persona.writingStyle,
+                              });
+                              setIsPersonaModalOpen(true);
+                            }
+                          }
+                        }}
+                        className="ml-2 p-1.5 text-gray-400 hover:text-teal-600 hover:bg-teal-100 rounded transition-colors flex-shrink-0"
+                        title="Modifier le persona"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
