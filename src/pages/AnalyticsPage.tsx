@@ -341,16 +341,28 @@ export function AnalyticsPage() {
       </div>
 
       {sellerStats.length > 0 && (
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
-              <Trophy className="w-7 h-7 text-white" />
+        <>
+          <div className="relative my-12">
+            <div className="absolute inset-0 flex items-center" aria-hidden="true">
+              <div className="w-full border-t-2 border-gray-300"></div>
             </div>
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">Classement des Vendeurs</h2>
-              <p className="text-sm text-gray-600">Qui génère le plus de ventes ?</p>
+            <div className="relative flex justify-center">
+              <span className="bg-gradient-to-r from-gray-50 to-white px-6 py-2 rounded-full border-2 border-gray-300 shadow-sm">
+                <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Performance des Vendeurs</span>
+              </span>
             </div>
           </div>
+
+          <div className="mb-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
+                <Trophy className="w-7 h-7 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Classement des Vendeurs</h2>
+                <p className="text-sm text-gray-600">Qui génère le plus de ventes ?</p>
+              </div>
+            </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="space-y-3">
@@ -470,6 +482,7 @@ export function AnalyticsPage() {
             </div>
           </div>
         </div>
+        </>
       )}
     </div>
   );
