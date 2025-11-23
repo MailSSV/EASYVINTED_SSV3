@@ -276,68 +276,6 @@ export function ProfilePage() {
               </div>
             </div>
 
-            <div className="border-t border-gray-200 pt-4 mt-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Style d'écriture personnel
-              </label>
-              <p className="text-sm text-gray-500 mb-3">
-                Ce style sera utilisé pour générer les descriptions de vos articles lorsque vous êtes le vendeur
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                {PERSONAS.map((persona) => (
-                  <button
-                    key={persona.id}
-                    type="button"
-                    onClick={() => {
-                      setProfile({ ...profile, persona_id: persona.id, writing_style: '' });
-                    }}
-                    className={`p-3 border-2 rounded-lg text-left transition-all ${
-                      profile.persona_id === persona.id && !profile.writing_style
-                        ? persona.color.replace('hover:', '')
-                        : 'bg-white border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-lg">{persona.emoji}</span>
-                      <span className="font-semibold text-sm text-gray-900">{persona.name}</span>
-                    </div>
-                    <p className="text-xs text-gray-600">{persona.description}</p>
-                  </button>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setCustomPersonaData(
-                    profile.writing_style
-                      ? { name: 'Mon style personnalisé', description: profile.writing_style }
-                      : null
-                  );
-                  setIsPersonaModalOpen(true);
-                }}
-                className={`w-full p-3 border-2 rounded-lg text-left transition-all ${
-                  profile.writing_style
-                    ? 'bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-300'
-                    : 'bg-white border-gray-200 hover:border-gray-300'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">✏️</span>
-                    <span className="font-semibold text-sm text-gray-900">Style Personnalisé</span>
-                  </div>
-                  <Pencil className="w-4 h-4 text-gray-400" />
-                </div>
-                <p className="text-xs text-gray-600 mt-1">
-                  {profile.writing_style
-                    ? 'Style personnalisé défini - Cliquez pour modifier'
-                    : 'Créez votre propre style d\'écriture'}
-                </p>
-              </button>
-            </div>
-
             <div className="flex justify-end">
               <Button type="submit" disabled={saving}>
                 {saving ? 'Enregistrement...' : 'Enregistrer'}
