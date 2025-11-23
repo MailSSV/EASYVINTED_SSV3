@@ -106,15 +106,33 @@ export function ArticleFormPage() {
   }, [id]);
 
   useEffect(() => {
-    if (!id && userProfile && !formData.size) {
-      const isShoeCategory = formData.subcategory === 'Chaussures';
+    if (!id && formData.seller_id) {
+      const selectedSeller = familyMembers.find(m => m.id === formData.seller_id);
+      if (selectedSeller) {
+        const isShoeCategory =
+          formData.subcategory === 'Chaussures' ||
+          formData.subcategory === 'Chaussures enfants' ||
+          formData.item_category?.toLowerCase().includes('chaussure');
+
+        if (isShoeCategory && selectedSeller.shoe_size) {
+          setFormData(prev => ({ ...prev, size: selectedSeller.shoe_size || '' }));
+        } else if (!isShoeCategory && selectedSeller.clothing_size) {
+          setFormData(prev => ({ ...prev, size: selectedSeller.clothing_size || '' }));
+        }
+      }
+    } else if (!id && userProfile && !formData.size && !formData.seller_id) {
+      const isShoeCategory =
+        formData.subcategory === 'Chaussures' ||
+        formData.subcategory === 'Chaussures enfants' ||
+        formData.item_category?.toLowerCase().includes('chaussure');
+
       if (isShoeCategory && userProfile.shoe_size) {
         setFormData(prev => ({ ...prev, size: userProfile.shoe_size }));
       } else if (!isShoeCategory && userProfile.clothing_size) {
         setFormData(prev => ({ ...prev, size: userProfile.clothing_size }));
       }
     }
-  }, [userProfile, formData.subcategory, id]);
+  }, [userProfile, formData.subcategory, formData.item_category, formData.seller_id, familyMembers, id]);
 
   async function loadUserProfile() {
     if (!user) return;
@@ -141,7 +159,11 @@ export function ArticleFormPage() {
 
   function updateSizeFromSeller(seller: { clothing_size: string | null; shoe_size: string | null }) {
     if (!id) {
-      const isShoeCategory = formData.subcategory === 'Chaussures';
+      const isShoeCategory =
+        formData.subcategory === 'Chaussures' ||
+        formData.subcategory === 'Chaussures enfants' ||
+        formData.item_category?.toLowerCase().includes('chaussure');
+
       if (isShoeCategory && seller.shoe_size) {
         setFormData(prev => ({ ...prev, size: seller.shoe_size || '' }));
       } else if (!isShoeCategory && seller.clothing_size) {
