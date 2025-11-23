@@ -911,7 +911,7 @@ export function ArticleFormPage() {
                     onChange={(e) => setFormData({ ...formData, seller_id: e.target.value || null })}
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   >
-                    <option value="">Moi (compte principal)</option>
+                    <option value="">Sélectionnez un vendeur</option>
                     {familyMembers.map((member) => (
                       <option key={member.id} value={member.id}>
                         {member.name} {member.is_default ? '(par défaut)' : ''}
