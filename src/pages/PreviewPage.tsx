@@ -17,6 +17,7 @@ export function PreviewPage() {
   const { id } = useParams();
   const { user } = useAuth();
   const [article, setArticle] = useState<Article | null>(null);
+  const [sellerName, setSellerName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [publishing, setPublishing] = useState(false);
   const [markingReady, setMarkingReady] = useState(false);
@@ -43,7 +44,10 @@ export function PreviewPage() {
       setLoading(true);
       const { data, error } = await supabase
         .from('articles')
-        .select('*')
+        .select(`
+          *,
+          family_members!articles_seller_id_fkey(name)
+        `)
         .eq('id', id)
         .maybeSingle();
 
@@ -54,6 +58,10 @@ export function PreviewPage() {
           ...data,
           price: parseFloat(data.price),
         });
+
+        if (data.family_members) {
+          setSellerName(data.family_members.name);
+        }
       }
     } catch (error) {
       console.error('Error fetching article:', error);
@@ -487,7 +495,7 @@ export function PreviewPage() {
                       </span>
                     </div>
                     <p className="text-sm text-green-800 leading-relaxed">
-                      Cet article a été vendu avec succès.
+                      Cet article a été vendu avec succès{sellerName ? ` par ${sellerName}` : ''}.
                     </p>
                   </div>
                 </div>
