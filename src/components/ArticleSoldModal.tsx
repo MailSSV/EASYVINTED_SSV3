@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, DollarSign } from 'lucide-react';
 import { Article } from '../types/article';
+import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 
 interface SaleData {
   soldPrice: number;
@@ -10,6 +12,7 @@ interface SaleData {
   shippingCost: number;
   buyerName: string;
   notes: string;
+  sellerId?: string;
 }
 
 interface ArticleSoldModalProps {
@@ -20,6 +23,7 @@ interface ArticleSoldModalProps {
 }
 
 export function ArticleSoldModal({ isOpen, onClose, onConfirm, article }: ArticleSoldModalProps) {
+  const { user } = useAuth();
   const today = new Date().toISOString().split('T')[0];
 
   const [soldPrice, setSoldPrice] = useState(article.price.toString());
@@ -29,6 +33,31 @@ export function ArticleSoldModal({ isOpen, onClose, onConfirm, article }: Articl
   const [shippingCost, setShippingCost] = useState('0');
   const [buyerName, setBuyerName] = useState('');
   const [notes, setNotes] = useState('');
+  const [sellerId, setSellerId] = useState<string>(article.seller_id || '');
+  const [familyMembers, setFamilyMembers] = useState<Array<{id: string; name: string; is_default: boolean}>>([]);
+
+  useEffect(() => {
+    if (isOpen && user) {
+      loadFamilyMembers();
+    }
+  }, [isOpen, user]);
+
+  async function loadFamilyMembers() {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('family_members')
+        .select('id, name, is_default')
+        .eq('user_id', user.id)
+        .order('name');
+
+      if (error) throw error;
+      setFamilyMembers(data || []);
+    } catch (error) {
+      console.error('Error loading family members:', error);
+    }
+  }
 
   if (!isOpen) return null;
 
@@ -46,6 +75,7 @@ export function ArticleSoldModal({ isOpen, onClose, onConfirm, article }: Articl
         shippingCost: shipping,
         buyerName,
         notes,
+        sellerId: sellerId || undefined,
       });
       onClose();
     }
@@ -176,6 +206,26 @@ export function ArticleSoldModal({ isOpen, onClose, onConfirm, article }: Articl
             <div className="border-t border-gray-200 pt-4">
               <h4 className="text-sm font-semibold text-gray-900 mb-3">Informations complémentaires</h4>
               <div className="space-y-4">
+                {familyMembers.length > 0 && (
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                      Vendu par
+                    </label>
+                    <select
+                      value={sellerId}
+                      onChange={(e) => setSellerId(e.target.value)}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    >
+                      <option value="">Sélectionnez un vendeur</option>
+                      {familyMembers.map((member) => (
+                        <option key={member.id} value={member.id}>
+                          {member.name} {member.is_default ? '(par défaut)' : ''}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1.5">
                     Nom de l'acheteur (optionnel)

@@ -797,19 +797,34 @@ export function ArticleFormPage() {
     setSoldModal(true);
   };
 
-  const handleSoldConfirm = async (soldPrice: number, salePrice: number) => {
+  const handleSoldConfirm = async (saleData: {
+    soldPrice: number;
+    soldAt: string;
+    platform: string;
+    fees: number;
+    shippingCost: number;
+    buyerName: string;
+    notes: string;
+    sellerId?: string;
+  }) => {
     if (!id) return;
 
     try {
+      const updateData: any = {
+        status: 'sold',
+        sold_at: saleData.soldAt,
+        sold_price: saleData.soldPrice,
+        sale_price: saleData.soldPrice,
+        updated_at: new Date().toISOString(),
+      };
+
+      if (saleData.sellerId) {
+        updateData.seller_id = saleData.sellerId;
+      }
+
       const { error } = await supabase
         .from('articles')
-        .update({
-          status: 'sold',
-          sold_at: new Date().toISOString(),
-          sold_price: soldPrice,
-          sale_price: salePrice,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq('id', id);
 
       if (error) throw error;
