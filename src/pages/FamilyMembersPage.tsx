@@ -371,10 +371,7 @@ export function FamilyMembersPage() {
           <p className="text-gray-600 mb-6">
             Créez des profils pour les différents vendeurs de votre famille
           </p>
-          <Button type="button" onClick={() => openModal()}>
-            <Plus className="w-5 h-5" />
-            Créer le premier membre
-          </Button>
+          
         </div>
       ) : (
         <div className="grid gap-4">
