@@ -307,7 +307,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 style={{ transitionDelay: mobileMenuOpen ? '350ms' : '0ms' }}
               >
                 <Users className="w-5 h-5" />
-                Membres famille
+                Membres / famille
               </Link>
               <button
                 onClick={() => {
