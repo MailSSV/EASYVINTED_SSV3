@@ -414,36 +414,7 @@ export function FamilyMembersPage() {
                         </div>
                       </div>
                       <button
-                        onClick={() => {
-                          if (member.persona_id === 'custom' && member.custom_persona_id) {
-                            const standalonePersona = standaloneCustomPersonas.find(p => p.id === member.custom_persona_id);
-                            if (standalonePersona) {
-                              setEditingCustomPersonaId(standalonePersona.id);
-                              setCustomPersonaData({
-                                name: standalonePersona.name,
-                                emoji: standalonePersona.emoji,
-                                description: standalonePersona.description,
-                                color: standalonePersona.color,
-                                writing_style: standalonePersona.writing_style,
-                              });
-                              setIsPersonaModalOpen(true);
-                            }
-                          } else {
-                            const customPersona = customPersonas[member.persona_id];
-                            const persona = PERSONAS.find(p => p.id === member.persona_id);
-                            if (persona) {
-                              setEditingBasePersonaId(persona.id);
-                              setCustomPersonaData(customPersona || {
-                                name: persona.name,
-                                emoji: persona.emoji,
-                                description: persona.description,
-                                color: persona.color,
-                                writing_style: persona.writingStyle,
-                              });
-                              setIsPersonaModalOpen(true);
-                            }
-                          }
-                        }}
+                        onClick={() => openModal(member)}
                         className="ml-2 p-1.5 text-gray-400 hover:text-teal-600 hover:bg-teal-100 rounded transition-colors flex-shrink-0"
                         title="Modifier le persona"
                       >
