@@ -810,11 +810,18 @@ export function ArticleFormPage() {
     if (!id) return;
 
     try {
+      const netProfit = saleData.soldPrice - saleData.fees - saleData.shippingCost;
+
       const updateData: any = {
         status: 'sold',
         sold_at: saleData.soldAt,
         sold_price: saleData.soldPrice,
-        sale_price: saleData.soldPrice,
+        platform: saleData.platform,
+        fees: saleData.fees,
+        shipping_cost: saleData.shippingCost,
+        buyer_name: saleData.buyerName,
+        sale_notes: saleData.notes,
+        net_profit: netProfit,
         updated_at: new Date().toISOString(),
       };
 
