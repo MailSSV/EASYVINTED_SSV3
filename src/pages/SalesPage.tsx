@@ -296,10 +296,6 @@ export function SalesPage() {
         <SaleDetailModal
           sale={selectedSale}
           onClose={() => setSelectedSale(null)}
-          onEdit={() => {
-            navigate(`/articles/${selectedSale.id}`);
-            setSelectedSale(null);
-          }}
         />
       )}
     </div>

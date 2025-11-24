@@ -1650,10 +1650,6 @@ export function ArticleFormPage() {
                   seller_name: sellerName || undefined,
                 }}
                 onClose={() => setSaleDetailModal(false)}
-                onEdit={() => {
-                  setSaleDetailModal(false);
-                  handleMarkAsSold();
-                }}
               />
             )}
           </>

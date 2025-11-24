@@ -1,4 +1,4 @@
-import { X, Package, Calendar, User, FileText, ShoppingBag, Truck, CreditCard, ArrowUpRight, BadgeCheck, Edit } from 'lucide-react';
+import { X, Package, Calendar, User, FileText, ShoppingBag, Truck, CreditCard, ArrowUpRight, BadgeCheck } from 'lucide-react';
 
 interface SaleDetailModalProps {
   sale: {
@@ -18,10 +18,9 @@ interface SaleDetailModalProps {
     seller_name?: string;
   };
   onClose: () => void;
-  onEdit?: () => void;
 }
 
-export function SaleDetailModal({ sale, onClose, onEdit }: SaleDetailModalProps) {
+export function SaleDetailModal({ sale, onClose }: SaleDetailModalProps) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
       day: 'numeric',
@@ -67,23 +66,12 @@ export function SaleDetailModal({ sale, onClose, onEdit }: SaleDetailModalProps)
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              {onEdit && (
-                <button
-                  onClick={onEdit}
-                  className="px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 rounded-lg transition-colors border border-gray-300 flex items-center gap-2 text-sm font-medium shadow-sm"
-                >
-                  <Edit className="w-4 h-4" />
-                  Modifier
-                </button>
-              )}
-              <button
-                onClick={onClose}
-                className="p-2 hover:bg-white/80 rounded-lg transition-colors"
-              >
-                <X className="w-6 h-6 text-gray-600" />
-              </button>
-            </div>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-white/80 rounded-lg transition-colors"
+            >
+              <X className="w-6 h-6 text-gray-600" />
+            </button>
           </div>
         </div>
 
