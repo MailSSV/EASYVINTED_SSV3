@@ -184,7 +184,9 @@ export function DashboardPage() {
       article.brand?.toLowerCase().includes(query) ||
       article.description?.toLowerCase().includes(query);
 
-    return matchesStatus && matchesQuery;
+    const isNotSold = article.status !== 'sold';
+
+    return matchesStatus && matchesQuery && isNotSold;
   });
 
   const formatDate = (date?: string) => {
@@ -509,7 +511,7 @@ export function DashboardPage() {
               Tous
             </button>
             {(
-              ['draft', 'ready', 'scheduled', 'published', 'sold'] as ArticleStatus[]
+              ['draft', 'ready', 'scheduled', 'published'] as ArticleStatus[]
             ).map((status) => (
               <button
                 key={status}
