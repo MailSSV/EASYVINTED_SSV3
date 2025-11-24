@@ -234,8 +234,8 @@ export function SalesPage() {
                 className="group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:scale-[1.01] cursor-pointer"
                 onClick={() => setSelectedSale(sale)}
               >
-                <div className="p-4">
-                  <div className="flex gap-4 mb-3">
+                <div className="p-3">
+                  <div className="flex gap-3 mb-2">
                     <div className="relative w-20 h-20 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0 ring-1 ring-gray-200/50">
                       {sale.photos.length > 0 ? (
                         <img
@@ -250,7 +250,7 @@ export function SalesPage() {
                     </div>
 
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
-                      <h3 className="text-sm font-semibold text-gray-900 truncate mb-1 group-hover:text-emerald-600 transition-colors">
+                      <h3 className="text-sm font-semibold text-gray-900 truncate mb-0.5 group-hover:text-emerald-600 transition-colors">
                         {sale.title}
                       </h3>
                       <p className="text-xs text-gray-500 truncate">
@@ -259,8 +259,8 @@ export function SalesPage() {
                     </div>
                   </div>
 
-                  <div className="space-y-2.5">
-                    <div className="flex items-center gap-2 flex-wrap justify-end">
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className="inline-flex items-center px-2.5 py-1 bg-gray-50 border border-gray-200/50 rounded-lg text-[11px] font-medium text-gray-700">
                         Vendu le {formatDate(sale.sold_at)}
                       </span>
@@ -271,7 +271,7 @@ export function SalesPage() {
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between pt-1">
+                    <div className="flex items-center justify-between">
                       <span className="text-xs font-medium text-gray-500">Bénéfice net</span>
                       <span className={`text-lg font-bold ${
                         sale.net_profit >= 0
