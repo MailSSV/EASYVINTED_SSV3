@@ -234,51 +234,52 @@ export function SalesPage() {
                 className="group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:scale-[1.01] cursor-pointer"
                 onClick={() => setSelectedSale(sale)}
               >
-                <div className="flex gap-4 p-4">
-                  <div className="relative w-24 h-24 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0 ring-1 ring-gray-200/50">
-                    {sale.photos.length > 0 ? (
-                      <img
-                        src={sale.photos[0]}
-                        alt={sale.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <Package className="w-10 h-10 text-gray-300" />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
+                <div className="p-4">
+                  <div className="flex gap-4 mb-3">
+                    <div className="relative w-20 h-20 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0 ring-1 ring-gray-200/50">
+                      {sale.photos.length > 0 ? (
+                        <img
+                          src={sale.photos[0]}
+                          alt={sale.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <Package className="w-8 h-8 text-gray-300" />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
 
-                  <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-                    <div>
+                    <div className="flex-1 min-w-0 flex flex-col justify-center">
                       <h3 className="text-sm font-semibold text-gray-900 truncate mb-1 group-hover:text-emerald-600 transition-colors">
                         {sale.title}
                       </h3>
-                      <p className="text-xs text-gray-500 truncate mb-2">
+                      <p className="text-xs text-gray-500 truncate">
                         {sale.brand}
                       </p>
                     </div>
+                  </div>
 
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="inline-flex items-center px-2.5 py-1 bg-gray-50 border border-gray-200/50 rounded-lg text-[11px] font-medium text-gray-700">
-                          {formatDate(sale.sold_at)}
+                  <div className="space-y-2.5">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="inline-flex items-center px-2.5 py-1 bg-gray-50 border border-gray-200/50 rounded-lg text-[11px] font-medium text-gray-700">
+                        {formatDate(sale.sold_at)}
+                      </span>
+                      {sale.seller_name && (
+                        <span className="inline-flex items-center px-2.5 py-1 bg-blue-50 border border-blue-200/50 rounded-lg text-[11px] font-medium text-blue-700">
+                          {sale.seller_name}
                         </span>
-                        {sale.seller_name && (
-                          <span className="inline-flex items-center px-2.5 py-1 bg-blue-50 border border-blue-200/50 rounded-lg text-[11px] font-medium text-blue-700">
-                            {sale.seller_name}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-gray-400">Bénéfice</span>
-                        <span className={`text-base font-bold ${
-                          sale.net_profit >= 0
-                            ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 bg-clip-text text-transparent'
-                            : 'text-red-600'
-                        }`}>
-                          {sale.net_profit >= 0 ? '+' : ''}{sale.net_profit.toFixed(2)} €
-                        </span>
-                      </div>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between pt-1">
+                      <span className="text-xs font-medium text-gray-500">Bénéfice net</span>
+                      <span className={`text-lg font-bold ${
+                        sale.net_profit >= 0
+                          ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 bg-clip-text text-transparent'
+                          : 'text-red-600'
+                      }`}>
+                        {sale.net_profit >= 0 ? '+' : ''}{sale.net_profit.toFixed(2)} €
+                      </span>
                     </div>
                   </div>
                 </div>
