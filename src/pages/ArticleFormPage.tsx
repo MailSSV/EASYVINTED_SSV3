@@ -1,6 +1,6 @@
 import { useState, FormEvent, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Save, CheckCircle, Trash2, Send, Calendar, CheckSquare, DollarSign, Edit, Eye } from 'lucide-react';
+import { Save, CheckCircle, Trash2, Send, Calendar, CheckSquare, DollarSign, Edit, Eye, Tag } from 'lucide-react';
 import { Condition, Season, ArticleStatus } from '../types/article';
 import { Button } from '../components/ui/Button';
 import { Toast } from '../components/ui/Toast';
@@ -13,6 +13,7 @@ import { PublishInstructionsModal } from '../components/PublishInstructionsModal
 import { ScheduleModal } from '../components/ScheduleModal';
 import { ArticleSoldModal } from '../components/ArticleSoldModal';
 import { SaleDetailModal } from '../components/SaleDetailModal';
+import { LabelModal } from '../components/LabelModal';
 import { VINTED_CATEGORIES } from '../constants/categories';
 import { COLORS, MATERIALS } from '../constants/articleAttributes';
 import { migratePhotosFromTempFolder } from '../lib/photoMigration';
@@ -74,6 +75,7 @@ export function ArticleFormPage() {
   const [scheduleModal, setScheduleModal] = useState(false);
   const [soldModal, setSoldModal] = useState(false);
   const [saleDetailModal, setSaleDetailModal] = useState(false);
+  const [labelModal, setLabelModal] = useState(false);
   const [currentArticle, setCurrentArticle] = useState<any>(null);
   const [articleStatus, setArticleStatus] = useState<ArticleStatus>('draft');
   const [sellerName, setSellerName] = useState<string | null>(null);
@@ -94,6 +96,7 @@ export function ArticleFormPage() {
     color: '',
     material: '',
     seller_id: null as string | null,
+    reference_number: '',
   });
 
   const selectedCategory = VINTED_CATEGORIES.find((c) => c.name === formData.main_category);
@@ -242,6 +245,7 @@ export function ArticleFormPage() {
           color: data.color || '',
           material: data.material || '',
           seller_id: data.seller_id || null,
+          reference_number: data.reference_number || '',
         });
         setArticleStatus(data.status as ArticleStatus);
         setCurrentArticle(data);
@@ -471,6 +475,11 @@ export function ArticleFormPage() {
     try {
       setLoading(true);
 
+      let referenceNumber = formData.reference_number;
+      if (!referenceNumber) {
+        referenceNumber = `REF-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
+      }
+
       const articleData = {
         title: formData.title,
         description: formData.description,
@@ -487,6 +496,7 @@ export function ArticleFormPage() {
         color: formData.color || null,
         material: formData.material || null,
         seller_id: formData.seller_id || null,
+        reference_number: referenceNumber,
         status,
         updated_at: new Date().toISOString(),
         ...(id ? {} : { user_id: user?.id }),
@@ -865,6 +875,18 @@ export function ArticleFormPage() {
     }
   };
 
+  const handleGenerateLabel = () => {
+    if (!id) {
+      setToast({
+        type: 'error',
+        text: 'Veuillez enregistrer l\'article avant de générer une étiquette',
+      });
+      return;
+    }
+
+    setLabelModal(true);
+  };
+
   const handlePublishToVinted = async (e: FormEvent) => {
     e.preventDefault();
     setValidationErrors([]);
@@ -886,6 +908,8 @@ export function ArticleFormPage() {
       setPublishing(true);
 
       if (!id) {
+        const referenceNumber = `REF-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
+
         const articleData = {
           title: formData.title,
           description: formData.description,
@@ -901,6 +925,7 @@ export function ArticleFormPage() {
           photos: formData.photos,
           color: formData.color || null,
           material: formData.material || null,
+          reference_number: referenceNumber,
           status: 'ready',
           user_id: user?.id,
         };
@@ -1606,7 +1631,28 @@ export function ArticleFormPage() {
                 </div>
               </div>
 
-
+              {id && (
+                <div className="pt-4 border-t border-gray-200">
+                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
+                    Étiquette de colis
+                  </div>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={handleGenerateLabel}
+                    disabled={loading || publishing}
+                    className="w-full justify-center bg-white text-blue-700 hover:bg-blue-50 border-blue-300 hover:border-blue-400"
+                  >
+                    <Tag className="w-4 h-4" />
+                    <span>Générer l'étiquette</span>
+                  </Button>
+                  {formData.reference_number && (
+                    <p className="mt-2 text-xs text-gray-600 text-center">
+                      Référence: <span className="font-semibold">{formData.reference_number}</span>
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </form>
@@ -1659,6 +1705,21 @@ export function ArticleFormPage() {
               />
             )}
           </>
+        )}
+
+        {id && formData.reference_number && (
+          <LabelModal
+            isOpen={labelModal}
+            onClose={() => setLabelModal(false)}
+            article={{
+              reference_number: formData.reference_number,
+              title: formData.title,
+              brand: formData.brand,
+              size: formData.size,
+              color: formData.color,
+              price: parseFloat(formData.price) || 0,
+            }}
+          />
         )}
       </div>
     </>

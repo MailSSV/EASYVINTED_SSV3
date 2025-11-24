@@ -1,0 +1,136 @@
+import { X, Printer } from 'lucide-react';
+import { Button } from './ui/Button';
+
+interface LabelModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  article: {
+    reference_number: string;
+    title: string;
+    brand?: string;
+    size?: string;
+    color?: string;
+    price: number;
+  };
+}
+
+export function LabelModal({ isOpen, onClose, article }: LabelModalProps) {
+  if (!isOpen) return null;
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  return (
+    <>
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 print:hidden">
+        <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+            <h2 className="text-xl font-bold text-gray-900">Étiquette de colis</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+
+          <div className="p-6">
+            <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm text-blue-800">
+                Cette étiquette sera optimisée pour l'impression sur une feuille A4. Vous pouvez imprimer plusieurs étiquettes par page.
+              </p>
+            </div>
+
+            <div id="label-preview" className="border-2 border-gray-300 rounded-lg p-6 bg-white">
+              <div className="text-center mb-6 pb-4 border-b-2 border-gray-200">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">EASY VINTED</h3>
+                <div className="inline-block bg-gray-900 text-white px-4 py-2 rounded">
+                  <span className="text-sm font-medium">Réf: </span>
+                  <span className="text-lg font-bold">{article.reference_number}</span>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Article</p>
+                  <p className="text-lg font-bold text-gray-900">{article.title}</p>
+                </div>
+
+                {article.brand && (
+                  <div>
+                    <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Marque</p>
+                    <p className="text-base text-gray-900">{article.brand}</p>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-4">
+                  {article.size && (
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Taille</p>
+                      <p className="text-base text-gray-900">{article.size}</p>
+                    </div>
+                  )}
+
+                  {article.color && (
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Couleur</p>
+                      <p className="text-base text-gray-900">{article.color}</p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="pt-3 mt-3 border-t border-gray-200">
+                  <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Prix de vente</p>
+                  <p className="text-2xl font-bold text-emerald-600">{article.price.toFixed(2)} €</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 flex gap-3">
+              <Button
+                onClick={handlePrint}
+                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+              >
+                <Printer className="w-4 h-4 mr-2" />
+                Imprimer l'étiquette
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={onClose}
+                className="flex-1"
+              >
+                Fermer
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        @media print {
+          body * {
+            visibility: hidden;
+          }
+          #label-preview, #label-preview * {
+            visibility: visible;
+          }
+          #label-preview {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 180mm;
+            padding: 20mm;
+            border: 2px solid #000;
+            page-break-after: always;
+          }
+          @page {
+            size: A4;
+            margin: 10mm;
+          }
+        }
+      `}</style>
+    </>
+  );
+}
