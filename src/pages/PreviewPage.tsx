@@ -705,7 +705,18 @@ export function PreviewPage() {
                 Supprimer
               </Button>
 
-              {article.status !== 'sold' && (
+              {article.status !== 'sold' && article.status !== 'published' && (
+                <Button
+                  variant="secondary"
+                  onClick={() => navigate(`/articles/${id}/edit`)}
+                  className="px-6 w-full md:w-auto"
+                >
+                  <Edit className="w-4 h-4 mr-2" />
+                  Modifier
+                </Button>
+              )}
+
+              {article.status === 'published' && (
                 <Button
                   variant="secondary"
                   onClick={() => navigate(`/articles/${id}/edit`)}
@@ -761,24 +772,14 @@ export function PreviewPage() {
               )}
 
               {article.status === 'sold' && (
-                <>
-                  <Button
-                    variant="secondary"
-                    onClick={() => setSaleDetailModalOpen(true)}
-                    className="px-6 w-full md:w-auto bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-300"
-                  >
-                    <Eye className="w-4 h-4 mr-2" />
-                    Voir la vente
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    onClick={() => navigate(`/articles/${article.id}/edit`)}
-                    className="px-6 w-full md:w-auto bg-white text-gray-700 hover:bg-gray-50 border-gray-300 hover:border-gray-400"
-                  >
-                    <Edit className="w-4 h-4 mr-2" />
-                    Modifier
-                  </Button>
-                </>
+                <Button
+                  variant="secondary"
+                  onClick={() => setSaleDetailModalOpen(true)}
+                  className="px-6 w-full md:w-auto bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-300"
+                >
+                  <Eye className="w-4 h-4 mr-2" />
+                  Voir la vente
+                </Button>
               )}
             </div>
           </>
