@@ -260,7 +260,7 @@ export function SalesPage() {
                   </div>
 
                   <div className="space-y-2.5">
-                    <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-2 flex-wrap justify-end">
                       <span className="inline-flex items-center px-2.5 py-1 bg-gray-50 border border-gray-200/50 rounded-lg text-[11px] font-medium text-gray-700">
                         Vendu le {formatDate(sale.sold_at)}
                       </span>
