@@ -1,6 +1,6 @@
 import { useState, FormEvent, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Save, CheckCircle, Trash2, Send, Calendar, CheckSquare, DollarSign } from 'lucide-react';
+import { Save, CheckCircle, Trash2, Send, Calendar, CheckSquare, DollarSign, Edit, Eye } from 'lucide-react';
 import { Condition, Season, ArticleStatus } from '../types/article';
 import { Button } from '../components/ui/Button';
 import { Toast } from '../components/ui/Toast';
@@ -12,6 +12,7 @@ import { ConfirmModal } from '../components/ui/ConfirmModal';
 import { PublishInstructionsModal } from '../components/PublishInstructionsModal';
 import { ScheduleModal } from '../components/ScheduleModal';
 import { ArticleSoldModal } from '../components/ArticleSoldModal';
+import { SaleDetailModal } from '../components/SaleDetailModal';
 import { VINTED_CATEGORIES } from '../constants/categories';
 import { COLORS, MATERIALS } from '../constants/articleAttributes';
 import { migratePhotosFromTempFolder } from '../lib/photoMigration';
@@ -72,6 +73,7 @@ export function ArticleFormPage() {
   });
   const [scheduleModal, setScheduleModal] = useState(false);
   const [soldModal, setSoldModal] = useState(false);
+  const [saleDetailModal, setSaleDetailModal] = useState(false);
   const [currentArticle, setCurrentArticle] = useState<any>(null);
   const [articleStatus, setArticleStatus] = useState<ArticleStatus>('draft');
 
@@ -1333,6 +1335,32 @@ export function ArticleFormPage() {
                   Actions principales
                 </div>
                 <div className="flex flex-wrap gap-3">
+                  {articleStatus === 'sold' && (
+                    <>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={(e) => handleSubmit(e as any, 'sold')}
+                        disabled={loading || publishing}
+                        className="flex-1 min-w-[200px] justify-center bg-white text-gray-700 hover:bg-gray-50 border-gray-300 hover:border-gray-400"
+                      >
+                        <Edit className="w-4 h-4" />
+                        <span>Modifier</span>
+                      </Button>
+
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => setSaleDetailModal(true)}
+                        disabled={loading}
+                        className="flex-1 min-w-[200px] justify-center bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-300"
+                      >
+                        <Eye className="w-4 h-4" />
+                        <span>Voir la vente</span>
+                      </Button>
+                    </>
+                  )}
+
                   {id && articleStatus !== 'sold' && (
                     <Button
                       type="button"
@@ -1444,6 +1472,27 @@ export function ArticleFormPage() {
               onConfirm={handleSoldConfirm}
               article={currentArticle}
             />
+
+            {saleDetailModal && currentArticle.status === 'sold' && (
+              <SaleDetailModal
+                sale={{
+                  id: currentArticle.id,
+                  title: title,
+                  brand: brand,
+                  price: price,
+                  sold_price: currentArticle.sold_price || price,
+                  sold_at: currentArticle.sold_at || new Date().toISOString(),
+                  platform: currentArticle.platform || 'Vinted',
+                  shipping_cost: currentArticle.shipping_cost || 0,
+                  fees: currentArticle.fees || 0,
+                  net_profit: currentArticle.net_profit || 0,
+                  photos: photos,
+                  buyer_name: currentArticle.buyer_name,
+                  sale_notes: currentArticle.sale_notes,
+                }}
+                onClose={() => setSaleDetailModal(false)}
+              />
+            )}
           </>
         )}
       </div>
