@@ -808,6 +808,27 @@ export function ArticleFormPage() {
     setSoldModal(true);
   };
 
+  const handleViewSaleDetail = async () => {
+    if (!id) return;
+
+    const { data, error } = await supabase
+      .from('articles')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (error || !data) {
+      setToast({
+        type: 'error',
+        text: 'Erreur lors du chargement de l\'article',
+      });
+      return;
+    }
+
+    setCurrentArticle(data);
+    setSaleDetailModal(true);
+  };
+
   const handleSoldConfirm = async (saleData: {
     soldPrice: number;
     soldAt: string;
@@ -1509,7 +1530,7 @@ export function ArticleFormPage() {
                       <Button
                         type="button"
                         variant="secondary"
-                        onClick={() => setSaleDetailModal(true)}
+                        onClick={handleViewSaleDetail}
                         disabled={loading}
                         className="flex-1 min-w-[200px] justify-center bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-300"
                       >
