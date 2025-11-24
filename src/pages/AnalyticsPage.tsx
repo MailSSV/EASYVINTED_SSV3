@@ -318,27 +318,6 @@ export function AnalyticsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-gray-200 p-4">
-          <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Brouillons</p>
-          <p className="text-xl font-bold text-gray-900">{metrics.draftArticles}</p>
-        </div>
-
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200 p-4">
-          <p className="text-xs font-medium text-blue-700 uppercase tracking-wide mb-1">Prêts</p>
-          <p className="text-xl font-bold text-blue-900">{metrics.readyArticles}</p>
-        </div>
-
-        <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg border border-emerald-200 p-4">
-          <p className="text-xs font-medium text-emerald-700 uppercase tracking-wide mb-1">Publiés</p>
-          <p className="text-xl font-bold text-emerald-900">{metrics.publishedArticles}</p>
-        </div>
-
-        <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg border border-orange-200 p-4">
-          <p className="text-xs font-medium text-orange-700 uppercase tracking-wide mb-1">Vendus</p>
-          <p className="text-xl font-bold text-orange-900">{metrics.soldArticles}</p>
-        </div>
-      </div>
 
       {sellerStats.length > 0 && (
         <>
