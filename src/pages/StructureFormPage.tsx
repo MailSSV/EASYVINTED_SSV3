@@ -203,11 +203,11 @@ export function StructureFormPage() {
       <div className="mb-6">
         <Button
           variant="secondary"
-          onClick={() => navigate('/dashboard')}
+          onClick={() => navigate('/stock')}
           className="mb-4"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Retour au tableau de bord
+          Retour au Stock
         </Button>
 
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
