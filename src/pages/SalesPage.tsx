@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Package, Eye } from 'lucide-react';
+import { Package, Eye, ClipboardEdit } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { SaleDetailModal } from '../components/SaleDetailModal';
+import { SoldModal } from '../components/SoldModal';
 
 interface SaleRecord {
   id: string;
@@ -29,6 +30,7 @@ export function SalesPage() {
   const [loading, setLoading] = useState(true);
   const [salesHistory, setSalesHistory] = useState<SaleRecord[]>([]);
   const [selectedSale, setSelectedSale] = useState<SaleRecord | null>(null);
+  const [editingSale, setEditingSale] = useState<SaleRecord | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -182,16 +184,28 @@ export function SalesPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedSale(sale);
-                          }}
-                          className="p-2.5 rounded-xl text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all active:scale-90"
-                          title="Voir les détails"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedSale(sale);
+                            }}
+                            className="p-2.5 rounded-xl text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all active:scale-90"
+                            title="Voir les détails"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingSale(sale);
+                            }}
+                            className="p-2.5 rounded-xl text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all active:scale-90"
+                            title="Modifier la vente"
+                          >
+                            <ClipboardEdit className="w-4 h-4" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -260,15 +274,26 @@ export function SalesPage() {
                     </div>
                   </div>
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedSale(sale);
-                    }}
-                    className="p-2 rounded-xl hover:bg-white text-gray-500 hover:text-emerald-600 transition-all active:scale-90"
-                  >
-                    <Eye className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedSale(sale);
+                      }}
+                      className="p-2 rounded-xl hover:bg-white text-gray-500 hover:text-emerald-600 transition-all active:scale-90"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingSale(sale);
+                      }}
+                      className="p-2 rounded-xl hover:bg-white text-gray-500 hover:text-blue-600 transition-all active:scale-90"
+                    >
+                      <ClipboardEdit className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -280,6 +305,55 @@ export function SalesPage() {
         <SaleDetailModal
           sale={selectedSale}
           onClose={() => setSelectedSale(null)}
+        />
+      )}
+
+      {editingSale && (
+        <SoldModal
+          article={{
+            id: editingSale.id,
+            title: editingSale.title,
+            brand: editingSale.brand,
+            price: editingSale.price.toString(),
+            photos: editingSale.photos,
+          }}
+          onClose={() => setEditingSale(null)}
+          onConfirm={async (saleData) => {
+            try {
+              const netProfit = saleData.soldPrice - saleData.fees - saleData.shippingCost;
+
+              const { error } = await supabase
+                .from('articles')
+                .update({
+                  sold_price: saleData.soldPrice,
+                  sold_at: saleData.soldDate,
+                  platform: saleData.platform,
+                  shipping_cost: saleData.shippingCost,
+                  fees: saleData.fees,
+                  net_profit: netProfit,
+                  buyer_name: saleData.buyerName || null,
+                  sale_notes: saleData.notes || null,
+                })
+                .eq('id', editingSale.id);
+
+              if (error) throw error;
+
+              await loadSales();
+              setEditingSale(null);
+            } catch (error) {
+              console.error('Error updating sale:', error);
+              throw error;
+            }
+          }}
+          initialData={{
+            soldPrice: editingSale.sold_price,
+            soldDate: editingSale.sold_at,
+            platform: editingSale.platform,
+            shippingCost: editingSale.shipping_cost,
+            fees: editingSale.fees,
+            buyerName: editingSale.buyer_name || '',
+            notes: editingSale.sale_notes || '',
+          }}
         />
       )}
     </div>
