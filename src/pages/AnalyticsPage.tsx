@@ -251,15 +251,15 @@ export function AnalyticsPage() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-white to-orange-50 rounded-xl shadow-md border-2 border-orange-200 p-5 hover:shadow-lg transition-all">
+        <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md border-2 border-gray-200 p-5 hover:shadow-lg transition-all">
           <div className="flex items-center justify-between">
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold text-orange-700 uppercase tracking-wide mb-2">
+              <p className="text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">
                 Revenu total
               </p>
               <p className="text-2xl font-bold text-gray-900">{metrics.totalRevenue.toFixed(2)} €</p>
             </div>
-            <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+            <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center shadow-lg">
               <Euro className="w-7 h-7 text-white" />
             </div>
           </div>
