@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Edit, Send, Package, ShoppingBag, ChevronLeft, ChevronRight, CheckCircle, Layers, Calendar, DollarSign, Trash2 } from 'lucide-react';
+import { Edit, Send, Package, ShoppingBag, ChevronLeft, ChevronRight, CheckCircle, Layers, Calendar, DollarSign, Trash2, Eye } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { supabase } from '../lib/supabase';
 import { Article } from '../types/article';
@@ -9,6 +9,7 @@ import { ConfirmModal } from '../components/ui/ConfirmModal';
 import { PublishInstructionsModal } from '../components/PublishInstructionsModal';
 import { ScheduleModal } from '../components/ScheduleModal';
 import { ArticleSoldModal } from '../components/ArticleSoldModal';
+import { SaleDetailModal } from '../components/SaleDetailModal';
 import { Toast } from '../components/ui/Toast';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -28,6 +29,7 @@ export function PreviewPage() {
   const [publishInstructionsModal, setPublishInstructionsModal] = useState<{ isOpen: boolean; articleId: string }>({ isOpen: false, articleId: '' });
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [soldModalOpen, setSoldModalOpen] = useState(false);
+  const [saleDetailModalOpen, setSaleDetailModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -313,6 +315,29 @@ export function PreviewPage() {
           />
         </>
       )}
+
+      {saleDetailModalOpen && article && article.status === 'sold' && (
+        <SaleDetailModal
+          sale={{
+            id: article.id,
+            title: article.title,
+            brand: article.brand || '',
+            price: article.price || 0,
+            sold_price: article.sold_price || article.price || 0,
+            sold_at: article.sold_at || new Date().toISOString(),
+            platform: article.platform || 'Vinted',
+            shipping_cost: article.shipping_cost || 0,
+            fees: article.fees || 0,
+            net_profit: article.net_profit || 0,
+            photos: article.photos || [],
+            buyer_name: article.buyer_name,
+            sale_notes: article.sale_notes,
+            seller_name: sellerName || undefined,
+          }}
+          onClose={() => setSaleDetailModalOpen(false)}
+        />
+      )}
+
       <ConfirmModal
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
@@ -737,14 +762,24 @@ export function PreviewPage() {
               )}
 
               {article.status === 'sold' && (
-                <Button
-                  variant="secondary"
-                  onClick={() => navigate(`/articles/${article.id}/edit`)}
-                  className="px-6 w-full md:w-auto bg-white text-gray-700 hover:bg-gray-50 border-gray-300 hover:border-gray-400"
-                >
-                  <Edit className="w-4 h-4 mr-2" />
-                  Modifier
-                </Button>
+                <>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setSaleDetailModalOpen(true)}
+                    className="px-6 w-full md:w-auto bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-300"
+                  >
+                    <Eye className="w-4 h-4 mr-2" />
+                    Voir la vente
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => navigate(`/articles/${article.id}/edit`)}
+                    className="px-6 w-full md:w-auto bg-white text-gray-700 hover:bg-gray-50 border-gray-300 hover:border-gray-400"
+                  >
+                    <Edit className="w-4 h-4 mr-2" />
+                    Modifier
+                  </Button>
+                </>
               )}
             </div>
           </>
