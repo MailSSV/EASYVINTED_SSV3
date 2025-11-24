@@ -34,7 +34,7 @@ export function SaleDetailModal({ sale, onClose }: SaleDetailModalProps) {
   const totalCosts = sale.fees + sale.shipping_cost;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] p-4 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         <div className="sticky top-0 bg-gradient-to-r from-emerald-50 to-teal-50 px-6 py-5 border-b border-emerald-200">
           <div className="flex items-center justify-between">

@@ -76,6 +76,7 @@ export function ArticleFormPage() {
   const [saleDetailModal, setSaleDetailModal] = useState(false);
   const [currentArticle, setCurrentArticle] = useState<any>(null);
   const [articleStatus, setArticleStatus] = useState<ArticleStatus>('draft');
+  const [sellerName, setSellerName] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -214,7 +215,10 @@ export function ArticleFormPage() {
       setLoading(true);
       const { data, error } = await supabase
         .from('articles')
-        .select('*')
+        .select(`
+          *,
+          family_members!articles_seller_id_fkey(name)
+        `)
         .eq('id', id)
         .maybeSingle();
 
@@ -240,6 +244,10 @@ export function ArticleFormPage() {
           seller_id: data.seller_id || null,
         });
         setArticleStatus(data.status as ArticleStatus);
+
+        if (data.family_members) {
+          setSellerName(data.family_members.name);
+        }
       }
     } catch (error) {
       console.error('Error fetching article:', error);
@@ -1344,8 +1352,8 @@ export function ArticleFormPage() {
                         disabled={loading || publishing}
                         className="flex-1 min-w-[200px] justify-center bg-white text-gray-700 hover:bg-gray-50 border-gray-300 hover:border-gray-400"
                       >
-                        <Edit className="w-4 h-4" />
-                        <span>Modifier</span>
+                        <Save className="w-4 h-4" />
+                        <span>Enregistrer</span>
                       </Button>
 
                       <Button
@@ -1473,22 +1481,23 @@ export function ArticleFormPage() {
               article={currentArticle}
             />
 
-            {saleDetailModal && currentArticle.status === 'sold' && (
+            {saleDetailModal && currentArticle && currentArticle.status === 'sold' && (
               <SaleDetailModal
                 sale={{
                   id: currentArticle.id,
-                  title: title,
-                  brand: brand,
-                  price: price,
-                  sold_price: currentArticle.sold_price || price,
+                  title: formData.title,
+                  brand: formData.brand,
+                  price: parseFloat(formData.price) || 0,
+                  sold_price: currentArticle.sold_price || parseFloat(formData.price) || 0,
                   sold_at: currentArticle.sold_at || new Date().toISOString(),
                   platform: currentArticle.platform || 'Vinted',
                   shipping_cost: currentArticle.shipping_cost || 0,
                   fees: currentArticle.fees || 0,
                   net_profit: currentArticle.net_profit || 0,
-                  photos: photos,
+                  photos: formData.photos,
                   buyer_name: currentArticle.buyer_name,
                   sale_notes: currentArticle.sale_notes,
+                  seller_name: sellerName || undefined,
                 }}
                 onClose={() => setSaleDetailModal(false)}
               />
