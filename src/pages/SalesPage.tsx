@@ -262,11 +262,11 @@ export function SalesPage() {
                   <div className="space-y-2.5">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="inline-flex items-center px-2.5 py-1 bg-gray-50 border border-gray-200/50 rounded-lg text-[11px] font-medium text-gray-700">
-                        {formatDate(sale.sold_at)}
+                        Vendu le {formatDate(sale.sold_at)}
                       </span>
                       {sale.seller_name && (
                         <span className="inline-flex items-center px-2.5 py-1 bg-blue-50 border border-blue-200/50 rounded-lg text-[11px] font-medium text-blue-700">
-                          {sale.seller_name}
+                          par {sale.seller_name}
                         </span>
                       )}
                     </div>
