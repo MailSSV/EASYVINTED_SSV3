@@ -335,6 +335,10 @@ export function PreviewPage() {
             seller_name: sellerName || undefined,
           }}
           onClose={() => setSaleDetailModalOpen(false)}
+          onEdit={() => {
+            setSaleDetailModalOpen(false);
+            setSoldModalOpen(true);
+          }}
         />
       )}
 
