@@ -132,6 +132,9 @@ export function SalesPage() {
                     <th className="px-4 py-3.5 text-left text-[10px] font-semibold text-gray-600 uppercase tracking-wide whitespace-nowrap">
                       Date vente
                     </th>
+                    <th className="px-4 py-3.5 text-left text-[10px] font-semibold text-gray-600 uppercase tracking-wide whitespace-nowrap">
+                      Vendeur
+                    </th>
                     <th className="px-4 py-3.5 text-right text-[10px] font-semibold text-gray-600 uppercase tracking-wide">
                       Bénéfice
                     </th>
@@ -173,6 +176,15 @@ export function SalesPage() {
                         <span className="inline-flex items-center px-2.5 py-1 bg-gray-50 border border-gray-200/50 rounded-lg text-[11px] font-medium text-gray-700">
                           {formatDate(sale.sold_at)}
                         </span>
+                      </td>
+                      <td className="px-4 py-4">
+                        {sale.seller_name ? (
+                          <span className="inline-flex items-center px-2.5 py-1 bg-blue-50 border border-blue-200/50 rounded-lg text-[11px] font-medium text-blue-700">
+                            {sale.seller_name}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-gray-400">Non défini</span>
+                        )}
                       </td>
                       <td className="px-4 py-4 text-right">
                         <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold ${
@@ -246,17 +258,30 @@ export function SalesPage() {
                       </p>
                     </div>
 
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs text-gray-500 font-medium">
-                        {formatDate(sale.sold_at)}
-                      </span>
-                      <span className={`text-base font-bold ${
-                        sale.net_profit >= 0
-                          ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 bg-clip-text text-transparent'
-                          : 'text-red-600'
-                      }`}>
-                        {sale.net_profit >= 0 ? '+' : ''}{sale.net_profit.toFixed(2)} €
-                      </span>
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-500 font-medium">
+                          {formatDate(sale.sold_at)}
+                        </span>
+                        {sale.seller_name && (
+                          <>
+                            <span className="text-gray-300">•</span>
+                            <span className="text-xs text-blue-600 font-medium">
+                              {sale.seller_name}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-400">Bénéfice</span>
+                        <span className={`text-base font-bold ${
+                          sale.net_profit >= 0
+                            ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 bg-clip-text text-transparent'
+                            : 'text-red-600'
+                        }`}>
+                          {sale.net_profit >= 0 ? '+' : ''}{sale.net_profit.toFixed(2)} €
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
