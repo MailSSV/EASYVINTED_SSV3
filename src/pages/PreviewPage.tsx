@@ -334,7 +334,7 @@ export function PreviewPage() {
               onClose={() => setSaleDetailModalOpen(false)}
               onEdit={() => {
                 setSaleDetailModalOpen(false);
-                setSoldModalOpen(true);
+                handleOpenSoldModal();
               }}
             />
           )}
