@@ -470,7 +470,7 @@ export function DashboardPage() {
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              Mes articles
+              Mon stock
             </h1>
             <p className="text-sm text-gray-600 mt-1">
               Gérez vos articles, préparez-les pour Vinted et suivez leur
