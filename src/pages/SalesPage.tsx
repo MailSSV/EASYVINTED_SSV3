@@ -4,7 +4,7 @@ import { Package, Eye, ClipboardEdit } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { SaleDetailModal } from '../components/SaleDetailModal';
-import { SoldModal } from '../components/SoldModal';
+import { ArticleSoldModal } from '../components/ArticleSoldModal';
 
 interface SaleRecord {
   id: string;
@@ -309,14 +309,16 @@ export function SalesPage() {
       )}
 
       {editingSale && (
-        <SoldModal
+        <ArticleSoldModal
+          isOpen={true}
           article={{
             id: editingSale.id,
             title: editingSale.title,
             brand: editingSale.brand,
-            price: editingSale.price.toString(),
+            price: editingSale.price,
             photos: editingSale.photos,
-          }}
+            seller_id: editingSale.seller_id,
+          } as any}
           onClose={() => setEditingSale(null)}
           onConfirm={async (saleData) => {
             try {
@@ -326,20 +328,21 @@ export function SalesPage() {
                 .from('articles')
                 .update({
                   sold_price: saleData.soldPrice,
-                  sold_at: saleData.soldDate,
+                  sold_at: saleData.soldAt,
                   platform: saleData.platform,
                   shipping_cost: saleData.shippingCost,
                   fees: saleData.fees,
                   net_profit: netProfit,
                   buyer_name: saleData.buyerName || null,
                   sale_notes: saleData.notes || null,
+                  seller_id: saleData.sellerId || null,
+                  updated_at: new Date().toISOString(),
                 })
                 .eq('id', editingSale.id);
 
               if (error) throw error;
 
               await loadSales();
-              setEditingSale(null);
             } catch (error) {
               console.error('Error updating sale:', error);
               throw error;
@@ -347,12 +350,13 @@ export function SalesPage() {
           }}
           initialData={{
             soldPrice: editingSale.sold_price,
-            soldDate: editingSale.sold_at,
+            soldAt: editingSale.sold_at,
             platform: editingSale.platform,
-            shippingCost: editingSale.shipping_cost,
             fees: editingSale.fees,
-            buyerName: editingSale.buyer_name || '',
-            notes: editingSale.sale_notes || '',
+            shippingCost: editingSale.shipping_cost,
+            buyerName: editingSale.buyer_name,
+            notes: editingSale.sale_notes,
+            sellerId: editingSale.seller_id,
           }}
         />
       )}

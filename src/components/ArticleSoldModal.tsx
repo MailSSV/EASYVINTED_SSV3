@@ -20,20 +20,34 @@ interface ArticleSoldModalProps {
   onClose: () => void;
   onConfirm: (saleData: SaleData) => void;
   article: Article;
+  initialData?: {
+    soldPrice: number;
+    soldAt: string;
+    platform: string;
+    fees: number;
+    shippingCost: number;
+    buyerName?: string;
+    notes?: string;
+    sellerId?: string;
+  };
 }
 
-export function ArticleSoldModal({ isOpen, onClose, onConfirm, article }: ArticleSoldModalProps) {
+export function ArticleSoldModal({ isOpen, onClose, onConfirm, article, initialData }: ArticleSoldModalProps) {
   const { user } = useAuth();
   const today = new Date().toISOString().split('T')[0];
 
-  const [soldPrice, setSoldPrice] = useState(article.price.toString());
-  const [soldAt, setSoldAt] = useState(today);
-  const [platform, setPlatform] = useState('Vinted');
-  const [fees, setFees] = useState('0');
-  const [shippingCost, setShippingCost] = useState('0');
-  const [buyerName, setBuyerName] = useState('');
-  const [notes, setNotes] = useState('');
-  const [sellerId, setSellerId] = useState<string>(article.seller_id || '');
+  const [soldPrice, setSoldPrice] = useState(
+    initialData?.soldPrice?.toString() || article.price.toString()
+  );
+  const [soldAt, setSoldAt] = useState(
+    initialData?.soldAt ? new Date(initialData.soldAt).toISOString().split('T')[0] : today
+  );
+  const [platform, setPlatform] = useState(initialData?.platform || 'Vinted');
+  const [fees, setFees] = useState(initialData?.fees?.toString() || '0');
+  const [shippingCost, setShippingCost] = useState(initialData?.shippingCost?.toString() || '0');
+  const [buyerName, setBuyerName] = useState(initialData?.buyerName || '');
+  const [notes, setNotes] = useState(initialData?.notes || '');
+  const [sellerId, setSellerId] = useState<string>(initialData?.sellerId || article.seller_id || '');
   const [familyMembers, setFamilyMembers] = useState<Array<{id: string; name: string; is_default: boolean}>>([]);
 
   useEffect(() => {
@@ -101,7 +115,9 @@ export function ArticleSoldModal({ isOpen, onClose, onConfirm, article }: Articl
                 <DollarSign className="w-6 h-6 text-green-600" />
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-900 mb-1">Enregistrer une vente</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                  {initialData ? 'Modifier la vente' : 'Enregistrer une vente'}
+                </h3>
                 <p className="text-sm text-gray-600">{article.title}</p>
                 <p className="text-xs text-gray-500 mt-1">Prix initial : {article.price.toFixed(2)} €</p>
               </div>
@@ -289,7 +305,7 @@ export function ArticleSoldModal({ isOpen, onClose, onConfirm, article }: Articl
               disabled={!soldPrice || parseFloat(soldPrice) <= 0 || !soldAt}
               className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Enregistrer la vente
+              {initialData ? 'Enregistrer les modifications' : 'Enregistrer la vente'}
             </button>
           </div>
         </div>
