@@ -244,6 +244,7 @@ export function ArticleFormPage() {
           seller_id: data.seller_id || null,
         });
         setArticleStatus(data.status as ArticleStatus);
+        setCurrentArticle(data);
 
         if (data.family_members) {
           setSellerName(data.family_members.name);
@@ -1480,29 +1481,29 @@ export function ArticleFormPage() {
               onConfirm={handleSoldConfirm}
               article={currentArticle}
             />
-
-            {saleDetailModal && currentArticle && currentArticle.status === 'sold' && (
-              <SaleDetailModal
-                sale={{
-                  id: currentArticle.id,
-                  title: formData.title,
-                  brand: formData.brand,
-                  price: parseFloat(formData.price) || 0,
-                  sold_price: currentArticle.sold_price || parseFloat(formData.price) || 0,
-                  sold_at: currentArticle.sold_at || new Date().toISOString(),
-                  platform: currentArticle.platform || 'Vinted',
-                  shipping_cost: currentArticle.shipping_cost || 0,
-                  fees: currentArticle.fees || 0,
-                  net_profit: currentArticle.net_profit || 0,
-                  photos: formData.photos,
-                  buyer_name: currentArticle.buyer_name,
-                  sale_notes: currentArticle.sale_notes,
-                  seller_name: sellerName || undefined,
-                }}
-                onClose={() => setSaleDetailModal(false)}
-              />
-            )}
           </>
+        )}
+
+        {saleDetailModal && currentArticle && currentArticle.status === 'sold' && (
+          <SaleDetailModal
+            sale={{
+              id: currentArticle.id,
+              title: formData.title,
+              brand: formData.brand,
+              price: parseFloat(formData.price) || 0,
+              sold_price: currentArticle.sold_price || parseFloat(formData.price) || 0,
+              sold_at: currentArticle.sold_at || new Date().toISOString(),
+              platform: currentArticle.platform || 'Vinted',
+              shipping_cost: currentArticle.shipping_cost || 0,
+              fees: currentArticle.fees || 0,
+              net_profit: currentArticle.net_profit || 0,
+              photos: formData.photos,
+              buyer_name: currentArticle.buyer_name,
+              sale_notes: currentArticle.sale_notes,
+              seller_name: sellerName || undefined,
+            }}
+            onClose={() => setSaleDetailModal(false)}
+          />
         )}
       </div>
     </>
