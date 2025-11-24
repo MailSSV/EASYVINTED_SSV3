@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Package, Eye } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
@@ -24,6 +25,7 @@ interface SaleRecord {
 
 export function SalesPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [salesHistory, setSalesHistory] = useState<SaleRecord[]>([]);
   const [selectedSale, setSelectedSale] = useState<SaleRecord | null>(null);
@@ -294,6 +296,10 @@ export function SalesPage() {
         <SaleDetailModal
           sale={selectedSale}
           onClose={() => setSelectedSale(null)}
+          onEdit={() => {
+            navigate(`/articles/${selectedSale.id}`);
+            setSelectedSale(null);
+          }}
         />
       )}
     </div>
