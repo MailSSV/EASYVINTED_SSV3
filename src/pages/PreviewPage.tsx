@@ -313,33 +313,32 @@ export function PreviewPage() {
             onConfirm={handleMarkAsSold}
             article={article}
           />
+          {saleDetailModalOpen && article.status === 'sold' && (
+            <SaleDetailModal
+              sale={{
+                id: article.id,
+                title: article.title,
+                brand: article.brand || '',
+                price: article.price || 0,
+                sold_price: article.sold_price || article.price || 0,
+                sold_at: article.sold_at || new Date().toISOString(),
+                platform: article.platform || 'Vinted',
+                shipping_cost: article.shipping_cost || 0,
+                fees: article.fees || 0,
+                net_profit: article.net_profit || 0,
+                photos: article.photos || [],
+                buyer_name: article.buyer_name,
+                sale_notes: article.sale_notes,
+                seller_name: sellerName || undefined,
+              }}
+              onClose={() => setSaleDetailModalOpen(false)}
+              onEdit={() => {
+                setSaleDetailModalOpen(false);
+                setSoldModalOpen(true);
+              }}
+            />
+          )}
         </>
-      )}
-
-      {saleDetailModalOpen && article && article.status === 'sold' && (
-        <SaleDetailModal
-          sale={{
-            id: article.id,
-            title: article.title,
-            brand: article.brand || '',
-            price: article.price || 0,
-            sold_price: article.sold_price || article.price || 0,
-            sold_at: article.sold_at || new Date().toISOString(),
-            platform: article.platform || 'Vinted',
-            shipping_cost: article.shipping_cost || 0,
-            fees: article.fees || 0,
-            net_profit: article.net_profit || 0,
-            photos: article.photos || [],
-            buyer_name: article.buyer_name,
-            sale_notes: article.sale_notes,
-            seller_name: sellerName || undefined,
-          }}
-          onClose={() => setSaleDetailModalOpen(false)}
-          onEdit={() => {
-            setSaleDetailModalOpen(false);
-            setSoldModalOpen(true);
-          }}
-        />
       )}
 
       <ConfirmModal
