@@ -735,6 +735,17 @@ export function PreviewPage() {
                   Envoyer à Vinted
                 </Button>
               )}
+
+              {article.status === 'sold' && (
+                <Button
+                  variant="secondary"
+                  onClick={() => navigate(`/articles/${article.id}/edit`)}
+                  className="px-6 w-full md:w-auto bg-white text-gray-700 hover:bg-gray-50 border-gray-300 hover:border-gray-400"
+                >
+                  <Edit className="w-4 h-4 mr-2" />
+                  Modifier
+                </Button>
+              )}
             </div>
           </>
         )}
