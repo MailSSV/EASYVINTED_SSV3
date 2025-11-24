@@ -258,18 +258,15 @@ export function SalesPage() {
                       </p>
                     </div>
 
-                    <div className="space-y-1.5">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-500 font-medium">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="inline-flex items-center px-2.5 py-1 bg-gray-50 border border-gray-200/50 rounded-lg text-[11px] font-medium text-gray-700">
                           {formatDate(sale.sold_at)}
                         </span>
                         {sale.seller_name && (
-                          <>
-                            <span className="text-gray-300">•</span>
-                            <span className="text-xs text-blue-600 font-medium">
-                              {sale.seller_name}
-                            </span>
-                          </>
+                          <span className="inline-flex items-center px-2.5 py-1 bg-blue-50 border border-blue-200/50 rounded-lg text-[11px] font-medium text-blue-700">
+                            {sale.seller_name}
+                          </span>
                         )}
                       </div>
                       <div className="flex items-center justify-between">
@@ -286,19 +283,7 @@ export function SalesPage() {
                   </div>
                 </div>
 
-                <div className="px-4 pb-3 pt-2 bg-gradient-to-r from-gray-50 to-transparent border-t border-gray-100 flex items-center justify-between">
-                  <div className="flex items-center gap-3 text-xs">
-                    <div>
-                      <span className="text-gray-500">Vendu:</span>
-                      <span className="ml-1 font-semibold text-gray-900">{sale.sold_price.toFixed(2)} €</span>
-                    </div>
-                    <div className="w-px h-4 bg-gray-300"></div>
-                    <div>
-                      <span className="text-gray-500">Frais:</span>
-                      <span className="ml-1 font-semibold text-gray-900">{(sale.fees + sale.shipping_cost).toFixed(2)} €</span>
-                    </div>
-                  </div>
-
+                <div className="px-4 pb-3 pt-2 bg-gradient-to-r from-gray-50 to-transparent border-t border-gray-100 flex items-center justify-end">
                   <div className="flex items-center gap-1">
                     <button
                       onClick={(e) => {
