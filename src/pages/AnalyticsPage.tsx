@@ -223,15 +223,15 @@ export function AnalyticsPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6">
-        <div className="bg-gradient-to-br from-white to-blue-50 rounded-xl shadow-md border-2 border-blue-200 p-5 hover:shadow-lg transition-all">
+        <div className="bg-gradient-to-br from-white to-orange-50 rounded-xl shadow-md border-2 border-orange-200 p-5 hover:shadow-lg transition-all">
           <div className="flex items-center justify-between">
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold text-blue-700 uppercase tracking-wide mb-2">
+              <p className="text-xs font-bold text-orange-700 uppercase tracking-wide mb-2">
                 Articles totaux
               </p>
               <p className="text-2xl font-bold text-gray-900">{metrics.totalArticles}</p>
             </div>
-            <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+            <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
               <Package className="w-7 h-7 text-white" />
             </div>
           </div>
