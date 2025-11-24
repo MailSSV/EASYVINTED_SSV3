@@ -130,12 +130,6 @@ export function SalesPage() {
                     <th className="px-4 py-3.5 text-left text-[10px] font-semibold text-gray-600 uppercase tracking-wide whitespace-nowrap">
                       Date vente
                     </th>
-                    <th className="px-4 py-3.5 text-right text-[10px] font-semibold text-gray-600 uppercase tracking-wide whitespace-nowrap">
-                      Prix
-                    </th>
-                    <th className="px-4 py-3.5 text-right text-[10px] font-semibold text-gray-600 uppercase tracking-wide">
-                      Frais
-                    </th>
                     <th className="px-4 py-3.5 text-right text-[10px] font-semibold text-gray-600 uppercase tracking-wide">
                       Bénéfice
                     </th>
@@ -176,16 +170,6 @@ export function SalesPage() {
                       <td className="px-4 py-4">
                         <span className="inline-flex items-center px-2.5 py-1 bg-gray-50 border border-gray-200/50 rounded-lg text-[11px] font-medium text-gray-700">
                           {formatDate(sale.sold_at)}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4 text-right">
-                        <span className="text-xs font-bold bg-gradient-to-r from-emerald-600 to-emerald-700 bg-clip-text text-transparent">
-                          {sale.sold_price.toFixed(2)} €
-                        </span>
-                      </td>
-                      <td className="px-4 py-4 text-right">
-                        <span className="text-xs text-gray-600 font-medium">
-                          {(sale.fees + sale.shipping_cost).toFixed(2)} €
                         </span>
                       </td>
                       <td className="px-4 py-4 text-right">
