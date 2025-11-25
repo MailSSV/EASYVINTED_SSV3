@@ -63,7 +63,8 @@ export function SalesPage() {
         .from('lots')
         .select(`
           *,
-          lot_items!inner(article_id)
+          lot_items!inner(article_id),
+          family_members:seller_id (name)
         `)
         .eq('user_id', user.id)
         .eq('status', 'sold')
@@ -91,7 +92,7 @@ export function SalesPage() {
         is_lot: false,
       })) : [];
 
-      const lotSales = lots ? lots.map(lot => ({
+      const lotSales = lots ? lots.map((lot: any) => ({
         id: lot.id,
         title: lot.name,
         brand: `Lot (${lot.lot_items?.length || 0} articles)`,
@@ -99,14 +100,14 @@ export function SalesPage() {
         sold_price: parseFloat(lot.price) || 0,
         sold_at: lot.published_at,
         platform: 'Vinted',
-        shipping_cost: 0,
-        fees: 0,
-        net_profit: parseFloat(lot.price) || 0,
+        shipping_cost: parseFloat(lot.shipping_cost) || 0,
+        fees: parseFloat(lot.fees) || 0,
+        net_profit: parseFloat(lot.net_profit) || (parseFloat(lot.price) - parseFloat(lot.shipping_cost || 0) - parseFloat(lot.fees || 0)),
         photos: lot.photos || [],
-        buyer_name: undefined,
-        sale_notes: undefined,
-        seller_id: undefined,
-        seller_name: undefined,
+        buyer_name: lot.buyer_name,
+        sale_notes: lot.sale_notes,
+        seller_id: lot.seller_id,
+        seller_name: lot.family_members?.name || null,
         is_lot: true,
         lot_article_count: lot.lot_items?.length || 0,
       })) : [];
@@ -394,11 +395,19 @@ export function SalesPage() {
           onConfirm={async (saleData) => {
             try {
               if (editingSale.is_lot) {
+                const netProfit = saleData.soldPrice - saleData.fees - saleData.shippingCost;
+
                 const { error } = await supabase
                   .from('lots')
                   .update({
                     price: saleData.soldPrice,
                     published_at: saleData.soldAt,
+                    shipping_cost: saleData.shippingCost,
+                    fees: saleData.fees,
+                    net_profit: netProfit,
+                    buyer_name: saleData.buyerName || null,
+                    sale_notes: saleData.notes || null,
+                    seller_id: saleData.sellerId || null,
                     updated_at: new Date().toISOString(),
                   })
                   .eq('id', editingSale.id);
