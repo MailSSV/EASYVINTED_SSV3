@@ -59,8 +59,7 @@ export default function LotPreviewPage() {
             price,
             photos,
             size,
-            description,
-            category_id
+            description
           )
         `)
         .eq('lot_id', id);

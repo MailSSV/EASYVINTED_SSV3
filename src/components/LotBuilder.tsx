@@ -496,6 +496,17 @@ export default function LotBuilder({ isOpen, onClose, onSuccess, existingLotId }
                     <span className="text-sm text-gray-600">Remise</span>
                     <span className="text-sm font-semibold text-emerald-600">{discount}%</span>
                   </div>
+                  <div className="pt-3 border-t border-emerald-200 mt-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-700">Statut du lot</span>
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                        Brouillon
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Le lot sera créé en mode brouillon. Vous pourrez le modifier et changer son statut plus tard.
+                    </p>
+                  </div>
                 </div>
               </div>
 
