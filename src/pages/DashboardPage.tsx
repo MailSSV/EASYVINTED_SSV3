@@ -1,28 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Eye,
-  Edit,
-  MoreVertical,
-  Plus,
-  Image as ImageIcon,
-  Search,
-  Copy,
-  Trash2,
-  DollarSign,
-  Calendar,
-  Clock,
-  CheckCircle2,
-  FileText,
-  Send,
-  Flower2,
-  Sun,
-  Leaf,
-  Snowflake,
-  CloudSun,
-  ClipboardList,
-  Upload,
-} from 'lucide-react';
+import { Eye, CreditCard as Edit, MoreVertical, Plus, Image as ImageIcon, Search, Copy, Trash2, DollarSign, Calendar, Clock, CheckCircle2, FileText, Send, Flower2, Sun, Leaf, Snowflake, CloudSun, ClipboardList, Upload } from 'lucide-react';
 import { Article, ArticleStatus, Season } from '../types/article';
 import { Button } from '../components/ui/Button';
 import { supabase } from '../lib/supabase';
