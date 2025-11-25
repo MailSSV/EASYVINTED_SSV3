@@ -22,6 +22,8 @@ interface SaleRecord {
   sale_notes?: string;
   seller_id?: string;
   seller_name?: string;
+  is_lot?: boolean;
+  lot_article_count?: number;
 }
 
 export function SalesPage() {
@@ -57,27 +59,63 @@ export function SalesPage() {
 
       if (error) throw error;
 
-      if (articles) {
-        setSalesHistory(
-          articles.map(a => ({
-            id: a.id,
-            title: a.title,
-            brand: a.brand || 'Sans marque',
-            price: parseFloat(a.price),
-            sold_price: parseFloat(a.sold_price) || 0,
-            sold_at: a.sold_at,
-            platform: a.platform || 'Vinted',
-            shipping_cost: parseFloat(a.shipping_cost) || 0,
-            fees: parseFloat(a.fees) || 0,
-            net_profit: parseFloat(a.net_profit) || 0,
-            photos: a.photos || [],
-            buyer_name: a.buyer_name,
-            sale_notes: a.sale_notes,
-            seller_id: a.seller_id,
-            seller_name: a.family_members?.name || null,
-          }))
-        );
-      }
+      const { data: lots, error: lotsError } = await supabase
+        .from('lots')
+        .select(`
+          *,
+          lot_items!inner(article_id)
+        `)
+        .eq('user_id', user.id)
+        .eq('status', 'sold')
+        .not('published_at', 'is', null)
+        .order('published_at', { ascending: false });
+
+      if (lotsError) throw lotsError;
+
+      const articleSales = articles ? articles.map(a => ({
+        id: a.id,
+        title: a.title,
+        brand: a.brand || 'Sans marque',
+        price: parseFloat(a.price),
+        sold_price: parseFloat(a.sold_price) || 0,
+        sold_at: a.sold_at,
+        platform: a.platform || 'Vinted',
+        shipping_cost: parseFloat(a.shipping_cost) || 0,
+        fees: parseFloat(a.fees) || 0,
+        net_profit: parseFloat(a.net_profit) || 0,
+        photos: a.photos || [],
+        buyer_name: a.buyer_name,
+        sale_notes: a.sale_notes,
+        seller_id: a.seller_id,
+        seller_name: a.family_members?.name || null,
+        is_lot: false,
+      })) : [];
+
+      const lotSales = lots ? lots.map(lot => ({
+        id: lot.id,
+        title: lot.name,
+        brand: `Lot (${lot.lot_items?.length || 0} articles)`,
+        price: parseFloat(lot.original_total_price),
+        sold_price: parseFloat(lot.price) || 0,
+        sold_at: lot.published_at,
+        platform: 'Vinted',
+        shipping_cost: 0,
+        fees: 0,
+        net_profit: parseFloat(lot.price) || 0,
+        photos: lot.photos || [],
+        buyer_name: undefined,
+        sale_notes: undefined,
+        seller_id: undefined,
+        seller_name: undefined,
+        is_lot: true,
+        lot_article_count: lot.lot_items?.length || 0,
+      })) : [];
+
+      const allSales = [...articleSales, ...lotSales].sort((a, b) =>
+        new Date(b.sold_at).getTime() - new Date(a.sold_at).getTime()
+      );
+
+      setSalesHistory(allSales);
     } catch (error) {
       console.error('Error loading sales:', error);
     } finally {
@@ -162,6 +200,11 @@ export function SalesPage() {
                             ) : (
                               <Package className="w-7 h-7 text-gray-300" />
                             )}
+                            {sale.is_lot && (
+                              <div className="absolute bottom-1 right-1 bg-purple-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+                                LOT
+                              </div>
+                            )}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                           </div>
                           <div className="min-w-0">
@@ -200,23 +243,29 @@ export function SalesPage() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              setSelectedSale(sale);
+                              if (sale.is_lot) {
+                                navigate(`/lots/${sale.id}`);
+                              } else {
+                                setSelectedSale(sale);
+                              }
                             }}
                             className="p-2.5 rounded-xl text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all active:scale-90"
-                            title="Voir les détails"
+                            title={sale.is_lot ? "Voir le lot" : "Voir les détails"}
                           >
                             <Eye className="w-4 h-4" />
                           </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setEditingSale(sale);
-                            }}
-                            className="p-2.5 rounded-xl text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all active:scale-90"
-                            title="Modifier la vente"
-                          >
-                            <ClipboardEdit className="w-4 h-4" />
-                          </button>
+                          {!sale.is_lot && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditingSale(sale);
+                              }}
+                              className="p-2.5 rounded-xl text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all active:scale-90"
+                              title="Modifier la vente"
+                            >
+                              <ClipboardEdit className="w-4 h-4" />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -236,7 +285,13 @@ export function SalesPage() {
                 <div className="flex gap-4 p-4">
                   <div
                     className="relative w-28 h-28 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0 ring-1 ring-gray-200/50 cursor-pointer"
-                    onClick={() => setSelectedSale(sale)}
+                    onClick={() => {
+                      if (sale.is_lot) {
+                        navigate(`/lots/${sale.id}`);
+                      } else {
+                        setSelectedSale(sale);
+                      }
+                    }}
                   >
                     {sale.photos.length > 0 ? (
                       <img
@@ -246,6 +301,11 @@ export function SalesPage() {
                       />
                     ) : (
                       <Package className="w-10 h-10 text-gray-300" />
+                    )}
+                    {sale.is_lot && (
+                      <div className="absolute bottom-1.5 right-1.5 bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded">
+                        LOT
+                      </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
@@ -287,21 +347,27 @@ export function SalesPage() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        setSelectedSale(sale);
+                        if (sale.is_lot) {
+                          navigate(`/lots/${sale.id}`);
+                        } else {
+                          setSelectedSale(sale);
+                        }
                       }}
                       className="p-2 rounded-xl hover:bg-white text-gray-500 hover:text-emerald-600 transition-all active:scale-90"
                     >
                       <Eye className="w-4 h-4" />
                     </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setEditingSale(sale);
-                      }}
-                      className="p-2 rounded-xl hover:bg-white text-gray-500 hover:text-blue-600 transition-all active:scale-90"
-                    >
-                      <ClipboardEdit className="w-4 h-4" />
-                    </button>
+                    {!sale.is_lot && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingSale(sale);
+                        }}
+                        className="p-2 rounded-xl hover:bg-white text-gray-500 hover:text-blue-600 transition-all active:scale-90"
+                      >
+                        <ClipboardEdit className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
