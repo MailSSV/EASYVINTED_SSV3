@@ -51,12 +51,66 @@ export default function LotBuilder({ isOpen, onClose, onSuccess, existingLotId }
     if (isOpen) {
       fetchArticles();
       fetchArticlesInLots();
+      if (existingLotId) {
+        loadExistingLot();
+      } else {
+        resetForm();
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, existingLotId]);
 
   useEffect(() => {
     applyFilters();
   }, [filters, articles]);
+
+  const resetForm = () => {
+    setLotData({
+      name: '',
+      description: '',
+      selectedArticles: [],
+      price: 0,
+      photos: [],
+    });
+    setCurrentStep(1);
+    setError('');
+  };
+
+  const loadExistingLot = async () => {
+    if (!existingLotId) return;
+
+    try {
+      const { data: lotData, error: lotError } = await supabase
+        .from('lots')
+        .select('*')
+        .eq('id', existingLotId)
+        .single();
+
+      if (lotError) throw lotError;
+
+      const { data: itemsData, error: itemsError } = await supabase
+        .from('lot_items')
+        .select('article_id')
+        .eq('lot_id', existingLotId);
+
+      if (itemsError) throw itemsError;
+
+      const articleIds = itemsData.map(item => item.article_id);
+
+      setLotData({
+        name: lotData.name,
+        description: lotData.description || '',
+        category_id: lotData.category_id,
+        season: lotData.season,
+        selectedArticles: articleIds,
+        price: parseFloat(lotData.price) || 0,
+        cover_photo: lotData.cover_photo,
+        photos: lotData.photos || [],
+      });
+    } catch (error) {
+      console.error('Error loading existing lot:', error);
+      setError('Erreur lors du chargement du lot');
+    }
+  };
 
   const fetchArticles = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -82,10 +136,16 @@ export default function LotBuilder({ isOpen, onClose, onSuccess, existingLotId }
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    const { data, error } = await supabase
+    let query = supabase
       .from('lot_items')
-      .select('article_id, lots!inner(status)')
+      .select('article_id, lot_id, lots!inner(status)')
       .neq('lots.status', 'sold');
+
+    if (existingLotId) {
+      query = query.neq('lot_id', existingLotId);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error('Error fetching lot items:', error);
@@ -214,16 +274,36 @@ export default function LotBuilder({ isOpen, onClose, onSuccess, existingLotId }
         status: 'draft',
       };
 
-      const { data: lot, error: lotError } = await supabase
-        .from('lots')
-        .insert([lotPayload])
-        .select()
-        .single();
+      let lotId: string;
 
-      if (lotError) throw lotError;
+      if (existingLotId) {
+        const { error: lotError } = await supabase
+          .from('lots')
+          .update(lotPayload)
+          .eq('id', existingLotId);
+
+        if (lotError) throw lotError;
+        lotId = existingLotId;
+
+        const { error: deleteError } = await supabase
+          .from('lot_items')
+          .delete()
+          .eq('lot_id', existingLotId);
+
+        if (deleteError) throw deleteError;
+      } else {
+        const { data: lot, error: lotError } = await supabase
+          .from('lots')
+          .insert([lotPayload])
+          .select()
+          .single();
+
+        if (lotError) throw lotError;
+        lotId = lot.id;
+      }
 
       const lotItems = lotData.selectedArticles.map(articleId => ({
-        lot_id: lot.id,
+        lot_id: lotId,
         article_id: articleId,
       }));
 
@@ -236,8 +316,8 @@ export default function LotBuilder({ isOpen, onClose, onSuccess, existingLotId }
       onSuccess();
       onClose();
     } catch (err: any) {
-      console.error('Error creating lot:', err);
-      setError(err.message || 'Erreur lors de la création du lot');
+      console.error('Error saving lot:', err);
+      setError(err.message || `Erreur lors de ${existingLotId ? 'la modification' : 'la création'} du lot`);
     } finally {
       setLoading(false);
     }
@@ -257,7 +337,7 @@ export default function LotBuilder({ isOpen, onClose, onSuccess, existingLotId }
               <Package className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Créer un lot</h2>
+              <h2 className="text-xl font-bold text-gray-900">{existingLotId ? 'Modifier le lot' : 'Créer un lot'}</h2>
               <p className="text-sm text-gray-500">Étape {currentStep} sur 4</p>
             </div>
           </div>

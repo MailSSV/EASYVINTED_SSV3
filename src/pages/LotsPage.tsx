@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Package, Plus, Search, Eye, ClipboardEdit, Trash2, MoreVertical } from 'lucide-react';
 import { Lot, LotStatus } from '../types/lot';
 import { Article } from '../types/article';
@@ -28,6 +28,7 @@ const STATUS_COLORS: Record<LotStatus, string> = {
 
 export default function LotsPage() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
   const [lots, setLots] = useState<Lot[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,6 +36,7 @@ export default function LotsPage() {
   const [statusFilter, setStatusFilter] = useState<'all' | LotStatus>('all');
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [builderOpen, setBuilderOpen] = useState(false);
+  const [editingLotId, setEditingLotId] = useState<string | undefined>(undefined);
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
     lotId: string | null;
@@ -46,6 +48,16 @@ export default function LotsPage() {
   useEffect(() => {
     fetchLots();
   }, []);
+
+  useEffect(() => {
+    const editId = searchParams.get('edit');
+    if (editId) {
+      setEditingLotId(editId);
+      setBuilderOpen(true);
+      searchParams.delete('edit');
+      setSearchParams(searchParams);
+    }
+  }, [searchParams]);
 
   const fetchLots = async () => {
     if (!user) return;
@@ -293,11 +305,16 @@ export default function LotsPage() {
 
       <LotBuilder
         isOpen={builderOpen}
-        onClose={() => setBuilderOpen(false)}
+        onClose={() => {
+          setBuilderOpen(false);
+          setEditingLotId(undefined);
+        }}
         onSuccess={() => {
           fetchLots();
-          setToast({ type: 'success', text: 'Lot créé avec succès' });
+          setToast({ type: 'success', text: editingLotId ? 'Lot modifié avec succès' : 'Lot créé avec succès' });
+          setEditingLotId(undefined);
         }}
+        existingLotId={editingLotId}
       />
 
       <ConfirmModal
