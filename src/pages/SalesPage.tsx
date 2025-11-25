@@ -254,18 +254,20 @@ export function SalesPage() {
                           >
                             <Eye className="w-4 h-4" />
                           </button>
-                          {!sale.is_lot && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (sale.is_lot) {
+                                navigate(`/lots/${sale.id}`);
+                              } else {
                                 setEditingSale(sale);
-                              }}
-                              className="p-2.5 rounded-xl text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all active:scale-90"
-                              title="Modifier la vente"
-                            >
-                              <ClipboardEdit className="w-4 h-4" />
-                            </button>
-                          )}
+                              }
+                            }}
+                            className="p-2.5 rounded-xl text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all active:scale-90"
+                            title={sale.is_lot ? "Voir le lot" : "Modifier la vente"}
+                          >
+                            <ClipboardEdit className="w-4 h-4" />
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -357,17 +359,19 @@ export function SalesPage() {
                     >
                       <Eye className="w-4 h-4" />
                     </button>
-                    {!sale.is_lot && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (sale.is_lot) {
+                          navigate(`/lots/${sale.id}`);
+                        } else {
                           setEditingSale(sale);
-                        }}
-                        className="p-2 rounded-xl hover:bg-white text-gray-500 hover:text-blue-600 transition-all active:scale-90"
-                      >
-                        <ClipboardEdit className="w-4 h-4" />
-                      </button>
-                    )}
+                        }
+                      }}
+                      className="p-2 rounded-xl hover:bg-white text-gray-500 hover:text-blue-600 transition-all active:scale-90"
+                    >
+                      <ClipboardEdit className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
               </div>
