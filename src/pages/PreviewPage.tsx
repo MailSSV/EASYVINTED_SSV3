@@ -366,10 +366,16 @@ export function PreviewPage() {
       />
       <div className="max-w-5xl mx-auto no-print">
         <div className="mb-8">
-          
+          <button
+            onClick={() => navigate(-1)}
+            className="mb-4 inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <ChevronLeft className="w-5 h-5" />
+            Retour
+          </button>
 
           <h1 className="text-3xl font-bold text-gray-900">Prévisualisation de l'annonce</h1>
-         
+
         </div>
 
         {loading ? (
