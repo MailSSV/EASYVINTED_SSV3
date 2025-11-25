@@ -725,7 +725,7 @@ export function PreviewPage() {
               </div>
             )}
 
-            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-center md:justify-end gap-3">
+            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-center gap-3">
               <Button
                 variant="secondary"
                 onClick={() => setDeleteModalOpen(true)}

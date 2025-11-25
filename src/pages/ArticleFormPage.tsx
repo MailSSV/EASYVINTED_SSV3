@@ -1527,7 +1527,7 @@ export function ArticleFormPage() {
                 <div className="text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:block">
                   Actions principales
                 </div>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap justify-center gap-3">
                   {articleStatus === 'sold' && (
                     <>
                       <Button
