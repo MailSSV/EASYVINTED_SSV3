@@ -3,6 +3,7 @@ import { X, ChevronLeft, ChevronRight, Check, Package, AlertCircle } from 'lucid
 import { supabase } from '../lib/supabase';
 import { Article } from '../types/article';
 import { Season } from '../types/article';
+import { LotStatus } from '../types/lot';
 import { VINTED_CATEGORIES } from '../constants/categories';
 import { Button } from './ui/Button';
 
@@ -22,6 +23,7 @@ interface LotData {
   price: number;
   cover_photo?: string;
   photos: string[];
+  status: LotStatus;
 }
 
 export default function LotBuilder({ isOpen, onClose, onSuccess, existingLotId }: LotBuilderProps) {
@@ -38,6 +40,7 @@ export default function LotBuilder({ isOpen, onClose, onSuccess, existingLotId }
     selectedArticles: [],
     price: 0,
     photos: [],
+    status: 'draft',
   });
 
   const [filters, setFilters] = useState({
@@ -70,6 +73,7 @@ export default function LotBuilder({ isOpen, onClose, onSuccess, existingLotId }
       selectedArticles: [],
       price: 0,
       photos: [],
+      status: 'draft',
     });
     setCurrentStep(1);
     setError('');
@@ -105,6 +109,7 @@ export default function LotBuilder({ isOpen, onClose, onSuccess, existingLotId }
         price: parseFloat(lotData.price) || 0,
         cover_photo: lotData.cover_photo,
         photos: lotData.photos || [],
+        status: lotData.status || 'draft',
       });
     } catch (error) {
       console.error('Error loading existing lot:', error);
@@ -271,7 +276,7 @@ export default function LotBuilder({ isOpen, onClose, onSuccess, existingLotId }
         discount_percentage: discount,
         cover_photo: lotData.cover_photo || allPhotos[0],
         photos: lotData.photos.length > 0 ? lotData.photos : allPhotos.slice(0, 5),
-        status: 'draft',
+        status: lotData.status,
       };
 
       let lotId: string;
@@ -547,6 +552,26 @@ export default function LotBuilder({ isOpen, onClose, onSuccess, existingLotId }
                 </div>
                 <p className="mt-2 text-xs text-gray-500">Cliquez sur une photo pour la définir comme couverture</p>
               </div>
+
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Statut du lot
+                </label>
+                <select
+                  value={lotData.status}
+                  onChange={(e) => setLotData({ ...lotData, status: e.target.value as LotStatus })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                >
+                  <option value="draft">Brouillon</option>
+                  <option value="ready">Prêt</option>
+                  <option value="scheduled">Planifié</option>
+                  <option value="published">Publié</option>
+                  <option value="sold">Vendu</option>
+                </select>
+                <p className="mt-2 text-xs text-gray-500">
+                  Le lot sera créé en mode brouillon. Vous pourrez le modifier et changer son statut plus tard.
+                </p>
+              </div>
             </div>
           )}
 
@@ -579,13 +604,20 @@ export default function LotBuilder({ isOpen, onClose, onSuccess, existingLotId }
                   <div className="pt-3 border-t border-emerald-200 mt-3">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-gray-700">Statut du lot</span>
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                        Brouillon
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                        lotData.status === 'draft' ? 'bg-gray-100 text-gray-700' :
+                        lotData.status === 'ready' ? 'bg-blue-100 text-blue-700' :
+                        lotData.status === 'scheduled' ? 'bg-yellow-50 text-yellow-700 border border-yellow-200' :
+                        lotData.status === 'published' ? 'bg-purple-100 text-purple-700' :
+                        'bg-green-100 text-green-700'
+                      }`}>
+                        {lotData.status === 'draft' ? 'Brouillon' :
+                         lotData.status === 'ready' ? 'Prêt' :
+                         lotData.status === 'scheduled' ? 'Planifié' :
+                         lotData.status === 'published' ? 'Publié' :
+                         'Vendu'}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-500 mt-2">
-                      Le lot sera créé en mode brouillon. Vous pourrez le modifier et changer son statut plus tard.
-                    </p>
                   </div>
                 </div>
               </div>
