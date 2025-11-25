@@ -302,7 +302,7 @@ export default function LotsPage() {
             })}
           </div>
         )}
-      </div>,
+      </div>
  </div>
       <LotBuilder
         isOpen={builderOpen}
