@@ -696,7 +696,7 @@ export function DashboardPage() {
         </div>
 
         <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-200/50 overflow-hidden">
-          <div className="overflow-x-auto overflow-y-visible">
+          <div className="overflow-x-auto overflow-y-visible min-h-[600px]">
             <table className="min-w-full">
             <thead>
               <tr className="bg-gradient-to-r from-gray-50 to-gray-50/50 border-b border-gray-200/50">
@@ -873,7 +873,7 @@ export function DashboardPage() {
                           </button>
 
                           {openMenuId === article.id && (
-                            <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-2xl border border-gray-200/50 py-2 z-[100] backdrop-blur-sm">
+                            <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-2xl border border-gray-200/50 py-2 z-[9999] backdrop-blur-sm">
                               <button
                                 className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 flex items-center gap-3 rounded-lg transition-all mx-1"
                                 onClick={(e) => {
