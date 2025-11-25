@@ -172,7 +172,7 @@ export default function LotPreviewPage() {
         .from('articles')
         .update({
           status: 'sold',
-          sold_date: saleData.soldAt,
+          sold_at: saleData.soldAt,
           sold_price: pricePerArticle,
           platform: saleData.platform,
           fees: feesPerArticle,
