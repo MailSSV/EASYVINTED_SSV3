@@ -238,7 +238,7 @@ export function DashboardPage() {
 
   const handleDuplicate = async (article: Article) => {
     try {
-      const { id, created_at, updated_at, ...rest } = article;
+      const { id, created_at, updated_at, reference_number, ...rest } = article;
 
       const { error } = await supabase
         .from('articles')
