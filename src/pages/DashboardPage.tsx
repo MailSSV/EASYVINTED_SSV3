@@ -202,15 +202,15 @@ export function DashboardPage() {
   const renderStatusIcon = (status: ArticleStatus) => {
     switch (status) {
       case 'draft':
-        return <FileText className="w-3 h-3 mr-1" />;
+        return <FileText className="w-4 h-4" />;
       case 'ready':
-        return <CheckCircle2 className="w-3 h-3 mr-1" />;
+        return <CheckCircle2 className="w-4 h-4" />;
       case 'scheduled':
-        return <Clock className="w-3 h-3 mr-1" />;
+        return <Clock className="w-4 h-4" />;
       case 'published':
-        return <Send className="w-3 h-3 mr-1" />;
+        return <Send className="w-4 h-4" />;
       case 'sold':
-        return <DollarSign className="w-3 h-3 mr-1" />;
+        return <DollarSign className="w-4 h-4" />;
       default:
         return null;
     }
@@ -488,84 +488,97 @@ export function DashboardPage() {
           </Button>
         </div>
 
-        <div className="mb-4 space-y-3">
-          <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
-            <div className="relative max-w-md w-full">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Rechercher par titre, marque, description..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              />
+        <div className="mb-6 space-y-4">
+          <div className="relative max-w-2xl w-full">
+            <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Rechercher par titre, marque, description..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 text-sm border border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white shadow-sm transition-all hover:shadow-md"
+            />
+          </div>
+
+          <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-1 h-4 bg-gradient-to-b from-emerald-500 to-emerald-600 rounded-full"></div>
+                  <h3 className="text-sm font-semibold text-gray-900">Statut</h3>
+                </div>
+                <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
+                  <button
+                    onClick={() => setStatusFilter('all')}
+                    className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap flex-shrink-0 transition-all ${
+                      statusFilter === 'all'
+                        ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-200 scale-105'
+                        : 'bg-white text-gray-600 border border-gray-200 hover:border-emerald-300 hover:bg-emerald-50'
+                    }`}
+                  >
+                    Tous
+                  </button>
+                  {(
+                    ['draft', 'ready', 'scheduled', 'published'] as ArticleStatus[]
+                  ).map((status) => (
+                    <button
+                      key={status}
+                      onClick={() => setStatusFilter(status)}
+                      className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap flex-shrink-0 flex items-center gap-2 transition-all ${
+                        statusFilter === status
+                          ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-200 scale-105'
+                          : 'bg-white text-gray-600 border border-gray-200 hover:border-emerald-300 hover:bg-emerald-50'
+                      }`}
+                    >
+                      {renderStatusIcon(status)}
+                      {STATUS_LABELS[status]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border-t border-gray-100 pt-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-1 h-4 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full"></div>
+                  <h3 className="text-sm font-semibold text-gray-900">Vendeur</h3>
+                </div>
+                <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
+                  <button
+                    onClick={() => setSellerFilter('all')}
+                    className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap flex-shrink-0 transition-all ${
+                      sellerFilter === 'all'
+                        ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-200 scale-105'
+                        : 'bg-white text-gray-600 border border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+                    }`}
+                  >
+                    Tous
+                  </button>
+                  {familyMembers.map((member) => (
+                    <button
+                      key={member.id}
+                      onClick={() => setSellerFilter(member.id)}
+                      className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap flex-shrink-0 transition-all ${
+                        sellerFilter === member.id
+                          ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-200 scale-105'
+                          : 'bg-white text-gray-600 border border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+                      }`}
+                    >
+                      {member.name}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => setSellerFilter('none')}
+                    className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap flex-shrink-0 transition-all ${
+                      sellerFilter === 'none'
+                        ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-200 scale-105'
+                        : 'bg-white text-gray-600 border border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+                    }`}
+                  >
+                    Pfff?!
+                  </button>
+                </div>
+              </div>
             </div>
-
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
-            <button
-              onClick={() => setStatusFilter('all')}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium border whitespace-nowrap flex-shrink-0 ${
-                statusFilter === 'all'
-                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                  : 'bg-white text-gray-600 border-gray-200'
-              }`}
-            >
-              Tous
-            </button>
-            {(
-              ['draft', 'ready', 'scheduled', 'published'] as ArticleStatus[]
-            ).map((status) => (
-              <button
-                key={status}
-                onClick={() => setStatusFilter(status)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium border whitespace-nowrap flex-shrink-0 flex items-center gap-1 ${
-                  statusFilter === status
-                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                    : 'bg-white text-gray-600 border-gray-200'
-                }`}
-              >
-                {renderStatusIcon(status)}
-                {STATUS_LABELS[status]}
-              </button>
-            ))}
-          </div>
-          </div>
-
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
-            <span className="text-xs font-medium text-gray-600 whitespace-nowrap">Vendeur:</span>
-            <button
-              onClick={() => setSellerFilter('all')}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium border whitespace-nowrap flex-shrink-0 ${
-                sellerFilter === 'all'
-                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                  : 'bg-white text-gray-600 border-gray-200'
-              }`}
-            >
-              Tous
-            </button>
-            {familyMembers.map((member) => (
-              <button
-                key={member.id}
-                onClick={() => setSellerFilter(member.id)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium border whitespace-nowrap flex-shrink-0 ${
-                  sellerFilter === member.id
-                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                    : 'bg-white text-gray-600 border-gray-200'
-                }`}
-              >
-                {member.name}
-              </button>
-            ))}
-            <button
-              onClick={() => setSellerFilter('none')}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium border whitespace-nowrap flex-shrink-0 ${
-                sellerFilter === 'none'
-                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                  : 'bg-white text-gray-600 border-gray-200'
-              }`}
-            >
-              Pfff?!
-            </button>
           </div>
         </div>
 
