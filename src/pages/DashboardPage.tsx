@@ -600,12 +600,12 @@ export function DashboardPage() {
               {filteredArticles.map((article) => (
                 <div
                   key={article.id}
-                  className="group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:scale-[1.01]"
+                  className="group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:scale-[1.01] cursor-pointer"
+                  onClick={() => navigate(`/articles/${article.id}/preview`)}
                 >
                   <div className="flex gap-4 p-4">
                     <div
-                      className="relative w-28 h-28 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0 cursor-pointer ring-1 ring-gray-200/50"
-                      onClick={() => navigate(`/articles/${article.id}/preview`)}
+                      className="relative w-28 h-28 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0 ring-1 ring-gray-200/50"
                     >
                       {article.photos && article.photos.length > 0 ? (
                         <img
@@ -667,16 +667,6 @@ export function DashboardPage() {
                           <Upload className="w-4 h-4" />
                         </button>
                       )}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/articles/${article.id}/preview`);
-                        }}
-                        className="p-2 rounded-xl hover:bg-gray-100 text-gray-500 hover:text-emerald-600 transition-all active:scale-90"
-                        title="Voir"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -762,9 +752,7 @@ export function DashboardPage() {
                   <tr
                     key={article.id}
                     className="group hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent cursor-pointer transition-all duration-200"
-                    onDoubleClick={() =>
-                      navigate(`/articles/${article.id}/preview`)
-                    }
+                    onClick={() => navigate(`/articles/${article.id}/preview`)}
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
@@ -851,17 +839,8 @@ export function DashboardPage() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigate(`/articles/${article.id}/preview`);
+                            navigate(`/articles/${article.id}/edit`);
                           }}
-                          className="p-2.5 rounded-xl text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all active:scale-90"
-                          title="Voir"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() =>
-                            navigate(`/articles/${article.id}/edit`)
-                          }
                           className="p-2.5 rounded-xl text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all active:scale-90"
                           title="Modifier"
                         >
