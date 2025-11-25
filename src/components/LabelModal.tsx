@@ -90,6 +90,9 @@ export function LabelModal({ isOpen, onClose, article, sellerName }: LabelModalP
               <p className="text-sm text-blue-800">
                 Imprimez cette étiquette et collez la sur votre colis. Vous pourrez identifier plus facilement son contenu le jour de l'expedition :) 
               </p>
+                <p className="text-sm text-blue-800">
+                Vous pourrez identifier plus facilement son contenu le jour de l'expedition :) 
+              </p>
             </div>
 
             {labelContent}
