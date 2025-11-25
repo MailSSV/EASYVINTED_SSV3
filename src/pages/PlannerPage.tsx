@@ -232,6 +232,7 @@ export function PlannerPage() {
 
   const [readyArticles, setReadyArticles] = useState<Article[]>([]);
   const [scheduledArticles, setScheduledArticles] = useState<Article[]>([]);
+  const [scheduledLots, setScheduledLots] = useState<Lot[]>([]);
 
   useEffect(() => {
     loadArticles();
@@ -255,11 +256,20 @@ export function PlannerPage() {
         .eq('status', 'scheduled')
         .order('scheduled_for', { ascending: true });
 
+      const { data: scheduledLotsData, error: scheduledLotsError } = await supabase
+        .from('lots')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'scheduled')
+        .order('scheduled_for', { ascending: true });
+
       if (readyError) throw readyError;
       if (scheduledError) throw scheduledError;
+      if (scheduledLotsError) throw scheduledLotsError;
 
       setReadyArticles(ready || []);
       setScheduledArticles(scheduled || []);
+      setScheduledLots(scheduledLotsData || []);
     } catch (error) {
       console.error('Error loading articles:', error);
     }
@@ -362,20 +372,20 @@ export function PlannerPage() {
                   )}
                 </div>
 
-                {/* Articles Planifiés */}
+                {/* Articles et Lots Planifiés */}
                 <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
                   <h3 className="text-sm font-semibold text-gray-700 mb-3">Annonces programées</h3>
-                  <div className="text-3xl font-bold text-emerald-600 mb-2">{scheduledArticles.length}</div>
+                  <div className="text-3xl font-bold text-emerald-600 mb-2">{scheduledArticles.length + scheduledLots.length}</div>
                   <p className="text-xs text-emerald-600 mb-4">
-                    {scheduledArticles.length > 0 ? 'Publication en 24h' : 'Aucune publication prévue'}
+                    {(scheduledArticles.length + scheduledLots.length) > 0 ? 'Publication en 24h' : 'Aucune publication prévue'}
                   </p>
 
-                  {scheduledArticles.length > 0 && (
+                  {(scheduledArticles.length > 0 || scheduledLots.length > 0) && (
                     <>
                       <div className="space-y-2">
                         {scheduledArticles.slice(0, scheduledArticlesDisplayLimit).map((article) => (
                           <div
-                            key={article.id}
+                            key={`article-${article.id}`}
                             onClick={() => navigate(`/articles/${article.id}/preview`)}
                             className="flex items-center gap-3 bg-white rounded-lg p-2 hover:shadow-sm transition-shadow cursor-pointer border border-emerald-100"
                           >
@@ -407,13 +417,55 @@ export function PlannerPage() {
                             </span>
                           </div>
                         ))}
+                        {scheduledLots.slice(0, Math.max(0, scheduledArticlesDisplayLimit - scheduledArticles.length)).map((lot) => (
+                          <div
+                            key={`lot-${lot.id}`}
+                            onClick={() => navigate(`/lots/${lot.id}/preview`)}
+                            className="flex items-center gap-3 bg-white rounded-lg p-2 hover:shadow-sm transition-shadow cursor-pointer border border-purple-100"
+                          >
+                            {lot.cover_photo ? (
+                              <img
+                                src={lot.cover_photo}
+                                alt={lot.name}
+                                className="w-10 h-10 rounded object-cover"
+                              />
+                            ) : (
+                              <div className="w-10 h-10 rounded bg-purple-100 flex items-center justify-center">
+                                <Package className="w-5 h-5 text-purple-600" />
+                              </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5 mb-0.5">
+                                <span className="inline-flex items-center gap-1 bg-purple-50 text-purple-700 text-xs px-1.5 py-0.5 rounded font-semibold">
+                                  <Package className="w-3 h-3" />
+                                  Lot
+                                </span>
+                                <p className="text-xs font-medium text-gray-900 truncate">{lot.name}</p>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Clock className="w-3 h-3 text-emerald-600" />
+                                <span className="text-xs text-emerald-600">
+                                  {lot.scheduled_for
+                                    ? new Date(lot.scheduled_for).toLocaleDateString('fr-FR', {
+                                        day: 'numeric',
+                                        month: 'short',
+                                      })
+                                    : 'Bientôt'}
+                                </span>
+                              </div>
+                            </div>
+                            <span className="hidden sm:inline-flex bg-purple-100 text-purple-700 text-xs font-semibold px-2 py-1 rounded">
+                              Planifié
+                            </span>
+                          </div>
+                        ))}
                       </div>
-                      {scheduledArticles.length > scheduledArticlesDisplayLimit && (
+                      {(scheduledArticles.length + scheduledLots.length) > scheduledArticlesDisplayLimit && (
                         <button
                           onClick={() => setScheduledArticlesDisplayLimit(prev => prev + 5)}
                           className="w-full mt-3 text-emerald-600 hover:text-emerald-700 text-xs font-semibold py-2 rounded-lg hover:bg-emerald-100 transition-colors"
                         >
-                          Voir + ({scheduledArticles.length - scheduledArticlesDisplayLimit} restants)
+                          Voir + ({(scheduledArticles.length + scheduledLots.length) - scheduledArticlesDisplayLimit} restants)
                         </button>
                       )}
                     </>
