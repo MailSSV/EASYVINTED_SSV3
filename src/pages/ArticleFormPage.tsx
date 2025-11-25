@@ -647,11 +647,12 @@ export function ArticleFormPage() {
         }
       }
 
+      const savedArticleId = id || newArticle?.id;
       setToast({
         type: 'success',
         text: `Article ${id ? 'modifié' : 'créé'} avec succès`,
       });
-      setTimeout(() => navigate('/stock'), 1500);
+      setTimeout(() => navigate(`/preview/${savedArticleId}`), 1500);
     } catch (error) {
       console.error('Error saving article:', error);
       setToast({
