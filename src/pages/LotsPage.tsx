@@ -81,6 +81,7 @@ export default function LotsPage() {
           )
         `)
         .eq('user_id', user.id)
+        .neq('status', 'sold')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
