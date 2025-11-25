@@ -22,9 +22,58 @@ export function LabelModal({ isOpen, onClose, article, sellerName }: LabelModalP
     window.print();
   };
 
+  const labelContent = (
+    <div className="border-2 border-gray-300 rounded-lg p-6 bg-white">
+      <div className="text-center mb-6 pb-4 border-b-2 border-gray-200">
+        <h3 className="text-2xl font-bold text-gray-900 mb-3">
+          EASYVINTED {sellerName && `by ${sellerName}`}
+        </h3>
+        <div className="inline-block border-2 border-gray-900 px-4 py-2 rounded">
+          <span className="text-sm font-medium text-gray-900">Réf: </span>
+          <span className="text-lg font-bold text-gray-900">{article.reference_number}</span>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <div>
+          <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Article</p>
+          <p className="text-lg font-bold text-gray-900">{article.title}</p>
+        </div>
+
+        {article.brand && (
+          <div>
+            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Marque</p>
+            <p className="text-base text-gray-900">{article.brand}</p>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-4">
+          {article.size && (
+            <div>
+              <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Taille</p>
+              <p className="text-base text-gray-900">{article.size}</p>
+            </div>
+          )}
+
+          {article.color && (
+            <div>
+              <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Couleur</p>
+              <p className="text-base text-gray-900">{article.color}</p>
+            </div>
+          )}
+        </div>
+
+        <div className="pt-3 mt-3 border-t border-gray-200">
+          <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Prix de vente</p>
+          <p className="text-2xl font-bold text-emerald-600">{article.price.toFixed(2)} €</p>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 print:hidden">
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 no-print">
         <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
           <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
             <h2 className="text-xl font-bold text-gray-900">Étiquette de colis</h2>
@@ -43,52 +92,7 @@ export function LabelModal({ isOpen, onClose, article, sellerName }: LabelModalP
               </p>
             </div>
 
-            <div id="label-preview" className="border-2 border-gray-300 rounded-lg p-6 bg-white">
-              <div className="text-center mb-6 pb-4 border-b-2 border-gray-200">
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                  EASYVINTED {sellerName && `by ${sellerName}`}
-                </h3>
-                <div className="inline-block border-2 border-gray-900 px-4 py-2 rounded">
-                  <span className="text-sm font-medium text-gray-900">Réf: </span>
-                  <span className="text-lg font-bold text-gray-900">{article.reference_number}</span>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Article</p>
-                  <p className="text-lg font-bold text-gray-900">{article.title}</p>
-                </div>
-
-                {article.brand && (
-                  <div>
-                    <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Marque</p>
-                    <p className="text-base text-gray-900">{article.brand}</p>
-                  </div>
-                )}
-
-                <div className="grid grid-cols-2 gap-4">
-                  {article.size && (
-                    <div>
-                      <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Taille</p>
-                      <p className="text-base text-gray-900">{article.size}</p>
-                    </div>
-                  )}
-
-                  {article.color && (
-                    <div>
-                      <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Couleur</p>
-                      <p className="text-base text-gray-900">{article.color}</p>
-                    </div>
-                  )}
-                </div>
-
-                <div className="pt-3 mt-3 border-t border-gray-200">
-                  <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Prix de vente</p>
-                  <p className="text-2xl font-bold text-emerald-600">{article.price.toFixed(2)} €</p>
-                </div>
-              </div>
-            </div>
+            {labelContent}
 
             <div className="mt-6 flex gap-3">
               <Button
@@ -110,34 +114,41 @@ export function LabelModal({ isOpen, onClose, article, sellerName }: LabelModalP
         </div>
       </div>
 
+      <div className="print-only">
+        {labelContent}
+      </div>
+
       <style>{`
+        .no-print {
+          display: block;
+        }
+
+        .print-only {
+          display: none;
+        }
+
         @media print {
           @page {
             size: A4;
             margin: 15mm;
           }
 
-          body * {
-            visibility: hidden !important;
+          .no-print {
+            display: none !important;
           }
 
-          #label-preview,
-          #label-preview * {
-            visibility: visible !important;
+          .print-only {
+            display: block !important;
+            width: 180mm;
+            padding: 15mm;
+            margin: 0 auto;
           }
 
-          #label-preview {
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            transform: none !important;
-            width: 100% !important;
-            max-width: 180mm !important;
-            margin: 0 auto !important;
-            padding: 15mm !important;
+          .print-only > div {
             border: 2px solid #000 !important;
-            border-radius: 8px !important;
-            background: white !important;
+            border-radius: 8px;
+            padding: 15mm;
+            background: white;
           }
         }
       `}</style>
