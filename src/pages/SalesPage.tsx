@@ -244,14 +244,10 @@ export function SalesPage() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              if (sale.is_lot) {
-                                navigate(`/lots/${sale.id}`);
-                              } else {
-                                setSelectedSale(sale);
-                              }
+                              setSelectedSale(sale);
                             }}
                             className="p-2.5 rounded-xl text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all active:scale-90"
-                            title={sale.is_lot ? "Voir le lot" : "Voir les détails"}
+                            title="Voir les détails"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
