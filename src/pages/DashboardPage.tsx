@@ -176,8 +176,7 @@ export function DashboardPage() {
     const matchesStatus =
       statusFilter === 'all' ? true : article.status === statusFilter;
     const matchesSeller =
-      
-      article.seller_id === sellerFilter;
+      sellerFilter === 'all' ? true : article.seller_id === sellerFilter;
     const query = searchQuery.toLowerCase();
 
     const matchesQuery =
