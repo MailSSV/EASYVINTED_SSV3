@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Edit, Send, Package, ShoppingBag, ChevronLeft, ChevronRight, CheckCircle, Layers, Calendar, DollarSign, Trash2, Eye } from 'lucide-react';
+import { Edit, Send, Package, ShoppingBag, ChevronLeft, ChevronRight, CheckCircle, Layers, Calendar, DollarSign, Trash2, Eye, Tag } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { supabase } from '../lib/supabase';
 import { Article } from '../types/article';
@@ -10,6 +10,7 @@ import { PublishInstructionsModal } from '../components/PublishInstructionsModal
 import { ScheduleModal } from '../components/ScheduleModal';
 import { ArticleSoldModal } from '../components/ArticleSoldModal';
 import { SaleDetailModal } from '../components/SaleDetailModal';
+import { LabelModal } from '../components/LabelModal';
 import { Toast } from '../components/ui/Toast';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -30,6 +31,7 @@ export function PreviewPage() {
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [soldModalOpen, setSoldModalOpen] = useState(false);
   const [saleDetailModalOpen, setSaleDetailModalOpen] = useState(false);
+  const [labelModalOpen, setLabelModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -332,6 +334,21 @@ export function PreviewPage() {
                 seller_name: sellerName || undefined,
               }}
               onClose={() => setSaleDetailModalOpen(false)}
+            />
+          )}
+
+          {article.reference_number && (
+            <LabelModal
+              isOpen={labelModalOpen}
+              onClose={() => setLabelModalOpen(false)}
+              article={{
+                reference_number: article.reference_number,
+                title: article.title,
+                brand: article.brand,
+                size: article.size,
+                color: article.color,
+                price: article.price,
+              }}
             />
           )}
         </>
@@ -779,6 +796,17 @@ export function PreviewPage() {
                 >
                   <Eye className="w-4 h-4 mr-2" />
                   Voir la vente
+                </Button>
+              )}
+
+              {article.reference_number && (
+                <Button
+                  variant="secondary"
+                  onClick={() => setLabelModalOpen(true)}
+                  className="px-6 w-full md:w-auto bg-white text-blue-700 hover:bg-blue-50 border-blue-300 hover:border-blue-400"
+                >
+                  <Tag className="w-4 h-4 mr-2" />
+                  Générer l'étiquette
                 </Button>
               )}
             </div>
