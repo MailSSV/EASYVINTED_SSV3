@@ -18,6 +18,7 @@ export interface Lot {
   scheduled_for?: string;
   published_at?: string;
   vinted_url?: string;
+  reference_number?: string;
   created_at: string;
   updated_at: string;
 }

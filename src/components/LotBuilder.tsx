@@ -251,6 +251,29 @@ export default function LotBuilder({ isOpen, onClose, onSuccess, existingLotId }
     setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 
+  const generateLotReferenceNumber = async (userId: string): Promise<string> => {
+    try {
+      const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('dressing_name')
+        .eq('id', userId)
+        .maybeSingle();
+
+      const { count } = await supabase
+        .from('lots')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId);
+
+      const dressingName = (profile?.dressing_name || 'MonDressing').replace(/\s+/g, '_');
+      const lotNumber = (count || 0) + 1;
+
+      return `LOT_${dressingName}_${lotNumber}`;
+    } catch (error) {
+      console.error('Error generating lot reference number:', error);
+      return `LOT_REF-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
+    }
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
     setError('');
@@ -265,7 +288,12 @@ export default function LotBuilder({ isOpen, onClose, onSuccess, existingLotId }
       const selectedArticles = getSelectedArticles();
       const allPhotos = selectedArticles.flatMap(a => a.photos);
 
-      const lotPayload = {
+      let referenceNumber: string | undefined;
+      if (!existingLotId) {
+        referenceNumber = await generateLotReferenceNumber(user.id);
+      }
+
+      const lotPayload: any = {
         user_id: user.id,
         name: lotData.name,
         description: lotData.description,
@@ -278,6 +306,10 @@ export default function LotBuilder({ isOpen, onClose, onSuccess, existingLotId }
         photos: lotData.photos.length > 0 ? lotData.photos : allPhotos.slice(0, 5),
         status: lotData.status,
       };
+
+      if (referenceNumber) {
+        lotPayload.reference_number = referenceNumber;
+      }
 
       let lotId: string;
 
