@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Eye, CreditCard as Edit, MoreVertical, Plus, Image as ImageIcon, Search, Copy, Trash2, DollarSign, Calendar, Clock, CheckCircle2, FileText, Send, Flower2, Sun, Leaf, Snowflake, CloudSun, ClipboardList, Upload } from 'lucide-react';
+import { Eye, ClipboardEdit, MoreVertical, Plus, Image as ImageIcon, Search, Copy, Trash2, DollarSign, Calendar, Clock, CheckCircle2, FileText, Send, Flower2, Sun, Leaf, Snowflake, CloudSun, ClipboardList, Upload } from 'lucide-react';
 import { Article, ArticleStatus, Season } from '../types/article';
 import { Button } from '../components/ui/Button';
 import { supabase } from '../lib/supabase';
@@ -672,7 +672,7 @@ export function DashboardPage() {
                         className="p-2 rounded-xl hover:bg-gray-100 text-gray-500 hover:text-emerald-600 transition-all active:scale-90"
                         title="Modifier"
                       >
-                        <Edit className="w-4 h-4" />
+                        <ClipboardEdit className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
@@ -852,7 +852,7 @@ export function DashboardPage() {
                           className="p-2.5 rounded-xl text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all active:scale-90"
                           title="Modifier"
                         >
-                          <Edit className="w-4 h-4" />
+                          <ClipboardEdit className="w-4 h-4" />
                         </button>
                         <div
                           className="relative"
