@@ -88,7 +88,7 @@ export function LabelModal({ isOpen, onClose, article, sellerName }: LabelModalP
           <div className="p-6">
             <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
               <p className="text-sm text-blue-800">
-                Cette étiquette sera optimisée pour l'impression sur une feuille A4. Vous pouvez imprimer plusieurs étiquettes par page.
+                Imprimez cette étiquette et collez la sur votre colis. Vous pourrez l'identifier plus facilement le jour de l'expedition :) 
               </p>
             </div>
 
