@@ -706,6 +706,25 @@ export function PreviewPage() {
               </div>
             )}
 
+            {article.reference_number && (
+              <div className="mb-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
+                  Étiquette de colis
+                </div>
+                <Button
+                  variant="secondary"
+                  onClick={() => setLabelModalOpen(true)}
+                  className="w-full justify-center bg-white text-blue-700 hover:bg-blue-50 border-blue-300 hover:border-blue-400"
+                >
+                  <Tag className="w-4 h-4" />
+                  <span>Générer l'étiquette</span>
+                </Button>
+                <p className="mt-2 text-xs text-gray-600 text-center">
+                  Référence: <span className="font-semibold">{article.reference_number}</span>
+                </p>
+              </div>
+            )}
+
             <div className="flex flex-col md:flex-row items-stretch md:items-center justify-center md:justify-end gap-3">
               <Button
                 variant="secondary"
@@ -793,25 +812,6 @@ export function PreviewPage() {
                 </Button>
               )}
             </div>
-
-            {article.reference_number && (
-              <div className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
-                  Étiquette de colis
-                </div>
-                <Button
-                  variant="secondary"
-                  onClick={() => setLabelModalOpen(true)}
-                  className="w-full justify-center bg-white text-blue-700 hover:bg-blue-50 border-blue-300 hover:border-blue-400"
-                >
-                  <Tag className="w-4 h-4" />
-                  <span>Générer l'étiquette</span>
-                </Button>
-                <p className="mt-2 text-xs text-gray-600 text-center">
-                  Référence: <span className="font-semibold">{article.reference_number}</span>
-                </p>
-              </div>
-            )}
 
           </>
         )}
