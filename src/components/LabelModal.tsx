@@ -1,6 +1,11 @@
 import { X, Printer } from 'lucide-react';
 import { Button } from './ui/Button';
 
+interface LotArticle {
+  title: string;
+  brand?: string;
+}
+
 interface LabelModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -13,14 +18,18 @@ interface LabelModalProps {
     price: number;
   };
   sellerName?: string;
+  lotArticles?: LotArticle[];
 }
 
-export function LabelModal({ isOpen, onClose, article, sellerName }: LabelModalProps) {
+export function LabelModal({ isOpen, onClose, article, sellerName, lotArticles }: LabelModalProps) {
   if (!isOpen) return null;
 
   const handlePrint = () => {
     window.print();
   };
+
+  const isLot = lotArticles && lotArticles.length > 0;
+  const uniqueBrands = isLot ? [...new Set(lotArticles.map(a => a.brand).filter(Boolean))] : [];
 
   const labelContent = (
     <div className="border-2 border-gray-300 rounded-lg p-6 bg-white">
@@ -36,14 +45,26 @@ export function LabelModal({ isOpen, onClose, article, sellerName }: LabelModalP
 
       <div className="space-y-3">
         <div>
-          <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Article</p>
-          <p className="text-lg font-bold text-gray-900">{article.title}</p>
+          <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Article{isLot ? 's' : ''}</p>
+          {isLot ? (
+            <ul className="list-disc list-inside space-y-1">
+              {lotArticles.map((lotArticle, idx) => (
+                <li key={idx} className="text-sm text-gray-900">{lotArticle.title}</li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-lg font-bold text-gray-900">{article.title}</p>
+          )}
         </div>
 
-        {article.brand && (
+        {(isLot ? uniqueBrands.length > 0 : article.brand) && (
           <div>
-            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Marque</p>
-            <p className="text-base text-gray-900">{article.brand}</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Marque{isLot && uniqueBrands.length > 1 ? 's' : ''}</p>
+            {isLot ? (
+              <p className="text-base text-gray-900">{uniqueBrands.join(', ')}</p>
+            ) : (
+              <p className="text-base text-gray-900">{article.brand}</p>
+            )}
           </div>
         )}
 

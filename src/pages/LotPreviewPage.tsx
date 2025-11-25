@@ -351,12 +351,16 @@ export default function LotPreviewPage() {
           article={{
             reference_number: lot.reference_number || 'Non définie',
             title: lot.name,
-            brand: `Lot de ${articles.length} articles`,
+            brand: '',
             size: '',
             color: '',
             price: lot.price,
           }}
           sellerName={userProfile?.dressing_name}
+          lotArticles={articles.map(a => ({
+            title: a.title,
+            brand: a.brand
+          }))}
         />
       )}
     </div>
