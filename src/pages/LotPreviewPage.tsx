@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronLeft, Package, Calendar, Tag, TrendingDown } from 'lucide-react';
+import { ChevronLeft, Package, Calendar, Tag, TrendingDown, ChevronRight } from 'lucide-react';
 import { Lot, LotStatus } from '../types/lot';
 import { Article } from '../types/article';
 import { Button } from '../components/ui/Button';
@@ -100,6 +100,19 @@ export default function LotPreviewPage() {
   }
 
   const allPhotos = articles.map(a => a.photos?.[0]).filter(Boolean);
+  const currentPhotoIndex = allPhotos.indexOf(selectedPhoto);
+
+  const handleNextPhoto = () => {
+    if (currentPhotoIndex < allPhotos.length - 1) {
+      setSelectedPhoto(allPhotos[currentPhotoIndex + 1]);
+    }
+  };
+
+  const handlePreviousPhoto = () => {
+    if (currentPhotoIndex > 0) {
+      setSelectedPhoto(allPhotos[currentPhotoIndex - 1]);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pb-12">
@@ -114,7 +127,7 @@ export default function LotPreviewPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div>
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-4">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-4 relative group">
               <div className="aspect-square bg-gray-100 flex items-center justify-center">
                 {selectedPhoto ? (
                   <img
@@ -126,10 +139,42 @@ export default function LotPreviewPage() {
                   <Package className="w-32 h-32 text-gray-300" />
                 )}
               </div>
+
+              {allPhotos.length > 1 && (
+                <>
+                  <button
+                    onClick={handlePreviousPhoto}
+                    disabled={currentPhotoIndex === 0}
+                    className={`absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg transition-all ${
+                      currentPhotoIndex === 0
+                        ? 'opacity-0 cursor-not-allowed'
+                        : 'opacity-0 group-hover:opacity-100 hover:bg-white hover:scale-110'
+                    }`}
+                  >
+                    <ChevronLeft className="w-6 h-6 text-gray-700" />
+                  </button>
+
+                  <button
+                    onClick={handleNextPhoto}
+                    disabled={currentPhotoIndex === allPhotos.length - 1}
+                    className={`absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg transition-all ${
+                      currentPhotoIndex === allPhotos.length - 1
+                        ? 'opacity-0 cursor-not-allowed'
+                        : 'opacity-0 group-hover:opacity-100 hover:bg-white hover:scale-110'
+                    }`}
+                  >
+                    <ChevronRight className="w-6 h-6 text-gray-700" />
+                  </button>
+
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
+                    {currentPhotoIndex + 1} / {allPhotos.length}
+                  </div>
+                </>
+              )}
             </div>
 
             {allPhotos.length > 1 && (
-              <div className="grid grid-cols-5 gap-2">
+              <div className="hidden sm:grid grid-cols-5 gap-2">
                 {allPhotos.slice(0, 10).map((photo, idx) => (
                   <button
                     key={idx}
@@ -138,6 +183,24 @@ export default function LotPreviewPage() {
                       selectedPhoto === photo
                         ? 'border-emerald-500 ring-2 ring-emerald-200'
                         : 'border-gray-200 hover:border-emerald-300'
+                    }`}
+                  >
+                    <img src={photo} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {allPhotos.length > 1 && (
+              <div className="sm:hidden flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 snap-x snap-mandatory scrollbar-hide">
+                {allPhotos.map((photo, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedPhoto(photo)}
+                    className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all snap-center ${
+                      selectedPhoto === photo
+                        ? 'border-emerald-500 ring-2 ring-emerald-200'
+                        : 'border-gray-200'
                     }`}
                   >
                     <img src={photo} alt="" className="w-full h-full object-cover" />
