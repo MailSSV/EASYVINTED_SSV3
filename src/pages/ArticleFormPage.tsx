@@ -536,6 +536,8 @@ export function ArticleFormPage() {
         ...(id ? {} : { user_id: user?.id }),
       };
 
+      let savedArticleId = id;
+
       if (id) {
         if (user?.id) {
           articleData.photos = await migratePhotosFromTempFolder(
@@ -631,23 +633,25 @@ export function ArticleFormPage() {
 
         if (error) throw error;
 
-        if (newArticle && formData.photos.length > 0 && user?.id) {
-          const migratedPhotos = await migratePhotosFromTempFolder(
-            formData.photos,
-            user.id,
-            newArticle.id
-          );
+        if (newArticle) {
+          savedArticleId = newArticle.id;
 
-          if (migratedPhotos.some((url, index) => url !== formData.photos[index])) {
-            await supabase
-              .from('articles')
-              .update({ photos: migratedPhotos })
-              .eq('id', newArticle.id);
+          if (formData.photos.length > 0 && user?.id) {
+            const migratedPhotos = await migratePhotosFromTempFolder(
+              formData.photos,
+              user.id,
+              newArticle.id
+            );
+
+            if (migratedPhotos.some((url, index) => url !== formData.photos[index])) {
+              await supabase
+                .from('articles')
+                .update({ photos: migratedPhotos })
+                .eq('id', newArticle.id);
+            }
           }
         }
       }
-
-      const savedArticleId = id || newArticle?.id;
       setToast({
         type: 'success',
         text: `Article ${id ? 'modifié' : 'créé'} avec succès`,
