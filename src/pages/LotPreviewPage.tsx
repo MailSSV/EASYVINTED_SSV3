@@ -9,7 +9,7 @@ import { Toast } from '../components/ui/Toast';
 import { LabelModal } from '../components/LabelModal';
 import { ConfirmModal } from '../components/ui/ConfirmModal';
 import { ScheduleModal } from '../components/ScheduleModal';
-import { SoldModal } from '../components/SoldModal';
+import { ArticleSoldModal } from '../components/ArticleSoldModal';
 
 const STATUS_LABELS: Record<LotStatus, string> = {
   draft: 'Brouillon',
@@ -143,25 +143,42 @@ export default function LotPreviewPage() {
     }
   };
 
-  const handleMarkAsSold = async (salePrice: number, saleDate: Date, fees: number) => {
+  const handleMarkAsSold = async (saleData: {
+    soldPrice: number;
+    soldAt: string;
+    platform: string;
+    fees: number;
+    shippingCost: number;
+    buyerName: string;
+    notes: string;
+  }) => {
     try {
       const { error } = await supabase
         .from('lots')
         .update({
           status: 'sold',
-          published_at: saleDate.toISOString()
+          published_at: saleData.soldAt
         })
         .eq('id', id);
 
       if (error) throw error;
 
       const articleIds = articles.map(a => a.id);
+      const pricePerArticle = saleData.soldPrice / articleIds.length;
+      const feesPerArticle = saleData.fees / articleIds.length;
+      const shippingPerArticle = saleData.shippingCost / articleIds.length;
+
       const { error: articlesError } = await supabase
         .from('articles')
         .update({
           status: 'sold',
-          sold_date: saleDate.toISOString(),
-          sold_price: salePrice / articleIds.length
+          sold_date: saleData.soldAt,
+          sold_price: pricePerArticle,
+          platform: saleData.platform,
+          fees: feesPerArticle,
+          shipping_cost: shippingPerArticle,
+          buyer_name: saleData.buyerName,
+          sale_notes: saleData.notes
         })
         .in('id', articleIds);
 
@@ -498,11 +515,15 @@ export default function LotPreviewPage() {
       )}
 
       {soldModalOpen && (
-        <SoldModal
+        <ArticleSoldModal
           isOpen={soldModalOpen}
           onClose={() => setSoldModalOpen(false)}
           onConfirm={handleMarkAsSold}
-          articlePrice={lot.price}
+          article={{
+            ...articles[0],
+            title: lot.name,
+            price: lot.price
+          }}
         />
       )}
 
