@@ -6,13 +6,25 @@ import { Article } from '../types/article';
 interface ScheduleModalProps {
   isOpen: boolean;
   onClose: () => void;
-  article: Article;
-  onScheduled: () => void;
+  article?: Article;
+  onScheduled?: () => void;
+  onSchedule?: (date: Date) => void;
+  currentDate?: Date;
 }
 
-export function ScheduleModal({ isOpen, onClose, article, onScheduled }: ScheduleModalProps) {
-  const [selectedDate, setSelectedDate] = useState('');
-  const [selectedTime, setSelectedTime] = useState('');
+export function ScheduleModal({ isOpen, onClose, article, onScheduled, onSchedule, currentDate }: ScheduleModalProps) {
+  const [selectedDate, setSelectedDate] = useState(() => {
+    if (currentDate) {
+      return currentDate.toISOString().split('T')[0];
+    }
+    return '';
+  });
+  const [selectedTime, setSelectedTime] = useState(() => {
+    if (currentDate) {
+      return currentDate.toTimeString().slice(0, 5);
+    }
+    return '';
+  });
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
@@ -24,23 +36,30 @@ export function ScheduleModal({ isOpen, onClose, article, onScheduled }: Schedul
       setLoading(true);
       const dateTime = new Date(`${selectedDate}T${selectedTime}`);
 
-      const { error } = await supabase
-        .from('articles')
-        .update({
-          status: 'scheduled',
-          scheduled_for: dateTime.toISOString(),
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', article.id);
+      if (onSchedule) {
+        await onSchedule(dateTime);
+      } else if (article) {
+        const { error } = await supabase
+          .from('articles')
+          .update({
+            status: 'scheduled',
+            scheduled_for: dateTime.toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', article.id);
 
-      if (error) throw error;
+        if (error) throw error;
 
-      onScheduled();
+        if (onScheduled) {
+          onScheduled();
+        }
+      }
+
       onClose();
       setSelectedDate('');
       setSelectedTime('');
     } catch (error) {
-      console.error('Error scheduling article:', error);
+      console.error('Error scheduling:', error);
     } finally {
       setLoading(false);
     }
@@ -68,7 +87,7 @@ export function ScheduleModal({ isOpen, onClose, article, onScheduled }: Schedul
               </div>
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Programmer la publication</h3>
-                <p className="text-sm text-gray-600">{article.title}</p>
+                {article && <p className="text-sm text-gray-600">{article.title}</p>}
               </div>
             </div>
             <button
@@ -108,7 +127,7 @@ export function ScheduleModal({ isOpen, onClose, article, onScheduled }: Schedul
             <div className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg">
               <Calendar className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
               <p className="text-xs text-blue-700">
-                L'article sera automatiquement publié sur Vinted à la date et l'heure choisies.
+                {article ? "L'article" : "Le lot"} sera automatiquement publié sur Vinted à la date et l'heure choisies.
               </p>
             </div>
           </div>
