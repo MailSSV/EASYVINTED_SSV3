@@ -349,6 +349,7 @@ export function PreviewPage() {
                 color: article.color,
                 price: article.price,
               }}
+              sellerName={sellerName || undefined}
             />
           )}
         </>

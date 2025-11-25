@@ -1723,6 +1723,7 @@ export function ArticleFormPage() {
               color: formData.color,
               price: parseFloat(formData.price) || 0,
             }}
+            sellerName={sellerName || undefined}
           />
         )}
       </div>

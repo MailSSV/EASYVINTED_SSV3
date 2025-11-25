@@ -12,9 +12,10 @@ interface LabelModalProps {
     color?: string;
     price: number;
   };
+  sellerName?: string;
 }
 
-export function LabelModal({ isOpen, onClose, article }: LabelModalProps) {
+export function LabelModal({ isOpen, onClose, article, sellerName }: LabelModalProps) {
   if (!isOpen) return null;
 
   const handlePrint = () => {
@@ -45,6 +46,9 @@ export function LabelModal({ isOpen, onClose, article }: LabelModalProps) {
             <div id="label-preview" className="border-2 border-gray-300 rounded-lg p-6 bg-white">
               <div className="text-center mb-6 pb-4 border-b-2 border-gray-200">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">EASY VINTED</h3>
+                {sellerName && (
+                  <p className="text-base text-gray-700 mb-3">{sellerName}</p>
+                )}
                 <div className="inline-block bg-gray-900 text-white px-4 py-2 rounded">
                   <span className="text-sm font-medium">Réf: </span>
                   <span className="text-lg font-bold">{article.reference_number}</span>
