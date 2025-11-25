@@ -1,21 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, TrendingUp, Sparkles, Clock, CheckCircle, X } from 'lucide-react';
+import { Calendar, TrendingUp, Sparkles, Clock, CheckCircle, X, Package } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { Toast } from '../components/ui/Toast';
 import { Button } from '../components/ui/Button';
 import { ScheduleModal } from '../components/ScheduleModal';
 import { Article } from '../types/article';
+import { Lot } from '../types/lot';
 
 interface Suggestion {
   id: string;
-  article_id: string;
+  article_id?: string;
+  lot_id?: string;
   suggested_date: string;
   priority: 'high' | 'medium' | 'low';
   reason: string;
   status: 'pending' | 'accepted' | 'rejected' | 'scheduled';
   article?: Article;
+  lot?: Lot;
 }
 
 const PRIORITY_COLORS = {
@@ -48,6 +51,7 @@ export function PlannerPage() {
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const [selectedLot, setSelectedLot] = useState<Lot | null>(null);
   const [selectedSuggestionId, setSelectedSuggestionId] = useState<string | null>(null);
   const [scheduledArticlesDisplayLimit, setScheduledArticlesDisplayLimit] = useState(5);
 
@@ -72,23 +76,35 @@ export function PlannerPage() {
 
       if (error) throw error;
 
-      const suggestionsWithArticles = await Promise.all(
+      const suggestionsWithData = await Promise.all(
         (suggestionsData || []).map(async (suggestion) => {
-          const { data: article } = await supabase
-            .from('articles')
-            .select('*')
-            .eq('id', suggestion.article_id)
-            .maybeSingle();
-
-          return { ...suggestion, article };
+          if (suggestion.article_id) {
+            const { data: article } = await supabase
+              .from('articles')
+              .select('*')
+              .eq('id', suggestion.article_id)
+              .maybeSingle();
+            return { ...suggestion, article };
+          } else if (suggestion.lot_id) {
+            const { data: lot } = await supabase
+              .from('lots')
+              .select('*')
+              .eq('id', suggestion.lot_id)
+              .maybeSingle();
+            return { ...suggestion, lot };
+          }
+          return suggestion;
         })
       );
 
-      const filteredSuggestions = suggestionsWithArticles.filter(
+      const filteredSuggestions = suggestionsWithData.filter(
         (suggestion) =>
-          suggestion.article &&
-          suggestion.article.status !== 'sold' &&
-          suggestion.article.status !== 'draft'
+          (suggestion.article &&
+            suggestion.article.status !== 'sold' &&
+            suggestion.article.status !== 'draft') ||
+          (suggestion.lot &&
+            suggestion.lot.status !== 'sold' &&
+            suggestion.lot.status !== 'draft')
       );
 
       setSuggestions(filteredSuggestions);
@@ -128,16 +144,17 @@ export function PlannerPage() {
     }
   }
 
-  async function acceptSuggestion(suggestionId: string, articleId: string, suggestedDate: string) {
+  async function acceptSuggestion(suggestionId: string, itemId: string, suggestedDate: string, isLot: boolean = false) {
     try {
       const scheduledFor = new Date(suggestedDate).toISOString();
+      const tableName = isLot ? 'lots' : 'articles';
 
-      const { error: articleError } = await supabase
-        .from('articles')
+      const { error: itemError } = await supabase
+        .from(tableName)
         .update({ status: 'scheduled', scheduled_for: scheduledFor })
-        .eq('id', articleId);
+        .eq('id', itemId);
 
-      if (articleError) throw articleError;
+      if (itemError) throw itemError;
 
       const { error: suggestionError } = await supabase
         .from('selling_suggestions')
@@ -147,8 +164,7 @@ export function PlannerPage() {
       if (suggestionError) throw suggestionError;
 
       await loadSuggestions();
-      await loadArticles();
-      setToast({ type: 'success', text: 'Suggestion acceptée et article planifié' });
+      setToast({ type: 'success', text: `Suggestion acceptée et ${isLot ? 'lot' : 'article'} planifié` });
     } catch (error) {
       console.error('Error accepting suggestion:', error);
       setToast({ type: 'error', text: 'Erreur lors de l\'acceptation de la suggestion' });
@@ -172,14 +188,22 @@ export function PlannerPage() {
     }
   }
 
-  function handleOpenScheduleModal(article: Article, suggestionId: string) {
-    setSelectedArticle(article);
+  function handleOpenScheduleModal(item: Article | Lot, suggestionId: string, isLot: boolean = false) {
+    if (isLot) {
+      setSelectedLot(item as Lot);
+    } else {
+      setSelectedArticle(item as Article);
+    }
     setSelectedSuggestionId(suggestionId);
     setScheduleModalOpen(true);
   }
 
-  function handleOpenPreviewModal(article: Article) {
-    navigate(`/articles/${article.id}/preview`);
+  function handleOpenPreviewModal(item: Article | Lot, isLot: boolean = false) {
+    if (isLot) {
+      navigate(`/lots/${item.id}/preview`);
+    } else {
+      navigate(`/articles/${item.id}/preview`);
+    }
   }
 
   async function handleScheduled() {
@@ -420,63 +444,80 @@ export function PlannerPage() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    {pendingSuggestions.map((suggestion) => (
-                      <div
-                        key={suggestion.id}
-                        onClick={() => {
-                          if (suggestion.article) {
-                            handleOpenPreviewModal(suggestion.article);
-                          }
-                        }}
-                        className="group relative bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 hover:border-emerald-300 cursor-pointer"
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-emerald-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    {pendingSuggestions.map((suggestion) => {
+                      const isLot = !!suggestion.lot_id;
+                      const item = suggestion.lot || suggestion.article;
+                      const itemPhoto = suggestion.lot?.cover_photo || suggestion.article?.photos?.[0];
+                      const itemTitle = suggestion.lot?.name || suggestion.article?.title || 'Élément inconnu';
+                      const itemPrice = suggestion.lot?.price || suggestion.article?.price;
+                      const itemSeason = suggestion.lot?.season || suggestion.article?.season;
+                      const itemId = suggestion.lot?.id || suggestion.article?.id;
 
-                        <div className="relative p-3">
-                          {/* Header avec image et infos principales */}
-                          <div className="flex items-start gap-3 mb-2">
-                            {suggestion.article?.photos?.[0] ? (
-                              <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 shadow-sm ring-1 ring-gray-200">
-                                <img
-                                  src={suggestion.article.photos[0]}
-                                  alt={suggestion.article.title}
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                            ) : (
-                              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0">
-                                <Calendar className="w-5 h-5 text-gray-400" />
-                              </div>
-                            )}
+                      return (
+                        <div
+                          key={suggestion.id}
+                          onClick={() => {
+                            if (item) {
+                              handleOpenPreviewModal(item, isLot);
+                            }
+                          }}
+                          className="group relative bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 hover:border-emerald-300 cursor-pointer"
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-emerald-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                            <div className="flex-1 min-w-0">
-                              <h3 className="font-medium text-gray-900 text-xs mb-1 line-clamp-2 leading-tight">
-                                {suggestion.article?.title || 'Article inconnu'}
-                              </h3>
+                          <div className="relative p-3">
+                            {/* Header avec image et infos principales */}
+                            <div className="flex items-start gap-3 mb-2">
+                              {itemPhoto ? (
+                                <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 shadow-sm ring-1 ring-gray-200">
+                                  <img
+                                    src={itemPhoto}
+                                    alt={itemTitle}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0">
+                                  {isLot ? <Package className="w-5 h-5 text-gray-400" /> : <Calendar className="w-5 h-5 text-gray-400" />}
+                                </div>
+                              )}
 
-                              <div className="flex items-center gap-2">
-                                {suggestion.article && (
-                                  <div className="text-xs font-semibold text-emerald-600">
-                                    {suggestion.article.price}€
-                                  </div>
-                                )}
-                                <span className={`inline-flex items-center text-xs font-semibold px-1.5 py-0.5 rounded ${
-                                  suggestion.priority === 'high'
-                                    ? 'bg-red-50 text-red-700'
-                                    : suggestion.priority === 'medium'
-                                    ? 'bg-amber-50 text-amber-700'
-                                    : 'bg-blue-50 text-blue-700'
-                                }`}>
-                                  {PRIORITY_LABELS[suggestion.priority]}
-                                </span>
-                                {suggestion.article?.season && (
-                                  <span className="text-xs text-gray-600 bg-gray-100 px-1.5 py-0.5 rounded">
-                                    {SEASON_LABELS[suggestion.article.season] || suggestion.article.season}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5 mb-1">
+                                  {isLot && (
+                                    <span className="inline-flex items-center gap-1 bg-purple-50 text-purple-700 text-xs px-1.5 py-0.5 rounded font-semibold">
+                                      <Package className="w-3 h-3" />
+                                      Lot
+                                    </span>
+                                  )}
+                                  <h3 className="font-medium text-gray-900 text-xs line-clamp-1 leading-tight">
+                                    {itemTitle}
+                                  </h3>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                  {itemPrice && (
+                                    <div className="text-xs font-semibold text-emerald-600">
+                                      {itemPrice}€
+                                    </div>
+                                  )}
+                                  <span className={`inline-flex items-center text-xs font-semibold px-1.5 py-0.5 rounded ${
+                                    suggestion.priority === 'high'
+                                      ? 'bg-red-50 text-red-700'
+                                      : suggestion.priority === 'medium'
+                                      ? 'bg-amber-50 text-amber-700'
+                                      : 'bg-blue-50 text-blue-700'
+                                  }`}>
+                                    {PRIORITY_LABELS[suggestion.priority]}
                                   </span>
-                                )}
+                                  {itemSeason && (
+                                    <span className="text-xs text-gray-600 bg-gray-100 px-1.5 py-0.5 rounded">
+                                      {SEASON_LABELS[itemSeason] || itemSeason}
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             </div>
-                          </div>
 
                           {/* Raison */}
                           <p className={`text-xs leading-relaxed mb-2 line-clamp-2 ${
@@ -490,8 +531,8 @@ export function PlannerPage() {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                if (suggestion.article) {
-                                  handleOpenScheduleModal(suggestion.article, suggestion.id);
+                                if (item) {
+                                  handleOpenScheduleModal(item, suggestion.id, isLot);
                                 }
                               }}
                               className="w-full flex items-center justify-center gap-1.5 text-xs text-gray-600 hover:text-blue-600 transition-colors bg-gray-50 hover:bg-blue-50 rounded-lg py-1.5 px-2"
@@ -522,7 +563,9 @@ export function PlannerPage() {
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  acceptSuggestion(suggestion.id, suggestion.article_id, suggestion.suggested_date);
+                                  if (itemId) {
+                                    acceptSuggestion(suggestion.id, itemId, suggestion.suggested_date, isLot);
+                                  }
                                 }}
                                 className="flex-[2] py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-semibold hover:from-emerald-600 hover:to-emerald-700 active:scale-95 transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-1.5 text-xs"
                                 title="Accepter"
@@ -534,7 +577,8 @@ export function PlannerPage() {
                           </div>
                         </div>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>

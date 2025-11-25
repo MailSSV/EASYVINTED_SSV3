@@ -16,6 +16,14 @@ interface Article {
   suggested_period?: string;
 }
 
+interface Lot {
+  id: string;
+  user_id: string;
+  name: string;
+  season?: string;
+  status: string;
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -36,9 +44,16 @@ Deno.serve(async (req: Request) => {
 
     if (articlesError) throw articlesError;
 
-    if (!articles || articles.length === 0) {
+    const { data: lots, error: lotsError } = await supabase
+      .from("lots")
+      .select("*")
+      .eq("status", "ready");
+
+    if (lotsError) throw lotsError;
+
+    if ((!articles || articles.length === 0) && (!lots || lots.length === 0)) {
       return new Response(
-        JSON.stringify({ message: "No articles to analyze", processed: 0 }),
+        JSON.stringify({ message: "No articles or lots to analyze", processed: 0 }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         }
@@ -127,6 +142,81 @@ Deno.serve(async (req: Request) => {
       }
     }
 
+    for (const lot of (lots as Lot[]) || []) {
+      let targetMonth = currentMonth;
+      let priority: "high" | "medium" | "low" = "medium";
+      let reason = "";
+
+      if (lot.season === "spring") {
+        targetMonth = 2;
+        reason = "Lot de printemps - meilleure période de vente en mars-avril";
+      } else if (lot.season === "summer") {
+        targetMonth = 4;
+        reason = "Lot d'été - meilleure période de vente en mai-juin";
+      } else if (lot.season === "autumn") {
+        targetMonth = 7;
+        reason = "Lot d'automne - meilleure période de vente en août-septembre";
+      } else if (lot.season === "winter") {
+        targetMonth = 9;
+        reason = "Lot d'hiver - meilleure période de vente en octobre-novembre";
+      } else {
+        targetMonth = currentMonth;
+        reason = "Lot toutes saisons - peut être publié maintenant";
+      }
+
+      const monthDiff = (targetMonth - currentMonth + 12) % 12;
+
+      if (monthDiff === 0 || monthDiff === 1) {
+        priority = "high";
+        reason = `Période optimale maintenant ! ${reason}`;
+      } else if (monthDiff <= 3) {
+        priority = "medium";
+      } else {
+        priority = "low";
+      }
+
+      let suggestedDate: Date;
+      if (!lot.season || lot.season === "all-seasons" || lot.season === "undefined") {
+        suggestedDate = new Date(now);
+        suggestedDate.setDate(suggestedDate.getDate() + 7);
+      } else {
+        suggestedDate = new Date(now.getFullYear(), targetMonth, 1);
+        if (suggestedDate < now) {
+          suggestedDate.setFullYear(suggestedDate.getFullYear() + 1);
+        }
+      }
+
+      const { data: existingSuggestion } = await supabase
+        .from("selling_suggestions")
+        .select("id, status, priority, reason, suggested_date")
+        .eq("lot_id", lot.id)
+        .eq("status", "pending")
+        .maybeSingle();
+
+      if (existingSuggestion) {
+        const { error: updateError } = await supabase
+          .from("selling_suggestions")
+          .update({
+            suggested_date: suggestedDate.toISOString().split("T")[0],
+            priority,
+            reason,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", existingSuggestion.id);
+
+        if (updateError) throw updateError;
+      } else {
+        suggestions.push({
+          lot_id: lot.id,
+          user_id: lot.user_id,
+          suggested_date: suggestedDate.toISOString().split("T")[0],
+          priority,
+          reason,
+          status: "pending",
+        });
+      }
+    }
+
     if (suggestions.length > 0) {
       const { error: insertError } = await supabase
         .from("selling_suggestions")
@@ -139,7 +229,7 @@ Deno.serve(async (req: Request) => {
       JSON.stringify({
         message: "Suggestions generated successfully",
         created: suggestions.length,
-        total_processed: articles.length,
+        total_processed: (articles?.length || 0) + (lots?.length || 0),
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
