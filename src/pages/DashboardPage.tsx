@@ -587,7 +587,7 @@ export function DashboardPage() {
                   : 'bg-white text-gray-600 border-gray-200'
               }`}
             >
-              Aucun vendeur
+              Pfff?!
             </button>
           </div>
         </div>
