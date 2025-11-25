@@ -289,20 +289,6 @@ export default function LotPreviewPage() {
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
-              <h3 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Étiquette de colis</h3>
-              <button
-                onClick={() => setLabelModalOpen(true)}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-gray-300 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 transition-all group"
-              >
-                <TagIcon className="w-5 h-5 text-gray-600 group-hover:text-emerald-600" />
-                <span className="font-medium text-gray-700 group-hover:text-emerald-700">Générer l'étiquette</span>
-              </button>
-              <p className="text-xs text-gray-500 mt-2 text-center">
-                Référence: {lot.reference_number || 'Non définie'}
-              </p>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
               <h2 className="text-lg font-bold text-gray-900 mb-4">Articles inclus ({articles.length})</h2>
               <div className="space-y-3 max-h-96 overflow-y-auto">
                 {articles.map((article) => (
@@ -331,6 +317,20 @@ export default function LotPreviewPage() {
                   </div>
                 ))}
               </div>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Étiquette de colis</h3>
+              <button
+                onClick={() => setLabelModalOpen(true)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-gray-300 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 transition-all group"
+              >
+                <TagIcon className="w-5 h-5 text-gray-600 group-hover:text-emerald-600" />
+                <span className="font-medium text-gray-700 group-hover:text-emerald-700">Générer l'étiquette</span>
+              </button>
+              <p className="text-xs text-gray-500 mt-2 text-center">
+                Référence: {lot.reference_number || 'Non définie'}
+              </p>
             </div>
           </div>
         </div>
