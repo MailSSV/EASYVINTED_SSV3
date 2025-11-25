@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { SaleDetailModal } from '../components/SaleDetailModal';
 import { ArticleSoldModal } from '../components/ArticleSoldModal';
+import { LotSoldModal } from '../components/LotSoldModal';
 
 interface SaleRecord {
   id: string;
@@ -33,6 +34,7 @@ export function SalesPage() {
   const [salesHistory, setSalesHistory] = useState<SaleRecord[]>([]);
   const [selectedSale, setSelectedSale] = useState<SaleRecord | null>(null);
   const [editingSale, setEditingSale] = useState<SaleRecord | null>(null);
+  const [editingLot, setEditingLot] = useState<SaleRecord | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -258,13 +260,13 @@ export function SalesPage() {
                             onClick={(e) => {
                               e.stopPropagation();
                               if (sale.is_lot) {
-                                navigate(`/lots/${sale.id}`);
+                                setEditingLot(sale);
                               } else {
                                 setEditingSale(sale);
                               }
                             }}
                             className="p-2.5 rounded-xl text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all active:scale-90"
-                            title={sale.is_lot ? "Voir le lot" : "Modifier la vente"}
+                            title="Modifier la vente"
                           >
                             <ClipboardEdit className="w-4 h-4" />
                           </button>
@@ -363,7 +365,7 @@ export function SalesPage() {
                       onClick={(e) => {
                         e.stopPropagation();
                         if (sale.is_lot) {
-                          navigate(`/lots/${sale.id}`);
+                          setEditingLot(sale);
                         } else {
                           setEditingSale(sale);
                         }
@@ -436,6 +438,47 @@ export function SalesPage() {
             buyerName: editingSale.buyer_name,
             notes: editingSale.sale_notes,
             sellerId: editingSale.seller_id,
+          }}
+        />
+      )}
+
+      {editingLot && (
+        <LotSoldModal
+          isOpen={true}
+          lot={{
+            id: editingLot.id,
+            name: editingLot.title,
+            price: editingLot.sold_price,
+            photos: editingLot.photos,
+          }}
+          onClose={() => setEditingLot(null)}
+          onConfirm={async (saleData) => {
+            try {
+              const { error } = await supabase
+                .from('lots')
+                .update({
+                  price: saleData.soldPrice,
+                  published_at: saleData.soldAt,
+                  updated_at: new Date().toISOString(),
+                })
+                .eq('id', editingLot.id);
+
+              if (error) throw error;
+
+              await loadSales();
+            } catch (error) {
+              console.error('Error updating lot sale:', error);
+              throw error;
+            }
+          }}
+          initialData={{
+            soldPrice: editingLot.sold_price,
+            soldAt: editingLot.sold_at,
+            platform: editingLot.platform,
+            fees: editingLot.fees,
+            shippingCost: editingLot.shipping_cost,
+            buyerName: editingLot.buyer_name,
+            notes: editingLot.sale_notes,
           }}
         />
       )}
