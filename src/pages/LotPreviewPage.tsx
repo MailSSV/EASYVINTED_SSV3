@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronLeft, Package, Calendar, Tag, TrendingDown, ChevronRight } from 'lucide-react';
+import { ChevronLeft, Package, Calendar, Tag, TrendingDown, ChevronRight, TagIcon } from 'lucide-react';
 import { Lot, LotStatus } from '../types/lot';
 import { Article } from '../types/article';
 import { Button } from '../components/ui/Button';
 import { supabase } from '../lib/supabase';
 import { Toast } from '../components/ui/Toast';
+import { LabelModal } from '../components/LabelModal';
 
 const STATUS_LABELS: Record<LotStatus, string> = {
   draft: 'Brouillon',
@@ -31,12 +32,31 @@ export default function LotPreviewPage() {
   const [loading, setLoading] = useState(true);
   const [selectedPhoto, setSelectedPhoto] = useState<string>('');
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [labelModalOpen, setLabelModalOpen] = useState(false);
+  const [userProfile, setUserProfile] = useState<any>(null);
 
   useEffect(() => {
     if (id) {
       fetchLot();
+      fetchUserProfile();
     }
   }, [id]);
+
+  const fetchUserProfile = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase
+          .from('user_profiles')
+          .select('dressing_name')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        setUserProfile(data);
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
 
   const fetchLot = async () => {
     setLoading(true);
@@ -268,6 +288,20 @@ export default function LotPreviewPage() {
               </div>
             </div>
 
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Étiquette de colis</h3>
+              <button
+                onClick={() => setLabelModalOpen(true)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-gray-300 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 transition-all group"
+              >
+                <TagIcon className="w-5 h-5 text-gray-600 group-hover:text-emerald-600" />
+                <span className="font-medium text-gray-700 group-hover:text-emerald-700">Générer l'étiquette</span>
+              </button>
+              <p className="text-xs text-gray-500 mt-2 text-center">
+                Référence: {lot.reference_number || 'Non définie'}
+              </p>
+            </div>
+
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
               <h2 className="text-lg font-bold text-gray-900 mb-4">Articles inclus ({articles.length})</h2>
               <div className="space-y-3 max-h-96 overflow-y-auto">
@@ -307,6 +341,22 @@ export default function LotPreviewPage() {
           type={toast.type}
           message={toast.text}
           onClose={() => setToast(null)}
+        />
+      )}
+
+      {labelModalOpen && (
+        <LabelModal
+          isOpen={labelModalOpen}
+          onClose={() => setLabelModalOpen(false)}
+          article={{
+            reference_number: lot.reference_number || 'Non définie',
+            title: lot.name,
+            brand: `Lot de ${articles.length} articles`,
+            size: '',
+            color: '',
+            price: lot.price,
+          }}
+          sellerName={userProfile?.dressing_name}
         />
       )}
     </div>
