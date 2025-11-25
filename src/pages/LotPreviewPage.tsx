@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronLeft, Package, Calendar, Tag, TrendingDown, ChevronRight, TagIcon } from 'lucide-react';
+import { ChevronLeft, Package, Calendar, Tag, TrendingDown, ChevronRight, TagIcon, Trash2, Edit, DollarSign, Send } from 'lucide-react';
 import { Lot, LotStatus } from '../types/lot';
 import { Article } from '../types/article';
 import { Button } from '../components/ui/Button';
 import { supabase } from '../lib/supabase';
 import { Toast } from '../components/ui/Toast';
 import { LabelModal } from '../components/LabelModal';
+import { ConfirmModal } from '../components/ui/ConfirmModal';
+import { ScheduleModal } from '../components/ScheduleModal';
+import { SoldModal } from '../components/SoldModal';
 
 const STATUS_LABELS: Record<LotStatus, string> = {
   draft: 'Brouillon',
@@ -34,6 +37,9 @@ export default function LotPreviewPage() {
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [labelModalOpen, setLabelModalOpen] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
+  const [soldModalOpen, setSoldModalOpen] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -96,6 +102,77 @@ export default function LotPreviewPage() {
       setToast({ type: 'error', text: 'Erreur lors du chargement du lot' });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const { error } = await supabase
+        .from('lots')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setToast({ type: 'success', text: 'Lot supprimé avec succès' });
+      setTimeout(() => navigate('/lots'), 1500);
+    } catch (error) {
+      console.error('Error deleting lot:', error);
+      setToast({ type: 'error', text: 'Erreur lors de la suppression du lot' });
+    }
+  };
+
+  const handleSchedule = async (date: Date) => {
+    try {
+      const { error } = await supabase
+        .from('lots')
+        .update({
+          scheduled_for: date.toISOString(),
+          status: 'scheduled'
+        })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setToast({ type: 'success', text: 'Lot programmé avec succès' });
+      setScheduleModalOpen(false);
+      fetchLot();
+    } catch (error) {
+      console.error('Error scheduling lot:', error);
+      setToast({ type: 'error', text: 'Erreur lors de la programmation' });
+    }
+  };
+
+  const handleMarkAsSold = async (salePrice: number, saleDate: Date, fees: number) => {
+    try {
+      const { error } = await supabase
+        .from('lots')
+        .update({
+          status: 'sold',
+          published_at: saleDate.toISOString()
+        })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      const articleIds = articles.map(a => a.id);
+      const { error: articlesError } = await supabase
+        .from('articles')
+        .update({
+          status: 'sold',
+          sold_date: saleDate.toISOString(),
+          sold_price: salePrice / articleIds.length
+        })
+        .in('id', articleIds);
+
+      if (articlesError) throw articlesError;
+
+      setToast({ type: 'success', text: 'Lot marqué comme vendu' });
+      setSoldModalOpen(false);
+      fetchLot();
+    } catch (error) {
+      console.error('Error marking lot as sold:', error);
+      setToast({ type: 'error', text: 'Erreur lors de la mise à jour' });
     }
   };
 
@@ -332,6 +409,63 @@ export default function LotPreviewPage() {
                 Référence: {lot.reference_number || 'Non définie'}
               </p>
             </div>
+
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Actions</h3>
+              <div className="flex flex-col gap-3">
+                <Button
+                  variant="secondary"
+                  onClick={() => setDeleteModalOpen(true)}
+                  className="w-full bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Supprimer
+                </Button>
+
+                {lot.status !== 'sold' && lot.status !== 'published' && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => navigate(`/lots?edit=${id}`)}
+                    className="w-full"
+                  >
+                    <Edit className="w-4 h-4 mr-2" />
+                    Modifier
+                  </Button>
+                )}
+
+                {(lot.status === 'ready' || lot.status === 'scheduled' || lot.status === 'published') && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => setScheduleModalOpen(true)}
+                    className="w-full bg-white text-blue-700 hover:bg-blue-50 border-blue-300 hover:border-blue-400"
+                  >
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Programmer
+                  </Button>
+                )}
+
+                {(lot.status === 'ready' || lot.status === 'scheduled' || lot.status === 'published') && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => setSoldModalOpen(true)}
+                    className="w-full bg-white text-green-700 hover:bg-green-50 border-green-300 hover:border-green-400"
+                  >
+                    <DollarSign className="w-4 h-4 mr-2" />
+                    Marquer vendu
+                  </Button>
+                )}
+
+                {(lot.status === 'ready' || lot.status === 'scheduled') && (
+                  <Button
+                    onClick={() => setToast({ type: 'error', text: 'Publication des lots bientôt disponible' })}
+                    className="w-full bg-emerald-600 hover:bg-emerald-700"
+                  >
+                    <Send className="w-4 h-4 mr-2" />
+                    Envoyer à Vinted
+                  </Button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -341,6 +475,34 @@ export default function LotPreviewPage() {
           type={toast.type}
           message={toast.text}
           onClose={() => setToast(null)}
+        />
+      )}
+
+      <ConfirmModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleDelete}
+        title="Supprimer le lot"
+        message="Êtes-vous sûr de vouloir supprimer ce lot ? Les articles qu'il contient ne seront pas supprimés. Cette action est irréversible."
+        confirmLabel="Supprimer"
+        variant="danger"
+      />
+
+      {scheduleModalOpen && (
+        <ScheduleModal
+          isOpen={scheduleModalOpen}
+          onClose={() => setScheduleModalOpen(false)}
+          onSchedule={handleSchedule}
+          currentDate={lot.scheduled_for ? new Date(lot.scheduled_for) : undefined}
+        />
+      )}
+
+      {soldModalOpen && (
+        <SoldModal
+          isOpen={soldModalOpen}
+          onClose={() => setSoldModalOpen(false)}
+          onConfirm={handleMarkAsSold}
+          articlePrice={lot.price}
         />
       )}
 
