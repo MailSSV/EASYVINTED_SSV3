@@ -100,8 +100,8 @@ export default function LotPreviewPage() {
   }
 
   const allPhotos = [
-    ...(lot.photos || []),
-    ...articles.flatMap(a => a.photos || [])
+    lot.cover_photo,
+    ...articles.map(a => a.photos?.[0]).filter(Boolean)
   ].filter(Boolean);
 
   return (
