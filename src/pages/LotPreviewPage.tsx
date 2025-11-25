@@ -94,7 +94,7 @@ export default function LotPreviewPage() {
         <div className="text-center">
           <Package className="w-20 h-20 text-gray-300 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-gray-900 mb-2">Lot introuvable</h2>
-          <Button onClick={() => navigate('/lots')}>Retour aux lots</Button>
+          <Button onClick={() => navigate(-1)}>Retour</Button>
         </div>
       </div>
     );
