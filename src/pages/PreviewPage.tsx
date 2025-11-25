@@ -390,160 +390,6 @@ export function PreviewPage() {
           </div>
         ) : (
           <>
-            {article.status === 'ready' && (
-              <div className="relative mb-6 overflow-hidden rounded-xl border border-emerald-200 bg-emerald-50/50 backdrop-blur-sm">
-                <div className="flex items-start gap-3 sm:gap-4 px-4 sm:px-5 py-4">
-                  <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white shadow-sm flex-shrink-0">
-                    <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-600" />
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <h3 className="text-base sm:text-lg font-semibold text-emerald-900">
-                        Statut : Prêt pour Vinted
-                      </h3>
-                      <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-emerald-700">
-                        100% complété
-                      </span>
-                    </div>
-                    <p className="text-sm text-emerald-800 leading-relaxed mb-3">
-                      Tous les champs requis sont remplis. Vous pouvez maintenant envoyer cette annonce sur la plateforme Vinted.
-                    </p>
-                    <Button
-                      onClick={() => navigate(`/articles/${article.id}/structure`)}
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white"
-                    >
-                      <Send className="w-4 h-4 mr-2" />
-                      Envoyer à Vinted
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {article.status === 'draft' && (
-              <div className="relative mb-6 overflow-hidden rounded-xl border border-gray-300 bg-gray-50/50 backdrop-blur-sm">
-                <div className="flex items-start gap-3 sm:gap-4 px-4 sm:px-5 py-4">
-                  <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white shadow-sm flex-shrink-0">
-                    <Package className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <h3 className="text-base sm:text-lg font-semibold text-gray-900">
-                        Statut : Brouillon
-                      </h3>
-                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-gray-700">
-                        En cours
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-700 leading-relaxed">
-                      Cette annonce est en cours de préparation. Complétez tous les champs requis avant de l'envoyer sur Vinted.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-            {article.status === 'scheduled' && (
-              <div className="relative mb-6 overflow-hidden rounded-xl border border-amber-200 bg-amber-50/50 backdrop-blur-sm">
-                <div className="flex items-start gap-3 sm:gap-4 px-4 sm:px-5 py-4">
-                  <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white shadow-sm flex-shrink-0">
-                    <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-amber-600" />
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <h3 className="text-base sm:text-lg font-semibold text-amber-900">
-                        Statut : Planifié
-                      </h3>
-                      <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-amber-700">
-                        Programmé
-                      </span>
-                    </div>
-                    <p className="text-sm text-amber-800 leading-relaxed">
-                      {article.scheduled_for ? (
-                        <>
-                          Publication prévue le{' '}
-                          <span className="font-semibold">
-                            {new Date(article.scheduled_for).toLocaleDateString('fr-FR', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </span>
-                        </>
-                      ) : (
-                        'Cette annonce est planifiée pour une publication ultérieure sur Vinted.'
-                      )}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-            {article.status === 'published' && (
-              <div className="relative mb-6 overflow-hidden rounded-xl border border-blue-200 bg-blue-50/50 backdrop-blur-sm">
-                <div className="flex items-start gap-3 sm:gap-4 px-4 sm:px-5 py-4">
-                  <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white shadow-sm flex-shrink-0">
-                    <Send className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <h3 className="text-base sm:text-lg font-semibold text-blue-900">
-                        Statut : Publié
-                      </h3>
-                      <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-blue-700">
-                        En ligne
-                      </span>
-                    </div>
-                    <p className="text-sm text-blue-800 leading-relaxed">
-                      {article.published_at ? (
-                        <>
-                          Publié le{' '}
-                          <span className="font-semibold">
-                            {new Date(article.published_at).toLocaleDateString('fr-FR', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </span>
-                        </>
-                      ) : (
-                        'Cette annonce est actuellement en ligne sur Vinted.'
-                      )}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-            {article.status === 'sold' && (
-              <div className="relative mb-6 overflow-hidden rounded-xl border border-green-200 bg-green-50/50 backdrop-blur-sm">
-                <div className="flex items-start gap-3 sm:gap-4 px-4 sm:px-5 py-4">
-                  <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white shadow-sm flex-shrink-0">
-                    <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <h3 className="text-base sm:text-lg font-semibold text-green-900">
-                        Statut : Vendu
-                      </h3>
-                      <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-green-700">
-                        Terminé
-                      </span>
-                    </div>
-                    <p className="text-sm text-green-800 leading-relaxed">
-                      Cet article a été vendu avec succès{sellerName ? ` par ${sellerName}` : ''}.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
             <div className="space-y-6 mb-6">
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 {article.photos && article.photos.length > 0 ? (
@@ -712,6 +558,153 @@ export function PreviewPage() {
               </div>
 
             </div>
+
+            {article.status === 'ready' && (
+              <div className="relative mb-6 overflow-hidden rounded-xl border border-emerald-200 bg-emerald-50/50 backdrop-blur-sm">
+                <div className="flex items-start gap-3 sm:gap-4 px-4 sm:px-5 py-4">
+                  <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white shadow-sm flex-shrink-0">
+                    <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-600" />
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <h3 className="text-base sm:text-lg font-semibold text-emerald-900">
+                        Statut : Prêt pour Vinted
+                      </h3>
+                      <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-emerald-700">
+                        100% complété
+                      </span>
+                    </div>
+                    <p className="text-sm text-emerald-800 leading-relaxed">
+                      Tous les champs requis sont remplis. Vous pouvez maintenant envoyer cette annonce sur la plateforme Vinted.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {article.status === 'draft' && (
+              <div className="relative mb-6 overflow-hidden rounded-xl border border-gray-300 bg-gray-50/50 backdrop-blur-sm">
+                <div className="flex items-start gap-3 sm:gap-4 px-4 sm:px-5 py-4">
+                  <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white shadow-sm flex-shrink-0">
+                    <Package className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900">
+                        Statut : Brouillon
+                      </h3>
+                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-gray-700">
+                        En cours
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-700 leading-relaxed">
+                      Cette annonce est en cours de préparation. Complétez tous les champs requis avant de l'envoyer sur Vinted.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            {article.status === 'scheduled' && (
+              <div className="relative mb-6 overflow-hidden rounded-xl border border-amber-200 bg-amber-50/50 backdrop-blur-sm">
+                <div className="flex items-start gap-3 sm:gap-4 px-4 sm:px-5 py-4">
+                  <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white shadow-sm flex-shrink-0">
+                    <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-amber-600" />
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <h3 className="text-base sm:text-lg font-semibold text-amber-900">
+                        Statut : Planifié
+                      </h3>
+                      <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-amber-700">
+                        Programmé
+                      </span>
+                    </div>
+                    <p className="text-sm text-amber-800 leading-relaxed">
+                      {article.scheduled_for ? (
+                        <>
+                          Publication prévue le{' '}
+                          <span className="font-semibold">
+                            {new Date(article.scheduled_for).toLocaleDateString('fr-FR', {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </span>
+                        </>
+                      ) : (
+                        'Cette annonce est planifiée pour une publication ultérieure sur Vinted.'
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            {article.status === 'published' && (
+              <div className="relative mb-6 overflow-hidden rounded-xl border border-blue-200 bg-blue-50/50 backdrop-blur-sm">
+                <div className="flex items-start gap-3 sm:gap-4 px-4 sm:px-5 py-4">
+                  <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white shadow-sm flex-shrink-0">
+                    <Send className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <h3 className="text-base sm:text-lg font-semibold text-blue-900">
+                        Statut : Publié
+                      </h3>
+                      <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-blue-700">
+                        En ligne
+                      </span>
+                    </div>
+                    <p className="text-sm text-blue-800 leading-relaxed">
+                      {article.published_at ? (
+                        <>
+                          Publié le{' '}
+                          <span className="font-semibold">
+                            {new Date(article.published_at).toLocaleDateString('fr-FR', {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </span>
+                        </>
+                      ) : (
+                        'Cette annonce est actuellement en ligne sur Vinted.'
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            {article.status === 'sold' && (
+              <div className="relative mb-6 overflow-hidden rounded-xl border border-green-200 bg-green-50/50 backdrop-blur-sm">
+                <div className="flex items-start gap-3 sm:gap-4 px-4 sm:px-5 py-4">
+                  <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white shadow-sm flex-shrink-0">
+                    <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <h3 className="text-base sm:text-lg font-semibold text-green-900">
+                        Statut : Vendu
+                      </h3>
+                      <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-green-700">
+                        Terminé
+                      </span>
+                    </div>
+                    <p className="text-sm text-green-800 leading-relaxed">
+                      Cet article a été vendu avec succès{sellerName ? ` par ${sellerName}` : ''}.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="flex flex-col md:flex-row items-stretch md:items-center justify-center md:justify-end gap-3">
               <Button
