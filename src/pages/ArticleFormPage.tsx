@@ -146,7 +146,7 @@ export function ArticleFormPage() {
     try {
       const { data, error } = await supabase
         .from('user_profiles')
-        .select('clothing_size, shoe_size')
+        .select('clothing_size, shoe_size, dressing_name')
         .eq('id', user.id)
         .maybeSingle();
 
@@ -160,6 +160,40 @@ export function ArticleFormPage() {
       }
     } catch (error) {
       console.error('Error loading user profile:', error);
+    }
+  }
+
+  async function generateReferenceNumber(): Promise<string> {
+    if (!user) return `REF-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
+
+    try {
+      const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('dressing_name')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      const { count } = await supabase
+        .from('articles')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id);
+
+      const dressingName = (profile?.dressing_name || 'MonDressing').replace(/\s+/g, '_');
+
+      let sellerNamePart = 'Principal';
+      if (formData.seller_id) {
+        const seller = familyMembers.find(m => m.id === formData.seller_id);
+        if (seller) {
+          sellerNamePart = seller.name.replace(/\s+/g, '_');
+        }
+      }
+
+      const itemNumber = (count || 0) + 1;
+
+      return `${dressingName}_${sellerNamePart}_${itemNumber}`;
+    } catch (error) {
+      console.error('Error generating reference number:', error);
+      return `REF-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
     }
   }
 
@@ -477,7 +511,7 @@ export function ArticleFormPage() {
 
       let referenceNumber = formData.reference_number;
       if (!referenceNumber) {
-        referenceNumber = `REF-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
+        referenceNumber = await generateReferenceNumber();
       }
 
       const articleData = {
@@ -912,7 +946,7 @@ export function ArticleFormPage() {
       setPublishing(true);
 
       if (!id) {
-        const referenceNumber = `REF-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
+        const referenceNumber = await generateReferenceNumber();
 
         const articleData = {
           title: formData.title,
