@@ -99,10 +99,7 @@ export default function LotPreviewPage() {
     );
   }
 
-  const allPhotos = [
-    lot.cover_photo,
-    ...articles.map(a => a.photos?.[0]).filter(Boolean)
-  ].filter(Boolean);
+  const allPhotos = articles.map(a => a.photos?.[0]).filter(Boolean);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pb-12">
