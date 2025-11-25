@@ -656,7 +656,7 @@ export function ArticleFormPage() {
         type: 'success',
         text: `Article ${id ? 'modifié' : 'créé'} avec succès`,
       });
-      setTimeout(() => navigate(`/preview/${savedArticleId}`), 1500);
+      setTimeout(() => navigate(`/articles/${savedArticleId}/preview`), 1500);
     } catch (error) {
       console.error('Error saving article:', error);
       setToast({
