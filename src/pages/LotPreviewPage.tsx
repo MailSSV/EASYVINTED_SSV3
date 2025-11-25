@@ -89,7 +89,8 @@ export default function LotPreviewPage() {
 
   if (!lot) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 pt-0">
+
         <div className="text-center">
           <Package className="w-20 h-20 text-gray-300 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-gray-900 mb-2">Lot introuvable</h2>
