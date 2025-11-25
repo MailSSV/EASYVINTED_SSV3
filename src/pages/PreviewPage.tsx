@@ -364,7 +364,7 @@ export function PreviewPage() {
         confirmLabel="Supprimer"
         variant="danger"
       />
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-5xl mx-auto no-print">
         <div className="mb-8">
           
 
