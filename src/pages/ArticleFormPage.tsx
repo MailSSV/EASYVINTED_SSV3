@@ -875,6 +875,10 @@ export function ArticleFormPage() {
     }
   };
 
+  const handleViewSaleDetail = () => {
+    setSaleDetailModal(true);
+  };
+
   const handleGenerateLabel = () => {
     if (!id) {
       setToast({
