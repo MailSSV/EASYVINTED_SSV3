@@ -117,7 +117,7 @@ export default function LotPreviewPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <button
           onClick={() => navigate('/lots')}
           className="mb-6 inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
