@@ -123,7 +123,7 @@ export default function LotPreviewPage() {
           className="mb-6 inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
         >
           <ChevronLeft className="w-5 h-5" />
-          Retour aux lots
+          Retour
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
