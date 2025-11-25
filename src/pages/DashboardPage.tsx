@@ -566,16 +566,6 @@ export function DashboardPage() {
             >
               Tous
             </button>
-            <button
-              onClick={() => setSellerFilter('none')}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium border whitespace-nowrap flex-shrink-0 ${
-                sellerFilter === 'none'
-                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                  : 'bg-white text-gray-600 border-gray-200'
-              }`}
-            >
-              Aucun vendeur
-            </button>
             {familyMembers.map((member) => (
               <button
                 key={member.id}
@@ -589,6 +579,16 @@ export function DashboardPage() {
                 {member.name}
               </button>
             ))}
+            <button
+              onClick={() => setSellerFilter('none')}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium border whitespace-nowrap flex-shrink-0 ${
+                sellerFilter === 'none'
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                  : 'bg-white text-gray-600 border-gray-200'
+              }`}
+            >
+              Aucun vendeur
+            </button>
           </div>
         </div>
 
