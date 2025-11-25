@@ -88,7 +88,7 @@ export function LabelModal({ isOpen, onClose, article, sellerName }: LabelModalP
           <div className="p-6">
             <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
               <p className="text-sm text-blue-800">
-                Imprimez cette étiquette et collez la sur votre colis. Vous pourrez identifier plus facilement son contenu le jour de l'expedition :) 
+                Imprimez cette étiquette et collez la sur votre colis.
               </p>
                 <p className="text-sm text-blue-800">
                 Vous pourrez identifier plus facilement son contenu le jour de l'expedition :) 
