@@ -63,7 +63,9 @@ export function DashboardPage() {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | ArticleStatus>('all');
+  const [sellerFilter, setSellerFilter] = useState<string>('all');
   const [articles, setArticles] = useState<Article[]>([]);
+  const [familyMembers, setFamilyMembers] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -117,6 +119,7 @@ export function DashboardPage() {
 
   useEffect(() => {
     fetchArticles();
+    fetchFamilyMembers();
   }, [user]);
 
   useEffect(() => {
@@ -173,9 +176,31 @@ export function DashboardPage() {
     }
   };
 
+  const fetchFamilyMembers = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('family_members')
+        .select('id, name')
+        .eq('user_id', user.id)
+        .order('name');
+
+      if (error) throw error;
+
+      setFamilyMembers(data || []);
+    } catch (error) {
+      console.error('Error fetching family members:', error);
+    }
+  };
+
   const filteredArticles = articles.filter((article) => {
     const matchesStatus =
       statusFilter === 'all' ? true : article.status === statusFilter;
+    const matchesSeller =
+      sellerFilter === 'all' ? true :
+      sellerFilter === 'none' ? !article.seller_id :
+      article.seller_id === sellerFilter;
     const query = searchQuery.toLowerCase();
 
     const matchesQuery =
@@ -186,7 +211,7 @@ export function DashboardPage() {
 
     const isNotSold = article.status !== 'sold';
 
-    return matchesStatus && matchesQuery && isNotSold;
+    return matchesStatus && matchesSeller && matchesQuery && isNotSold;
   });
 
   const formatDate = (date?: string) => {
@@ -487,19 +512,20 @@ export function DashboardPage() {
           </Button>
         </div>
 
-        <div className="mb-4 flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
-          <div className="relative max-w-md w-full">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Rechercher par titre, marque, description..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-            />
-          </div>
+        <div className="mb-4 space-y-3">
+          <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
+            <div className="relative max-w-md w-full">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Rechercher par titre, marque, description..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              />
+            </div>
 
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
             <button
               onClick={() => setStatusFilter('all')}
               className={`px-3 py-1.5 rounded-full text-xs font-medium border whitespace-nowrap flex-shrink-0 ${
@@ -524,6 +550,44 @@ export function DashboardPage() {
               >
                 {renderStatusIcon(status)}
                 {STATUS_LABELS[status]}
+              </button>
+            ))}
+          </div>
+          </div>
+
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+            <span className="text-xs font-medium text-gray-600 whitespace-nowrap">Vendeur:</span>
+            <button
+              onClick={() => setSellerFilter('all')}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium border whitespace-nowrap flex-shrink-0 ${
+                sellerFilter === 'all'
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                  : 'bg-white text-gray-600 border-gray-200'
+              }`}
+            >
+              Tous
+            </button>
+            <button
+              onClick={() => setSellerFilter('none')}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium border whitespace-nowrap flex-shrink-0 ${
+                sellerFilter === 'none'
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                  : 'bg-white text-gray-600 border-gray-200'
+              }`}
+            >
+              Aucun vendeur
+            </button>
+            {familyMembers.map((member) => (
+              <button
+                key={member.id}
+                onClick={() => setSellerFilter(member.id)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium border whitespace-nowrap flex-shrink-0 ${
+                  sellerFilter === member.id
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                    : 'bg-white text-gray-600 border-gray-200'
+                }`}
+              >
+                {member.name}
               </button>
             ))}
           </div>
