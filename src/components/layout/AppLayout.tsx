@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Package, Settings, BarChart3, ShoppingBag, Calendar, Menu, X, LogOut, Users } from 'lucide-react';
+import { Package, Settings, BarChart3, ShoppingBag, Calendar, Menu, X, LogOut, Users, Boxes } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
@@ -99,6 +99,17 @@ export function AppLayout({ children }: AppLayoutProps) {
                 >
                   <Package className="w-4 h-4" />
                   Mes articles
+                </Link>
+                <Link
+                  to="/lots"
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive('/lots')
+                      ? 'bg-emerald-50 text-emerald-700'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  <Boxes className="w-4 h-4" />
+                  Mes lots
                 </Link>
                 <Link
                   to="/sales"
@@ -224,6 +235,21 @@ export function AppLayout({ children }: AppLayoutProps) {
             >
               <Package className="w-5 h-5" />
               Mes articles
+            </Link>
+            <Link
+              to="/lots"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 transform ${
+                mobileMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
+              } ${
+                isActive('/lots')
+                  ? 'bg-emerald-50 text-emerald-700'
+                  : 'text-gray-700 hover:bg-gray-50'
+              }`}
+              style={{ transitionDelay: mobileMenuOpen ? '75ms' : '0ms' }}
+            >
+              <Boxes className="w-5 h-5" />
+              Mes lots
             </Link>
             <Link
               to="/sales"

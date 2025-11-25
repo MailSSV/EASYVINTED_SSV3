@@ -16,6 +16,8 @@ import { SignupPage } from './pages/SignupPage';
 import { HomePage } from './pages/HomePage';
 import { StructureFormPage } from './pages/StructureFormPage';
 import { FamilyMembersPage } from './pages/FamilyMembersPage';
+import LotsPage from './pages/LotsPage';
+import LotPreviewPage from './pages/LotPreviewPage';
 
 function App() {
   return (
@@ -41,6 +43,8 @@ function App() {
                     <Route path="/articles/:id/edit" element={<ArticleFormPage />} />
                     <Route path="/articles/:id/preview" element={<PreviewPage />} />
                     <Route path="/articles/:id/structure" element={<StructureFormPage />} />
+                    <Route path="/lots" element={<LotsPage />} />
+                    <Route path="/lots/:id/preview" element={<LotPreviewPage />} />
                     <Route path="/analytics" element={<AnalyticsPage />} />
                     <Route path="/sales" element={<SalesPage />} />
                     <Route path="/planner" element={<PlannerPage />} />
