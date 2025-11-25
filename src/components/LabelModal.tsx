@@ -26,7 +26,7 @@ export function LabelModal({ isOpen, onClose, article, sellerName }: LabelModalP
     <div className="border-2 border-gray-300 rounded-lg p-6 bg-white">
       <div className="text-center mb-6 pb-4 border-b-2 border-gray-200">
         <h3 className="text-2xl font-bold text-gray-900 mb-3">
-          EASYVINTED {sellerName && `by ${sellerName}`}
+          EASY VINTED {sellerName && `by ${sellerName}`}
         </h3>
         <div className="inline-block border-2 border-gray-900 px-4 py-2 rounded">
           <span className="text-sm font-medium text-gray-900">Réf: </span>
