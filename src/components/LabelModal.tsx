@@ -112,25 +112,32 @@ export function LabelModal({ isOpen, onClose, article, sellerName }: LabelModalP
 
       <style>{`
         @media print {
-          body * {
-            visibility: hidden;
-          }
-          #label-preview, #label-preview * {
-            visibility: visible;
-          }
-          #label-preview {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: 180mm;
-            padding: 20mm;
-            border: 2px solid #000;
-            page-break-after: always;
-          }
           @page {
             size: A4;
-            margin: 10mm;
+            margin: 15mm;
+          }
+
+          body * {
+            visibility: hidden !important;
+          }
+
+          #label-preview,
+          #label-preview * {
+            visibility: visible !important;
+          }
+
+          #label-preview {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            transform: none !important;
+            width: 100% !important;
+            max-width: 180mm !important;
+            margin: 0 auto !important;
+            padding: 15mm !important;
+            border: 2px solid #000 !important;
+            border-radius: 8px !important;
+            background: white !important;
           }
         }
       `}</style>
