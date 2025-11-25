@@ -284,13 +284,7 @@ export function SalesPage() {
                 <div className="flex gap-4 p-4">
                   <div
                     className="relative w-28 h-28 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0 ring-1 ring-gray-200/50 cursor-pointer"
-                    onClick={() => {
-                      if (sale.is_lot) {
-                        navigate(`/lots/${sale.id}`);
-                      } else {
-                        setSelectedSale(sale);
-                      }
-                    }}
+                    onClick={() => setSelectedSale(sale)}
                   >
                     {sale.photos.length > 0 ? (
                       <img
@@ -346,11 +340,7 @@ export function SalesPage() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (sale.is_lot) {
-                          navigate(`/lots/${sale.id}`);
-                        } else {
-                          setSelectedSale(sale);
-                        }
+                        setSelectedSale(sale);
                       }}
                       className="p-2 rounded-xl hover:bg-white text-gray-500 hover:text-emerald-600 transition-all active:scale-90"
                     >
