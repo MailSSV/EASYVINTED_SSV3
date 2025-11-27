@@ -102,11 +102,20 @@ html {
 }
 
 @media print {
-  html, body {
-    height: auto !important;
+  * {
     overflow: visible !important;
+  }
+
+  html {
+    height: 100%;
+  }
+
+  body {
     margin: 0 !important;
     padding: 0 !important;
+    height: fit-content !important;
+    min-height: 0 !important;
+    max-height: none !important;
   }
 
   body * {
@@ -119,14 +128,17 @@ html {
   }
 
   .print-only {
-    position: absolute;
+    position: fixed !important;
     left: 0;
     top: 0;
     width: 100%;
+    height: fit-content !important;
     page-break-after: avoid !important;
   }
 
   body > #root {
-    height: auto !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
   }
 }
