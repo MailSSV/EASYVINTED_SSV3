@@ -125,7 +125,7 @@ export default function LotBuilder({ isOpen, onClose, onSuccess, existingLotId }
       .from('articles')
       .select('*')
       .eq('user_id', user.id)
-      .in('status', ['draft', 'ready'])
+      .in('status', ['draft', 'ready', 'scheduled'])
       .order('created_at', { ascending: false });
 
     if (error) {
