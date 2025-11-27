@@ -100,3 +100,17 @@ html {
 .animate-wiggle {
   animation: wiggle 0.5s ease-in-out 1;
 }
+
+@media print {
+  body > #root {
+    display: none !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+}
