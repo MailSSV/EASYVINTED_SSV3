@@ -85,9 +85,7 @@ export function SaleDetailModal({ sale, onClose }: SaleDetailModalProps) {
             {/* Résumé financier compact en haut à droite */}
             <div className="hidden md:flex flex-col items-end gap-2">
               <div className="rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 px-4 py-2.5 text-right shadow-md">
-                <p className="text-[11px] uppercase tracking-wide text-emerald-100 font-semibold">
-                  Bénéfice net
-                </p>
+              
                 <p className="text-2xl font-semibold text-white">
                   {sale.net_profit.toFixed(2)} €
                 </p>
