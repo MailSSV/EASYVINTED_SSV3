@@ -17,7 +17,6 @@ import { LabelModal } from '../components/LabelModal';
 import { VINTED_CATEGORIES } from '../constants/categories';
 import { COLORS, MATERIALS } from '../constants/articleAttributes';
 import { migratePhotosFromTempFolder } from '../lib/photoMigration';
-import { PageContainer, Card, Pill } from '../components/ui/UiKit';
 
 const CONDITION_LABELS: Record<Condition, string> = {
   new_with_tag: 'Neuf avec étiquette',
@@ -1023,12 +1022,16 @@ export function ArticleFormPage() {
         articleId={publishInstructionsModal.articleId}
       />
 
-      <PageContainer className="max-w-5xl">
+      <div className="max-w-5xl mx-auto">
+        <div className="mb-4">
+         
+        </div>
+
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
+          <h1 className="text-2xl font-bold text-gray-900">
             {id ? "Modifier l'article" : 'Nouvel article'}
           </h1>
-          <p className="text-sm sm:text-base text-slate-500 mt-2">
+          <p className="text-sm text-gray-600 mt-1">
             Remplissez les informations de votre article pour le préparer à la publication
           </p>
         </div>
@@ -1037,21 +1040,21 @@ export function ArticleFormPage() {
           className="space-y-6"
           onSubmit={(e) => e.preventDefault()}
         >
-          <div className="space-y-5 sm:space-y-6">
+          <div className="space-y-6">
             {familyMembers.length > 0 && (
-              <Card>
-                <h2 className="text-lg font-semibold text-slate-900 mb-4">Vendeur</h2>
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Vendeur</h2>
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1.5">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Vendu par
-                    <span className="ml-1 text-xs text-slate-500 font-normal">
+                    <span className="ml-1 text-xs text-gray-500 font-normal">
                       (sélectionnez le vendeur avant d'analyser les photos avec l'IA)
                     </span>
                   </label>
                   <select
                     value={formData.seller_id || ''}
                     onChange={(e) => handleSellerChange(e.target.value)}
-                    className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   >
                     <option value="">Sélectionnez un vendeur</option>
                     {familyMembers.map((member) => (
@@ -1061,11 +1064,11 @@ export function ArticleFormPage() {
                     ))}
                   </select>
                 </div>
-              </Card>
+              </div>
             )}
 
-            <Card>
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">Photos</h2>
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Photos</h2>
               <PhotoUpload
                 photos={formData.photos}
                 onPhotosChange={(photos) => setFormData({ ...formData, photos })}
@@ -1074,10 +1077,10 @@ export function ArticleFormPage() {
                 userId={user?.id || ''}
                 articleId={id}
               />
-            </Card>
+            </div>
 
-            <Card>
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">Informations principales</h2>
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Informations principales</h2>
 
               <div className="space-y-4">
                 <div>
@@ -1315,10 +1318,10 @@ export function ArticleFormPage() {
                   </div>
                 )}
               </div>
-            </Card>
+            </div>
 
-            <Card>
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">Prix de vente</h2>
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Prix de vente</h2>
 
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1354,10 +1357,16 @@ export function ArticleFormPage() {
                   </div>
                 </div>
               </div>
-            </Card>
+            </div>
 
-            <Card>
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">
+
+
+            
+
+
+            
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Saison & période conseillée
               </h2>
 
@@ -1400,13 +1409,13 @@ export function ArticleFormPage() {
                   />
                 </div>
               </div>
-            </Card>
+            </div>
           </div>
 
           {id && articleStatus === 'ready' && (
-            <Card className="border-emerald-200 bg-emerald-50/50">
-              <div className="flex items-start gap-3 sm:gap-4">
-                <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-2xl bg-white shadow-sm flex-shrink-0">
+            <div className="relative overflow-hidden rounded-xl border border-emerald-200 bg-emerald-50/50 backdrop-blur-sm">
+              <div className="flex items-start gap-3 sm:gap-4 px-4 sm:px-5 py-4">
+                <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white shadow-sm flex-shrink-0">
                   <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-600" />
                 </div>
 
@@ -1415,14 +1424,16 @@ export function ArticleFormPage() {
                     <h3 className="text-base sm:text-lg font-semibold text-emerald-900">
                       Statut : Prêt pour Vinted
                     </h3>
-                    <Pill variant="success">100% complété</Pill>
+                    <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-emerald-700">
+                      100% complété
+                    </span>
                   </div>
                   <p className="text-sm text-emerald-800 leading-relaxed">
                     Tous les champs requis sont remplis. Vous pouvez maintenant envoyer cette annonce sur la plateforme Vinted.
                   </p>
                 </div>
               </div>
-            </Card>
+            </div>
           )}
 
           {id && articleStatus === 'draft' && (
@@ -1735,7 +1746,7 @@ export function ArticleFormPage() {
             sellerName={sellerName || undefined}
           />
         )}
-      </PageContainer>
+      </div>
     </>
   );
 }
