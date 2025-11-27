@@ -375,11 +375,7 @@ export default function LotPreviewPage() {
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <Button className="w-full" onClick={() => navigate(`/lots?edit=${id}`)}>
-                  Modifier le lot
-                </Button>
-              </div>
+             
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
