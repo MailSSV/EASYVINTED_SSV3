@@ -83,48 +83,155 @@ export function LabelModal({ isOpen, onClose, article, sellerName, lotArticles }
 <head>
   <meta charset="UTF-8">
   <title>Etiquette - ${escapeHtml(article.reference_number)}</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 20mm;
+      background: white;
+      margin: 0;
+    }
+    .label-container {
+      border: 2px solid #d1d5db;
+      border-radius: 8px;
+      padding: 24px;
+      background: white;
+      max-width: 180mm;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    .header h3 {
+      font-size: 24px;
+      font-weight: bold;
+      color: #111827;
+      margin: 0 0 12px 0;
+    }
+    .reference {
+      display: inline-block;
+      border: 2px solid #111827;
+      padding: 8px 16px;
+      border-radius: 4px;
+    }
+    .reference-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #111827;
+    }
+    .reference-number {
+      font-size: 18px;
+      font-weight: bold;
+      color: #111827;
+    }
+    .field-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+    .field-value {
+      font-size: 16px;
+      color: #111827;
+    }
+    .field-value-large {
+      font-size: 18px;
+      font-weight: bold;
+      color: #111827;
+    }
+    .section {
+      margin-bottom: 12px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+    .price-section {
+      padding-top: 12px;
+      margin-top: 12px;
+      border-top: 1px solid #e5e7eb;
+    }
+    .price {
+      font-size: 24px;
+      font-weight: bold;
+      color: #059669;
+      margin: 0;
+    }
+    ul {
+      margin-left: 20px;
+    }
+    li {
+      margin-bottom: 4px;
+    }
+    .print-button {
+      display: block;
+      width: 200px;
+      margin: 20px auto;
+      padding: 12px 24px;
+      background-color: #059669;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .print-button:hover {
+      background-color: #047857;
+    }
+    @media print {
+      body {
+        padding: 0;
+      }
+      .print-button {
+        display: none;
+      }
+    }
+  </style>
 </head>
-<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20mm; background: white; margin: 0;">
-  <div style="border: 2px solid #d1d5db; border-radius: 8px; padding: 24px; background: white; max-width: 180mm;">
-    <div style="text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #e5e7eb;">
-      <h3 style="font-size: 24px; font-weight: bold; color: #111827; margin: 0 0 12px 0;">EasyVinted ${sellerName ? 'by ' + escapeHtml(sellerName) : ''}</h3>
-      <div style="display: inline-block; border: 2px solid #111827; padding: 8px 16px; border-radius: 4px;">
-        <span style="font-size: 14px; font-weight: 500; color: #111827;">Ref: </span>
-        <span style="font-size: 18px; font-weight: bold; color: #111827;">${escapeHtml(article.reference_number)}</span>
+<body>
+  <button class="print-button" onclick="window.print()">🖨️ Imprimer l'étiquette</button>
+  <div class="label-container">
+    <div class="header">
+      <h3>EasyVinted ${sellerName ? 'by ' + escapeHtml(sellerName) : ''}</h3>
+      <div class="reference">
+        <span class="reference-label">Réf: </span>
+        <span class="reference-number">${escapeHtml(article.reference_number)}</span>
       </div>
     </div>
     <div>
-      <div style="margin-bottom: 12px;">
-        <p style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; margin-bottom: 4px;">Article${isLot ? 's' : ''}</p>
+      <div class="section">
+        <p class="field-label">Article${isLot ? 's' : ''}</p>
         ${articleContentHTML}
       </div>
       ${brandsHTML}
       ${gridHTML}
-      <div style="padding-top: 12px; margin-top: 12px; border-top: 1px solid #e5e7eb;">
-        <p style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; margin-bottom: 4px;">Prix de vente</p>
-        <p style="font-size: 24px; font-weight: bold; color: #059669; margin: 0;">${article.price.toFixed(2)} €</p>
+      <div class="price-section">
+        <p class="field-label">Prix de vente</p>
+        <p class="price">${article.price.toFixed(2)} €</p>
       </div>
     </div>
   </div>
 </body>
 </html>`;
 
-    const printWindow = window.open('', '_blank', 'width=800,height=600');
-    if (!printWindow) {
-      alert('Veuillez autoriser les popups pour imprimer l\'etiquette');
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const newTab = window.open(url, '_blank');
+
+    if (!newTab) {
+      alert('Veuillez autoriser les onglets pour imprimer l\'etiquette');
       return;
     }
 
-    printWindow.document.open();
-    printWindow.document.write(htmlContent);
-    printWindow.document.close();
-
-    printWindow.onload = () => {
-      setTimeout(() => {
-        printWindow.focus();
-        printWindow.print();
-      }, 250);
-    };
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 1000);
   };
 
   const labelContent = (
