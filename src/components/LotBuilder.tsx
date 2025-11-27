@@ -428,7 +428,11 @@ export default function LotBuilder({ isOpen, onClose, onSuccess, existingLotId }
                 </label>
                 <select
                   value={lotData.season || ''}
-                  onChange={(e) => setLotData({ ...lotData, season: e.target.value as Season })}
+                  onChange={(e) => {
+                    const season = e.target.value as Season;
+                    setLotData({ ...lotData, season });
+                    setFilters({ ...filters, season: season || 'all' });
+                  }}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                 >
                   <option value="">Sélectionner une saison</option>
