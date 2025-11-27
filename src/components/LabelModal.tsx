@@ -24,7 +24,8 @@ interface LabelModalProps {
 export function LabelModal({ isOpen, onClose, article, sellerName, lotArticles }: LabelModalProps) {
   if (!isOpen) return null;
 
-  const handlePrint = () => {
+  const handlePrint = (e: React.MouseEvent) => {
+    e.preventDefault();
     window.print();
   };
 
@@ -119,20 +120,21 @@ export function LabelModal({ isOpen, onClose, article, sellerName, lotArticles }
             {labelContent}
 
             <div className="mt-6 flex gap-3">
-              <Button
+              <button
+                type="button"
                 onClick={handlePrint}
-                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center"
               >
                 <Printer className="w-4 h-4 mr-2" />
                 Imprimer l'étiquette
-              </Button>
-              <Button
-                variant="secondary"
+              </button>
+              <button
+                type="button"
                 onClick={onClose}
-                className="flex-1"
+                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors"
               >
                 Fermer
-              </Button>
+              </button>
             </div>
           </div>
         </div>
@@ -157,6 +159,11 @@ export function LabelModal({ isOpen, onClose, article, sellerName, lotArticles }
             margin: 15mm;
           }
 
+          html, body {
+            height: auto;
+            overflow: visible;
+          }
+
           .no-print {
             display: none !important;
           }
@@ -164,8 +171,10 @@ export function LabelModal({ isOpen, onClose, article, sellerName, lotArticles }
           .print-only {
             display: block !important;
             width: 180mm;
-            padding: 15mm;
-            margin: 0 auto;
+            padding: 0;
+            margin: 0;
+            page-break-after: avoid;
+            page-break-inside: avoid;
           }
 
           .print-only > div {
@@ -173,6 +182,8 @@ export function LabelModal({ isOpen, onClose, article, sellerName, lotArticles }
             border-radius: 8px;
             padding: 15mm;
             background: white;
+            page-break-after: avoid;
+            page-break-inside: avoid;
           }
         }
       `}</style>
