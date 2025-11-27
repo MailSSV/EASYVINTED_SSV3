@@ -28,9 +28,58 @@ export function LabelModal({ isOpen, onClose, article, sellerName, lotArticles }
     e.preventDefault();
     e.stopPropagation();
 
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    if (!printWindow) {
+      alert('Veuillez autoriser les popups pour imprimer l\'étiquette');
+      return false;
+    }
+
+    const printContent = document.querySelector('.print-only');
+    if (!printContent) return false;
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Étiquette - ${article.reference_number}</title>
+          <style>
+            * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+            }
+
+            body {
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              padding: 20mm;
+              background: white;
+            }
+
+            @page {
+              size: A4;
+              margin: 15mm;
+            }
+
+            @media print {
+              body {
+                padding: 0;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          ${printContent.innerHTML}
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+
     setTimeout(() => {
-      window.print();
-    }, 100);
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    }, 250);
 
     return false;
   };
