@@ -24,6 +24,9 @@ interface LabelModalProps {
 export function LabelModal({ isOpen, onClose, article, sellerName, lotArticles }: LabelModalProps) {
   if (!isOpen) return null;
 
+  const isLot = lotArticles && lotArticles.length > 0;
+  const uniqueBrands = isLot ? [...new Set(lotArticles.map(a => a.brand).filter(Boolean))] : [];
+
   const handlePrint = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -34,37 +37,43 @@ export function LabelModal({ isOpen, onClose, article, sellerName, lotArticles }
       return false;
     }
 
+    const escapeHtml = (text: string) => {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    };
+
     const articlesListHTML = isLot
-      ? lotArticles!.map(a => `<li class="text-sm text-gray-900">${a.title}</li>`).join('')
+      ? lotArticles!.map(a => `<li>${escapeHtml(a.title)}</li>`).join('')
       : '';
 
     const articleContentHTML = isLot
       ? `<ul class="list-disc list-inside space-y-1">${articlesListHTML}</ul>`
-      : `<p class="text-lg font-bold text-gray-900">${article.title}</p>`;
+      : `<p class="field-value-large">${escapeHtml(article.title)}</p>`;
 
     const brandsHTML = isLot && uniqueBrands.length > 0
       ? `<div>
-          <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Marque${uniqueBrands.length > 1 ? 's' : ''}</p>
-          <p class="text-base text-gray-900">${uniqueBrands.join(', ')}</p>
+          <p class="field-label">Marque${uniqueBrands.length > 1 ? 's' : ''}</p>
+          <p class="field-value">${escapeHtml(uniqueBrands.join(', '))}</p>
         </div>`
       : article.brand
       ? `<div>
-          <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Marque</p>
-          <p class="text-base text-gray-900">${article.brand}</p>
+          <p class="field-label">Marque</p>
+          <p class="field-value">${escapeHtml(article.brand)}</p>
         </div>`
       : '';
 
     const sizeHTML = article.size
       ? `<div>
-          <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Taille</p>
-          <p class="text-base text-gray-900">${article.size}</p>
+          <p class="field-label">Taille</p>
+          <p class="field-value">${escapeHtml(article.size)}</p>
         </div>`
       : '';
 
     const colorHTML = article.color
       ? `<div>
-          <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Couleur</p>
-          <p class="text-base text-gray-900">${article.color}</p>
+          <p class="field-label">Couleur</p>
+          <p class="field-value">${escapeHtml(article.color)}</p>
         </div>`
       : '';
 
@@ -234,9 +243,6 @@ export function LabelModal({ isOpen, onClose, article, sellerName, lotArticles }
 
     return false;
   };
-
-  const isLot = lotArticles && lotArticles.length > 0;
-  const uniqueBrands = isLot ? [...new Set(lotArticles.map(a => a.brand).filter(Boolean))] : [];
 
   const labelContent = (
     <div className="border-2 border-gray-300 rounded-lg p-6 bg-white">
