@@ -1,5 +1,6 @@
-import { TrendingUp, Package, ShoppingBag, Euro } from 'lucide-react';
+import { TrendingUp, Package, ShoppingBag, Euro, Wallet, TrendingDown } from 'lucide-react';
 import { Product } from '../lib/supabase';
+import { Card, IconCircle, GradientStatCard, InfoRow } from './ui/UiKit';
 
 interface StatsProps {
   products: Product[];
@@ -29,62 +30,72 @@ export function Stats({ products }: StatsProps) {
       icon: Package,
       label: 'Total produits',
       value: totalProducts,
-      color: 'bg-blue-500',
+      variant: 'soft' as const,
     },
     {
       icon: ShoppingBag,
       label: 'Disponibles',
       value: availableProducts,
-      color: 'bg-green-500',
+      variant: 'success' as const,
     },
     {
       icon: TrendingUp,
       label: 'Vendus',
       value: soldProducts,
-      color: 'bg-purple-500',
+      variant: 'solid' as const,
     },
     {
       icon: Euro,
       label: 'Bénéfice réalisé',
       value: `${totalProfit.toFixed(2)}€`,
-      color: 'bg-orange-500',
+      variant: 'success' as const,
     },
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="space-y-5 sm:space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {stats.map((stat) => (
-          <div key={stat.label} className="bg-white rounded-lg shadow-md p-6">
+          <Card key={stat.label}>
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
-                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+              <div className="min-w-0">
+                <p className="text-xs sm:text-sm text-slate-500 mb-1.5">{stat.label}</p>
+                <p className="text-xl sm:text-2xl font-bold text-slate-900">{stat.value}</p>
               </div>
-              <div className={`${stat.color} p-3 rounded-lg`}>
-                <stat.icon className="w-6 h-6 text-white" />
-              </div>
+              <IconCircle icon={stat.icon} variant={stat.variant} />
             </div>
-          </div>
+          </Card>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Investissement total</h3>
-          <p className="text-2xl font-bold text-gray-900">{totalInvestment.toFixed(2)}€</p>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+        <Card>
+          <InfoRow
+            icon={TrendingDown}
+            title="Investissement total"
+            description="Coût d'achat cumulé"
+            value={`${totalInvestment.toFixed(2)}€`}
+            valueClassName="text-slate-900"
+            separator={false}
+          />
+        </Card>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Revenu total</h3>
-          <p className="text-2xl font-bold text-green-600">{totalRevenue.toFixed(2)}€</p>
-        </div>
+        <Card>
+          <InfoRow
+            icon={Wallet}
+            title="Revenu total"
+            description="Somme des ventes réalisées"
+            value={`${totalRevenue.toFixed(2)}€`}
+            valueClassName="text-emerald-600"
+            separator={false}
+          />
+        </Card>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Revenu potentiel</h3>
-          <p className="text-2xl font-bold text-blue-600">{potentialRevenue.toFixed(2)}€</p>
-          <p className="text-xs text-gray-500 mt-1">Si tout est vendu</p>
-        </div>
+        <GradientStatCard
+          label="Revenu potentiel"
+          value={`${potentialRevenue.toFixed(2)}€`}
+          sublabel="Si tous les articles disponibles sont vendus"
+        />
       </div>
     </div>
   );
