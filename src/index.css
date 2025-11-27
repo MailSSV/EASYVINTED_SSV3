@@ -102,15 +102,19 @@ html {
 }
 
 @media print {
-  body > #root {
-    display: none !important;
+  body * {
+    visibility: hidden;
   }
 
-  .no-print {
-    display: none !important;
+  .print-only,
+  .print-only * {
+    visibility: visible !important;
   }
 
   .print-only {
-    display: block !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
   }
 }
