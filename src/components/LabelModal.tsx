@@ -220,18 +220,8 @@ export function LabelModal({ isOpen, onClose, article, sellerName, lotArticles }
 </body>
 </html>`;
 
-    const blob = new Blob([htmlContent], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const newTab = window.open(url, '_blank');
-
-    if (!newTab) {
-      alert('Veuillez autoriser les onglets pour imprimer l\'etiquette');
-      return;
-    }
-
-    setTimeout(() => {
-      URL.revokeObjectURL(url);
-    }, 1000);
+    const dataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(htmlContent);
+    window.open(dataUrl, '_blank');
   };
 
   const labelContent = (
