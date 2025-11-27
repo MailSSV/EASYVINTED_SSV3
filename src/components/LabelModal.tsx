@@ -31,16 +31,13 @@ export function LabelModal({ isOpen, onClose, article, sellerName, lotArticles }
     e.preventDefault();
     e.stopPropagation();
 
-    const printWindow = window.open('', '_blank', 'width=800,height=600');
-    if (!printWindow) {
-      alert('Veuillez autoriser les popups pour imprimer l\'étiquette');
-      return false;
-    }
-
     const escapeHtml = (text: string) => {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
     };
 
     const articlesListHTML = isLot
@@ -48,200 +45,86 @@ export function LabelModal({ isOpen, onClose, article, sellerName, lotArticles }
       : '';
 
     const articleContentHTML = isLot
-      ? `<ul class="list-disc list-inside space-y-1">${articlesListHTML}</ul>`
-      : `<p class="field-value-large">${escapeHtml(article.title)}</p>`;
+      ? `<ul style="margin-left: 20px;">${articlesListHTML}</ul>`
+      : `<p style="font-size: 18px; font-weight: bold; color: #111827;">${escapeHtml(article.title)}</p>`;
 
     const brandsHTML = isLot && uniqueBrands.length > 0
-      ? `<div>
-          <p class="field-label">Marque${uniqueBrands.length > 1 ? 's' : ''}</p>
-          <p class="field-value">${escapeHtml(uniqueBrands.join(', '))}</p>
+      ? `<div style="margin-bottom: 12px;">
+          <p style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; margin-bottom: 4px;">Marque${uniqueBrands.length > 1 ? 's' : ''}</p>
+          <p style="font-size: 16px; color: #111827;">${escapeHtml(uniqueBrands.join(', '))}</p>
         </div>`
       : article.brand
-      ? `<div>
-          <p class="field-label">Marque</p>
-          <p class="field-value">${escapeHtml(article.brand)}</p>
+      ? `<div style="margin-bottom: 12px;">
+          <p style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; margin-bottom: 4px;">Marque</p>
+          <p style="font-size: 16px; color: #111827;">${escapeHtml(article.brand)}</p>
         </div>`
       : '';
 
     const sizeHTML = article.size
       ? `<div>
-          <p class="field-label">Taille</p>
-          <p class="field-value">${escapeHtml(article.size)}</p>
+          <p style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; margin-bottom: 4px;">Taille</p>
+          <p style="font-size: 16px; color: #111827;">${escapeHtml(article.size)}</p>
         </div>`
       : '';
 
     const colorHTML = article.color
       ? `<div>
-          <p class="field-label">Couleur</p>
-          <p class="field-value">${escapeHtml(article.color)}</p>
+          <p style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; margin-bottom: 4px;">Couleur</p>
+          <p style="font-size: 16px; color: #111827;">${escapeHtml(article.color)}</p>
         </div>`
       : '';
 
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Étiquette - ${article.reference_number}</title>
-          <meta charset="UTF-8">
-          <style>
-            * {
-              margin: 0;
-              padding: 0;
-              box-sizing: border-box;
-            }
+    const gridHTML = (sizeHTML || colorHTML)
+      ? `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px;">${sizeHTML}${colorHTML}</div>`
+      : '';
 
-            body {
-              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-              padding: 20mm;
-              background: white;
-            }
+    const htmlContent = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Etiquette - ${escapeHtml(article.reference_number)}</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20mm; background: white; margin: 0;">
+  <div style="border: 2px solid #d1d5db; border-radius: 8px; padding: 24px; background: white; max-width: 180mm;">
+    <div style="text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #e5e7eb;">
+      <h3 style="font-size: 24px; font-weight: bold; color: #111827; margin: 0 0 12px 0;">EasyVinted ${sellerName ? 'by ' + escapeHtml(sellerName) : ''}</h3>
+      <div style="display: inline-block; border: 2px solid #111827; padding: 8px 16px; border-radius: 4px;">
+        <span style="font-size: 14px; font-weight: 500; color: #111827;">Ref: </span>
+        <span style="font-size: 18px; font-weight: bold; color: #111827;">${escapeHtml(article.reference_number)}</span>
+      </div>
+    </div>
+    <div>
+      <div style="margin-bottom: 12px;">
+        <p style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; margin-bottom: 4px;">Article${isLot ? 's' : ''}</p>
+        ${articleContentHTML}
+      </div>
+      ${brandsHTML}
+      ${gridHTML}
+      <div style="padding-top: 12px; margin-top: 12px; border-top: 1px solid #e5e7eb;">
+        <p style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; margin-bottom: 4px;">Prix de vente</p>
+        <p style="font-size: 24px; font-weight: bold; color: #059669; margin: 0;">${article.price.toFixed(2)} €</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
 
-            .label-container {
-              border: 2px solid #d1d5db;
-              border-radius: 8px;
-              padding: 24px;
-              background: white;
-              max-width: 180mm;
-            }
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    if (!printWindow) {
+      alert('Veuillez autoriser les popups pour imprimer l\'etiquette');
+      return;
+    }
 
-            .header {
-              text-align: center;
-              margin-bottom: 24px;
-              padding-bottom: 16px;
-              border-bottom: 2px solid #e5e7eb;
-            }
-
-            .header h3 {
-              font-size: 24px;
-              font-weight: bold;
-              color: #111827;
-              margin-bottom: 12px;
-            }
-
-            .reference {
-              display: inline-block;
-              border: 2px solid #111827;
-              padding: 8px 16px;
-              border-radius: 4px;
-            }
-
-            .reference-label {
-              font-size: 14px;
-              font-weight: 500;
-              color: #111827;
-            }
-
-            .reference-number {
-              font-size: 18px;
-              font-weight: bold;
-              color: #111827;
-            }
-
-            .content {
-              margin-top: 12px;
-            }
-
-            .content > div {
-              margin-bottom: 12px;
-            }
-
-            .field-label {
-              font-size: 12px;
-              font-weight: 600;
-              text-transform: uppercase;
-              color: #6b7280;
-              margin-bottom: 4px;
-            }
-
-            .field-value {
-              font-size: 16px;
-              color: #111827;
-            }
-
-            .field-value-large {
-              font-size: 18px;
-              font-weight: bold;
-              color: #111827;
-            }
-
-            .grid {
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-              gap: 16px;
-            }
-
-            .price-section {
-              padding-top: 12px;
-              margin-top: 12px;
-              border-top: 1px solid #e5e7eb;
-            }
-
-            .price {
-              font-size: 24px;
-              font-weight: bold;
-              color: #059669;
-            }
-
-            ul {
-              margin-left: 20px;
-            }
-
-            li {
-              margin-bottom: 4px;
-              font-size: 14px;
-              color: #111827;
-            }
-
-            @page {
-              size: A4;
-              margin: 15mm;
-            }
-
-            @media print {
-              body {
-                padding: 0;
-              }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="label-container">
-            <div class="header">
-              <h3>EasyVinted ${sellerName ? `by ${sellerName}` : ''}</h3>
-              <div class="reference">
-                <span class="reference-label">Réf: </span>
-                <span class="reference-number">${article.reference_number}</span>
-              </div>
-            </div>
-
-            <div class="content">
-              <div>
-                <p class="field-label">Article${isLot ? 's' : ''}</p>
-                ${articleContentHTML}
-              </div>
-
-              ${brandsHTML}
-
-              ${(sizeHTML || colorHTML) ? `<div class="grid">${sizeHTML}${colorHTML}</div>` : ''}
-
-              <div class="price-section">
-                <p class="field-label">Prix de vente</p>
-                <p class="price">${article.price.toFixed(2)} €</p>
-              </div>
-            </div>
-          </div>
-        </body>
-      </html>
-    `);
-
+    printWindow.document.open();
+    printWindow.document.write(htmlContent);
     printWindow.document.close();
 
-    setTimeout(() => {
-      printWindow.focus();
-      printWindow.print();
-    }, 500);
-
-    return false;
+    printWindow.onload = () => {
+      setTimeout(() => {
+        printWindow.focus();
+        printWindow.print();
+      }, 250);
+    };
   };
 
   const labelContent = (
