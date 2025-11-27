@@ -26,7 +26,13 @@ export function LabelModal({ isOpen, onClose, article, sellerName, lotArticles }
 
   const handlePrint = (e: React.MouseEvent) => {
     e.preventDefault();
-    window.print();
+    e.stopPropagation();
+
+    setTimeout(() => {
+      window.print();
+    }, 100);
+
+    return false;
   };
 
   const isLot = lotArticles && lotArticles.length > 0;

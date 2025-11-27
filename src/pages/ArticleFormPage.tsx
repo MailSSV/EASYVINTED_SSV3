@@ -1036,7 +1036,10 @@ export function ArticleFormPage() {
           </p>
         </div>
 
-        <form className="space-y-6">
+        <form
+          className="space-y-6"
+          onSubmit={(e) => e.preventDefault()}
+        >
           <div className="space-y-6">
             {familyMembers.length > 0 && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
