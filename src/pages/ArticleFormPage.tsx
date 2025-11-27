@@ -1,8 +1,17 @@
 import { useState, FormEvent, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Save, CheckCircle, Trash2, Send, Calendar, CheckSquare, DollarSign, Edit, Eye, Tag } from 'lucide-react';
+import {
+  Save,
+  CheckCircle,
+  Trash2,
+  Send,
+  Calendar,
+  DollarSign,
+  Edit,
+  Eye,
+  Tag,
+} from 'lucide-react';
 import { Condition, Season, ArticleStatus } from '../types/article';
-import { Button } from '../components/ui/Button';
 import { Toast } from '../components/ui/Toast';
 import { supabase } from '../lib/supabase';
 import { PhotoUpload } from '../components/PhotoUpload';
@@ -17,7 +26,17 @@ import { LabelModal } from '../components/LabelModal';
 import { VINTED_CATEGORIES } from '../constants/categories';
 import { COLORS, MATERIALS } from '../constants/articleAttributes';
 import { migratePhotosFromTempFolder } from '../lib/photoMigration';
-import { PageContainer, Card, Pill } from '../components/ui/UiKit';
+
+// UI Kit Apple-style
+import {
+  PageContainer,
+  PageSection,
+  Card,
+  SoftCard,
+  Pill,
+  PrimaryButton,
+  GhostButton,
+} from '../components/ui/UiKit';
 
 const CONDITION_LABELS: Record<Condition, string> = {
   new_with_tag: 'Neuf avec étiquette',
@@ -46,6 +65,23 @@ const STATUS_LABELS: Record<ArticleStatus, string> = {
   sold: 'Vendu',
 };
 
+function getStatusVariant(status: ArticleStatus) {
+  switch (status) {
+    case 'draft':
+      return 'neutral';
+    case 'ready':
+      return 'primary';
+    case 'scheduled':
+      return 'warning';
+    case 'published':
+      return 'primary';
+    case 'sold':
+      return 'success';
+    default:
+      return 'neutral';
+  }
+}
+
 export function ArticleFormPage() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -64,12 +100,20 @@ export function ArticleFormPage() {
     message: '',
     type: 'info',
   });
-  const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(
+    null
+  );
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
-  const [userProfile, setUserProfile] = useState<{ clothing_size: string; shoe_size: string } | null>(null);
+  const [userProfile, setUserProfile] = useState<{
+    clothing_size: string;
+    shoe_size: string;
+  } | null>(null);
   const [deleteModal, setDeleteModal] = useState(false);
   const [publishing, setPublishing] = useState(false);
-  const [publishInstructionsModal, setPublishInstructionsModal] = useState<{ isOpen: boolean; articleId: string }>({
+  const [publishInstructionsModal, setPublishInstructionsModal] = useState<{
+    isOpen: boolean;
+    articleId: string;
+  }>({
     isOpen: false,
     articleId: '',
   });
@@ -100,9 +144,21 @@ export function ArticleFormPage() {
     reference_number: '',
   });
 
-  const selectedCategory = VINTED_CATEGORIES.find((c) => c.name === formData.main_category);
-  const selectedSubcategory = selectedCategory?.subcategories.find((s) => s.name === formData.subcategory);
-  const [familyMembers, setFamilyMembers] = useState<Array<{id: string; name: string; is_default: boolean; clothing_size: string | null; shoe_size: string | null}>>([]);
+  const selectedCategory = VINTED_CATEGORIES.find(
+    (c) => c.name === formData.main_category
+  );
+  const selectedSubcategory = selectedCategory?.subcategories.find(
+    (s) => s.name === formData.subcategory
+  );
+  const [familyMembers, setFamilyMembers] = useState<
+    Array<{
+      id: string;
+      name: string;
+      is_default: boolean;
+      clothing_size: string | null;
+      shoe_size: string | null;
+    }>
+  >([]);
 
   useEffect(() => {
     loadUserProfile();
@@ -114,7 +170,7 @@ export function ArticleFormPage() {
 
   useEffect(() => {
     if (!id && formData.seller_id) {
-      const selectedSeller = familyMembers.find(m => m.id === formData.seller_id);
+      const selectedSeller = familyMembers.find((m) => m.id === formData.seller_id);
       if (selectedSeller) {
         const isShoeCategory =
           formData.subcategory === 'Chaussures' ||
@@ -122,9 +178,9 @@ export function ArticleFormPage() {
           formData.item_category?.toLowerCase().includes('chaussure');
 
         if (isShoeCategory && selectedSeller.shoe_size) {
-          setFormData(prev => ({ ...prev, size: selectedSeller.shoe_size || '' }));
+          setFormData((prev) => ({ ...prev, size: selectedSeller.shoe_size || '' }));
         } else if (!isShoeCategory && selectedSeller.clothing_size) {
-          setFormData(prev => ({ ...prev, size: selectedSeller.clothing_size || '' }));
+          setFormData((prev) => ({ ...prev, size: selectedSeller.clothing_size || '' }));
         }
       }
     } else if (!id && userProfile && !formData.size && !formData.seller_id) {
@@ -134,12 +190,19 @@ export function ArticleFormPage() {
         formData.item_category?.toLowerCase().includes('chaussure');
 
       if (isShoeCategory && userProfile.shoe_size) {
-        setFormData(prev => ({ ...prev, size: userProfile.shoe_size }));
+        setFormData((prev) => ({ ...prev, size: userProfile.shoe_size }));
       } else if (!isShoeCategory && userProfile.clothing_size) {
-        setFormData(prev => ({ ...prev, size: userProfile.clothing_size }));
+        setFormData((prev) => ({ ...prev, size: userProfile.clothing_size }));
       }
     }
-  }, [userProfile, formData.subcategory, formData.item_category, formData.seller_id, familyMembers, id]);
+  }, [
+    userProfile,
+    formData.subcategory,
+    formData.item_category,
+    formData.seller_id,
+    familyMembers,
+    id,
+  ]);
 
   async function loadUserProfile() {
     if (!user) return;
@@ -165,7 +228,11 @@ export function ArticleFormPage() {
   }
 
   async function generateReferenceNumber(): Promise<string> {
-    if (!user) return `REF-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
+    if (!user)
+      return `REF-${Date.now()}-${Math.random()
+        .toString(36)
+        .substring(2, 9)
+        .toUpperCase()}`;
 
     try {
       const { data: profile } = await supabase
@@ -183,7 +250,7 @@ export function ArticleFormPage() {
 
       let sellerNamePart = 'Principal';
       if (formData.seller_id) {
-        const seller = familyMembers.find(m => m.id === formData.seller_id);
+        const seller = familyMembers.find((m) => m.id === formData.seller_id);
         if (seller) {
           sellerNamePart = seller.name.replace(/\s+/g, '_');
         }
@@ -194,11 +261,17 @@ export function ArticleFormPage() {
       return `${dressingName}_${sellerNamePart}_${itemNumber}`;
     } catch (error) {
       console.error('Error generating reference number:', error);
-      return `REF-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
+      return `REF-${Date.now()}-${Math.random()
+        .toString(36)
+        .substring(2, 9)
+        .toUpperCase()}`;
     }
   }
 
-  function updateSizeFromSeller(seller: { clothing_size: string | null; shoe_size: string | null }) {
+  function updateSizeFromSeller(seller: {
+    clothing_size: string | null;
+    shoe_size: string | null;
+  }) {
     if (!id) {
       const isShoeCategory =
         formData.subcategory === 'Chaussures' ||
@@ -206,16 +279,16 @@ export function ArticleFormPage() {
         formData.item_category?.toLowerCase().includes('chaussure');
 
       if (isShoeCategory && seller.shoe_size) {
-        setFormData(prev => ({ ...prev, size: seller.shoe_size || '' }));
+        setFormData((prev) => ({ ...prev, size: seller.shoe_size || '' }));
       } else if (!isShoeCategory && seller.clothing_size) {
-        setFormData(prev => ({ ...prev, size: seller.clothing_size || '' }));
+        setFormData((prev) => ({ ...prev, size: seller.clothing_size || '' }));
       }
     }
   }
 
   function handleSellerChange(sellerId: string) {
-    setFormData(prev => ({ ...prev, seller_id: sellerId }));
-    const selectedSeller = familyMembers.find(m => m.id === sellerId);
+    setFormData((prev) => ({ ...prev, seller_id: sellerId }));
+    const selectedSeller = familyMembers.find((m) => m.id === sellerId);
     if (selectedSeller) {
       updateSizeFromSeller(selectedSeller);
     }
@@ -235,9 +308,9 @@ export function ArticleFormPage() {
       setFamilyMembers(data || []);
 
       if (!id && data && data.length > 0) {
-        const defaultMember = data.find(m => m.is_default);
+        const defaultMember = data.find((m) => m.is_default);
         if (defaultMember) {
-          setFormData(prev => ({ ...prev, seller_id: defaultMember.id }));
+          setFormData((prev) => ({ ...prev, seller_id: defaultMember.id }));
           updateSizeFromSeller(defaultMember);
         }
       }
@@ -253,17 +326,20 @@ export function ArticleFormPage() {
       setLoading(true);
       const { data, error } = await supabase
         .from('articles')
-        .select(`
+        .select(
+          `
           *,
           family_members!articles_seller_id_fkey(name)
-        `)
+        `
+        )
         .eq('id', id)
         .maybeSingle();
 
       if (error) throw error;
 
       if (data) {
-        const normalizedSeason = data.season === 'all_seasons' ? 'all-seasons' : data.season;
+        const normalizedSeason =
+          data.season === 'all_seasons' ? 'all-seasons' : data.season;
         setFormData({
           title: data.title,
           description: data.description || '',
@@ -316,7 +392,9 @@ export function ArticleFormPage() {
     try {
       setAnalyzingWithAI(true);
 
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
       if (!session) {
         throw new Error('Vous devez être connecté pour utiliser cette fonctionnalité');
@@ -333,7 +411,7 @@ export function ArticleFormPage() {
         headers,
         body: JSON.stringify({
           imageUrls: formData.photos,
-          sellerId: formData.seller_id
+          sellerId: formData.seller_id,
         }),
       });
 
@@ -369,16 +447,30 @@ export function ArticleFormPage() {
       } else if (aiSubcategory.includes('t-shirt') || aiSubcategory.includes('tee-shirt')) {
         subcategory = 'Vêtements';
         itemCategory = 'T-shirts';
-      } else if (aiSubcategory.includes('top') || aiSubcategory.includes('débardeur') || aiSubcategory.includes('tank')) {
+      } else if (
+        aiSubcategory.includes('top') ||
+        aiSubcategory.includes('débardeur') ||
+        aiSubcategory.includes('tank')
+      ) {
         subcategory = 'Vêtements';
         itemCategory = 'Tops & débardeurs';
       } else if (aiSubcategory.includes('chemis') || aiSubcategory.includes('blouse')) {
         subcategory = 'Vêtements';
         itemCategory = 'Chemises & blouses';
-      } else if (aiSubcategory.includes('pull') || aiSubcategory.includes('sweat') || aiSubcategory.includes('hoodie') || aiSubcategory.includes('gilet')) {
+      } else if (
+        aiSubcategory.includes('pull') ||
+        aiSubcategory.includes('sweat') ||
+        aiSubcategory.includes('hoodie') ||
+        aiSubcategory.includes('gilet')
+      ) {
         subcategory = 'Vêtements';
         itemCategory = 'Pulls, sweats & hoodies';
-      } else if (aiSubcategory.includes('manteau') || aiSubcategory.includes('veste') || aiSubcategory.includes('blouson') || aiSubcategory.includes('jacket')) {
+      } else if (
+        aiSubcategory.includes('manteau') ||
+        aiSubcategory.includes('veste') ||
+        aiSubcategory.includes('blouson') ||
+        aiSubcategory.includes('jacket')
+      ) {
         subcategory = 'Vêtements';
         itemCategory = 'Manteaux & vestes';
       } else if (aiSubcategory.includes('jean')) {
@@ -443,7 +535,9 @@ export function ArticleFormPage() {
         main_category: mainCategory,
         subcategory: subcategory,
         item_category: itemCategory,
-        price: analysisResult.estimatedPrice ? analysisResult.estimatedPrice.toString() : formData.price,
+        price: analysisResult.estimatedPrice
+          ? analysisResult.estimatedPrice.toString()
+          : formData.price,
         season: analysisResult.season || formData.season,
         suggested_period: analysisResult.suggestedPeriod || formData.suggested_period,
         color: analysisResult.color || formData.color,
@@ -453,7 +547,8 @@ export function ArticleFormPage() {
       setModalState({
         isOpen: true,
         title: 'Analyse terminée',
-        message: "Les informations de l'article ont été remplies automatiquement. Vous pouvez les modifier si nécessaire.",
+        message:
+          "Les informations de l'article ont été remplies automatiquement. Vous pouvez les modifier si nécessaire.",
         type: 'success',
       });
     } catch (error) {
@@ -515,7 +610,7 @@ export function ArticleFormPage() {
         referenceNumber = await generateReferenceNumber();
       }
 
-      const articleData = {
+      const articleData: any = {
         title: formData.title,
         description: formData.description,
         brand: formData.brand,
@@ -551,6 +646,7 @@ export function ArticleFormPage() {
         const { error } = await supabase.from('articles').update(articleData).eq('id', id);
         if (error) throw error;
 
+        // Gestion des selling_suggestions selon le statut
         if (status === 'draft') {
           await supabase
             .from('selling_suggestions')
@@ -644,7 +740,9 @@ export function ArticleFormPage() {
               newArticle.id
             );
 
-            if (migratedPhotos.some((url, index) => url !== formData.photos[index])) {
+            if (
+              migratedPhotos.some((url: string, index: number) => url !== formData.photos[index])
+            ) {
               await supabase
                 .from('articles')
                 .update({ photos: migratedPhotos })
@@ -653,6 +751,7 @@ export function ArticleFormPage() {
           }
         }
       }
+
       setToast({
         type: 'success',
         text: `Article ${id ? 'modifié' : 'créé'} avec succès`,
@@ -707,7 +806,9 @@ export function ArticleFormPage() {
           .list(folderPath);
 
         if (folderContents && folderContents.length > 0) {
-          const filesToDelete = folderContents.map(file => `${folderPath}/${file.name}`);
+          const filesToDelete = folderContents.map(
+            (file: any) => `${folderPath}/${file.name}`
+          );
           await supabase.storage.from('article-photos').remove(filesToDelete);
         }
       } catch (folderError) {
@@ -737,7 +838,7 @@ export function ArticleFormPage() {
     if (!id) {
       setToast({
         type: 'error',
-        text: 'Veuillez enregistrer l\'article avant de le programmer',
+        text: "Veuillez enregistrer l'article avant de le programmer",
       });
       return;
     }
@@ -751,7 +852,7 @@ export function ArticleFormPage() {
     if (error || !data) {
       setToast({
         type: 'error',
-        text: 'Erreur lors du chargement de l\'article',
+        text: "Erreur lors du chargement de l'article",
       });
       return;
     }
@@ -797,7 +898,7 @@ export function ArticleFormPage() {
     if (!id) {
       setToast({
         type: 'error',
-        text: 'Veuillez enregistrer l\'article avant de le marquer comme publié',
+        text: "Veuillez enregistrer l'article avant de le marquer comme publié",
       });
       return;
     }
@@ -835,7 +936,7 @@ export function ArticleFormPage() {
     if (!id) {
       setToast({
         type: 'error',
-        text: 'Veuillez enregistrer l\'article avant de le marquer comme vendu',
+        text: "Veuillez enregistrer l'article avant de le marquer comme vendu",
       });
       return;
     }
@@ -849,7 +950,7 @@ export function ArticleFormPage() {
     if (error || !data) {
       setToast({
         type: 'error',
-        text: 'Erreur lors du chargement de l\'article',
+        text: "Erreur lors du chargement de l'article",
       });
       return;
     }
@@ -923,7 +1024,7 @@ export function ArticleFormPage() {
     if (!id) {
       setToast({
         type: 'error',
-        text: 'Veuillez enregistrer l\'article avant de générer une étiquette',
+        text: "Veuillez enregistrer l'article avant de générer une étiquette",
       });
       return;
     }
@@ -992,7 +1093,10 @@ export function ArticleFormPage() {
       console.error('Error preparing article:', error);
       setToast({
         type: 'error',
-        text: error instanceof Error ? error.message : "Erreur lors de la préparation de l'article",
+        text:
+          error instanceof Error
+            ? error.message
+            : "Erreur lors de la préparation de l'article",
       });
     } finally {
       setPublishing(false);
@@ -1002,11 +1106,7 @@ export function ArticleFormPage() {
   return (
     <>
       {toast && (
-        <Toast
-          message={toast.text}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
+        <Toast message={toast.text} type={toast.type} onClose={() => setToast(null)} />
       )}
 
       <Modal
@@ -1023,719 +1123,817 @@ export function ArticleFormPage() {
         articleId={publishInstructionsModal.articleId}
       />
 
-      <PageContainer className="max-w-5xl">
-        <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
-            {id ? "Modifier l'article" : 'Nouvel article'}
-          </h1>
-          <p className="text-sm sm:text-base text-slate-500 mt-2">
-            Remplissez les informations de votre article pour le préparer à la publication
-          </p>
-        </div>
+      <PageContainer>
+        <PageSection>
+          {/* Header Apple-like */}
+          <div className="flex items-start justify-between gap-4 mb-6">
+            <div className="flex items-start gap-3 min-w-0">
+              <div className="w-11 h-11 rounded-2xl bg-slate-900 text-white flex items-center justify-center shadow-md">
+                <Tag className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 truncate">
+                  {id ? "Modifier l'article" : 'Nouvel article'}
+                </h1>
+                <p className="mt-1 text-xs sm:text-sm text-slate-500">
+                  Remplissez les informations de votre article pour le préparer à la
+                  publication.
+                </p>
 
-        <form
-          className="space-y-6"
-          onSubmit={(e) => e.preventDefault()}
-        >
-          <div className="space-y-5 sm:space-y-6">
-            {familyMembers.length > 0 && (
-              <Card>
-                <h2 className="text-lg font-semibold text-slate-900 mb-4">Vendeur</h2>
-                <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1.5">
-                    Vendu par
-                    <span className="ml-1 text-xs text-slate-500 font-normal">
-                      (sélectionnez le vendeur avant d'analyser les photos avec l'IA)
-                    </span>
-                  </label>
-                  <select
-                    value={formData.seller_id || ''}
-                    onChange={(e) => handleSellerChange(e.target.value)}
-                    className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
+                {id && (
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <Pill variant={getStatusVariant(articleStatus)}>
+                      {STATUS_LABELS[articleStatus]}
+                    </Pill>
+                    {formData.reference_number && (
+                      <Pill variant="neutral">
+                        Réf. <span className="font-mono ml-1">{formData.reference_number}</span>
+                      </Pill>
+                    )}
+                    {sellerName && (
+                      <Pill variant="neutral">Vendu par {sellerName}</Pill>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Boutons rapides */}
+            {id && (
+              <div className="hidden sm:flex flex-col gap-2 items-end">
+                {articleStatus === 'published' && (
+                  <GhostButton onClick={handleMarkAsPublished} className="text-xs px-3 py-2">
+                    <Send className="w-3.5 h-3.5" />
+                    Marquer comme publié
+                  </GhostButton>
+                )}
+                {formData.reference_number && (
+                  <GhostButton
+                    onClick={handleGenerateLabel}
+                    className="text-xs px-3 py-2 bg-slate-900 text-white hover:bg-slate-800"
                   >
-                    <option value="">Sélectionnez un vendeur</option>
-                    {familyMembers.map((member) => (
-                      <option key={member.id} value={member.id}>
-                        {member.name} {member.is_default ? '(par défaut)' : ''}
-                      </option>
-                    ))}
-                  </select>
+                    <Edit className="w-3.5 h-3.5" />
+                    Étiquette
+                  </GhostButton>
+                )}
+              </div>
+            )}
+          </div>
+
+          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+            <div className="space-y-6">
+              {/* Vendeur */}
+              {familyMembers.length > 0 && (
+                <Card>
+                  <h2 className="text-sm font-semibold text-slate-900 mb-3">Vendeur</h2>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1.5">
+                      Vendu par
+                      <span className="ml-1 text-[11px] text-slate-500 font-normal normal-case">
+                        (sélectionnez le vendeur avant d'analyser les photos avec l'IA)
+                      </span>
+                    </label>
+                    <select
+                      value={formData.seller_id || ''}
+                      onChange={(e) => handleSellerChange(e.target.value)}
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/60 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    >
+                      <option value="">Sélectionnez un vendeur</option>
+                      {familyMembers.map((member) => (
+                        <option key={member.id} value={member.id}>
+                          {member.name} {member.is_default ? '(par défaut)' : ''}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </Card>
+              )}
+
+              {/* Photos */}
+              <Card>
+                <h2 className="text-sm font-semibold text-slate-900 mb-3">Photos</h2>
+                <PhotoUpload
+                  photos={formData.photos}
+                  onPhotosChange={(photos) => setFormData({ ...formData, photos })}
+                  onAnalyzeClick={handleAnalyzeWithAI}
+                  analyzing={analyzingWithAI}
+                  userId={user?.id || ''}
+                  articleId={id}
+                />
+              </Card>
+
+              {/* Informations principales */}
+              <Card>
+                <h2 className="text-sm font-semibold text-slate-900 mb-4">
+                  Informations principales
+                </h2>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1.5">
+                      Titre *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.title}
+                      onChange={(e) => {
+                        setFormData({ ...formData, title: e.target.value });
+                        if (validationErrors.includes('title')) {
+                          setValidationErrors(
+                            validationErrors.filter((err) => err !== 'title')
+                          );
+                        }
+                      }}
+                      className={`w-full px-4 py-3 text-sm rounded-2xl border focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50/60 ${
+                        validationErrors.includes('title')
+                          ? 'border-rose-400 bg-rose-50'
+                          : 'border-slate-200'
+                      }`}
+                      placeholder="Ex: Robe d'été fleurie"
+                    />
+                    {validationErrors.includes('title') && (
+                      <p className="text-xs text-rose-600 mt-1">
+                        Ce champ est obligatoire
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1.5">
+                      Description
+                    </label>
+                    <textarea
+                      value={formData.description}
+                      onChange={(e) =>
+                        setFormData({ ...formData, description: e.target.value })
+                      }
+                      rows={4}
+                      className="w-full px-4 py-3 text-sm rounded-2xl border border-slate-200 bg-slate-50/60 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none"
+                      placeholder="Décrivez votre article en détail..."
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1.5">
+                        Marque
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.brand}
+                        onChange={(e) =>
+                          setFormData({ ...formData, brand: e.target.value })
+                        }
+                        className="w-full px-4 py-3 text-sm rounded-2xl border border-slate-200 bg-slate-50/60 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        placeholder="Ex: Zara"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1.5">
+                        Taille
+                        {!id && userProfile && (
+                          <span className="ml-1 text-[11px] text-slate-500 font-normal normal-case">
+                            {formData.subcategory === 'Chaussures' && userProfile.shoe_size
+                              ? `(Défaut: ${userProfile.shoe_size})`
+                              : userProfile.clothing_size
+                              ? `(Défaut: ${userProfile.clothing_size})`
+                              : ''}
+                          </span>
+                        )}
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.size}
+                        onChange={(e) =>
+                          setFormData({ ...formData, size: e.target.value })
+                        }
+                        className="w-full px-4 py-3 text-sm rounded-2xl border border-slate-200 bg-slate-50/60 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        placeholder={
+                          !id && userProfile
+                            ? formData.subcategory === 'Chaussures' &&
+                              userProfile.shoe_size
+                              ? userProfile.shoe_size
+                              : userProfile.clothing_size || 'Ex: M, 38, 42'
+                            : 'Ex: M, 38, 42'
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1.5">
+                        Couleur
+                      </label>
+                      <select
+                        value={formData.color}
+                        onChange={(e) =>
+                          setFormData({ ...formData, color: e.target.value })
+                        }
+                        className="w-full px-4 py-3 text-sm rounded-2xl border border-slate-200 bg-slate-50/60 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      >
+                        <option value="">Sélectionnez une couleur</option>
+                        {COLORS.map((color) => (
+                          <option key={color} value={color}>
+                            {color}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1.5">
+                        Matière
+                      </label>
+                      <select
+                        value={formData.material}
+                        onChange={(e) =>
+                          setFormData({ ...formData, material: e.target.value })
+                        }
+                        className="w-full px-4 py-3 text-sm rounded-2xl border border-slate-200 bg-slate-50/60 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      >
+                        <option value="">Sélectionnez une matière</option>
+                        {MATERIALS.map((material) => (
+                          <option key={material} value={material}>
+                            {material}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1.5">
+                      État *
+                    </label>
+                    <select
+                      required
+                      value={formData.condition}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          condition: e.target.value as Condition,
+                        })
+                      }
+                      className="w-full px-4 py-3 text-sm rounded-2xl border border-slate-200 bg-slate-50/60 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    >
+                      {Object.entries(CONDITION_LABELS).map(([value, label]) => (
+                        <option key={value} value={value}>
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1.5">
+                      Catégorie principale *
+                    </label>
+                    <select
+                      required
+                      value={formData.main_category}
+                      onChange={(e) => {
+                        setFormData({
+                          ...formData,
+                          main_category: e.target.value,
+                          subcategory: '',
+                          item_category: '',
+                        });
+                        if (validationErrors.includes('main_category')) {
+                          setValidationErrors(
+                            validationErrors.filter((err) => err !== 'main_category')
+                          );
+                        }
+                      }}
+                      className={`w-full px-4 py-3 text-sm rounded-2xl border focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50/60 ${
+                        validationErrors.includes('main_category')
+                          ? 'border-rose-400 bg-rose-50'
+                          : 'border-slate-200'
+                      }`}
+                    >
+                      <option value="">Sélectionnez une catégorie</option>
+                      {VINTED_CATEGORIES.map((category) => (
+                        <option key={category.name} value={category.name}>
+                          {category.name}
+                        </option>
+                      ))}
+                    </select>
+                    {validationErrors.includes('main_category') && (
+                      <p className="text-xs text-rose-600 mt-1">
+                        Ce champ est obligatoire
+                      </p>
+                    )}
+                  </div>
+
+                  {formData.main_category && (
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1.5">
+                        Sous-catégorie *
+                      </label>
+                      <select
+                        required
+                        value={formData.subcategory}
+                        onChange={(e) => {
+                          const newSubcategory = e.target.value;
+                          const isShoeCategory = newSubcategory === 'Chaussures';
+                          let newSize = formData.size;
+
+                          if (!id && userProfile && !formData.size) {
+                            if (isShoeCategory && userProfile.shoe_size) {
+                              newSize = userProfile.shoe_size;
+                            } else if (!isShoeCategory && userProfile.clothing_size) {
+                              newSize = userProfile.clothing_size;
+                            }
+                          }
+
+                          setFormData({
+                            ...formData,
+                            subcategory: newSubcategory,
+                            item_category: '',
+                            size: newSize,
+                          });
+                          if (validationErrors.includes('subcategory')) {
+                            setValidationErrors(
+                              validationErrors.filter((err) => err !== 'subcategory')
+                            );
+                          }
+                        }}
+                        className={`w-full px-4 py-3 text-sm rounded-2xl border focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50/60 ${
+                          validationErrors.includes('subcategory')
+                            ? 'border-rose-400 bg-rose-50'
+                            : 'border-slate-200'
+                        }`}
+                      >
+                        <option value="">Sélectionnez une sous-catégorie</option>
+                        {selectedCategory?.subcategories.map((subcategory) => (
+                          <option key={subcategory.name} value={subcategory.name}>
+                            {subcategory.name}
+                          </option>
+                        ))}
+                      </select>
+                      {validationErrors.includes('subcategory') && (
+                        <p className="text-xs text-rose-600 mt-1">
+                          Ce champ est obligatoire
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {formData.subcategory &&
+                    selectedSubcategory &&
+                    selectedSubcategory.items.length > 0 && (
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1.5">
+                          Type d'article
+                        </label>
+                        <select
+                          value={formData.item_category}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              item_category: e.target.value,
+                            })
+                          }
+                          className="w-full px-4 py-3 text-sm rounded-2xl border border-slate-200 bg-slate-50/60 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        >
+                          <option value="">Sélectionnez un type (optionnel)</option>
+                          {selectedSubcategory.items.map((item) => (
+                            <option key={item} value={item}>
+                              {item}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                </div>
+              </Card>
+
+              {/* Prix */}
+              <Card>
+                <h2 className="text-sm font-semibold text-slate-900 mb-4">Prix de vente</h2>
+
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1.5">
+                        Prix de vente (€) *
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="number"
+                          required
+                          step="0.01"
+                          min="0"
+                          value={formData.price}
+                          onChange={(e) => {
+                            setFormData({
+                              ...formData,
+                              price: e.target.value,
+                            });
+                            if (validationErrors.includes('price')) {
+                              setValidationErrors(
+                                validationErrors.filter((err) => err !== 'price')
+                              );
+                            }
+                          }}
+                          className={`w-full px-4 py-3 text-sm rounded-2xl border focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50/60 ${
+                            validationErrors.includes('price')
+                              ? 'border-rose-400 bg-rose-50'
+                              : 'border-slate-200'
+                          }`}
+                          placeholder="25.00"
+                        />
+                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400">
+                          €
+                        </span>
+                      </div>
+                      {validationErrors.includes('price') && (
+                        <p className="text-xs text-rose-600 mt-1">
+                          Ce champ est obligatoire et doit être supérieur à 0
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Saison */}
+              <Card>
+                <h2 className="text-sm font-semibold text-slate-900 mb-4">
+                  Saison & période conseillée
+                </h2>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1.5">
+                      Saison
+                    </label>
+                    <select
+                      value={formData.season}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          season: e.target.value as Season,
+                        })
+                      }
+                      className="w-full px-4 py-3 text-sm rounded-2xl border border-slate-200 bg-slate-50/60 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    >
+                      {Object.entries(SEASON_LABELS).map(([value, label]) => (
+                        <option key={value} value={value}>
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1.5">
+                      Période conseillée
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.suggested_period}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          suggested_period: e.target.value,
+                        })
+                      }
+                      className="w-full px-4 py-3 text-sm rounded-2xl border border-slate-200 bg-slate-50/60 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      placeholder="Ex: Avril - Juin"
+                    />
+                  </div>
+                </div>
+              </Card>
+            </div>
+
+            {/* Bannières de statut */}
+            {id && articleStatus === 'ready' && (
+              <SoftCard>
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm flex-shrink-0">
+                    <CheckCircle className="h-5 w-5 text-emerald-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <h3 className="text-sm sm:text-base font-semibold text-emerald-900">
+                        Statut : Prêt pour Vinted
+                      </h3>
+                      <Pill variant="success" className="text-[11px]">
+                        100% complété
+                      </Pill>
+                    </div>
+                    <p className="text-sm text-emerald-900/90 leading-relaxed">
+                      Tous les champs requis sont remplis. Vous pouvez maintenant envoyer
+                      cette annonce sur la plateforme Vinted.
+                    </p>
+                  </div>
+                </div>
+              </SoftCard>
+            )}
+
+            {id && articleStatus === 'draft' && (
+              <Card>
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white shadow-sm flex-shrink-0">
+                    <Edit className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <h3 className="text-sm sm:text-base font-semibold text-slate-900">
+                        Statut : Brouillon
+                      </h3>
+                      <Pill variant="neutral" className="text-[11px]">
+                        En cours
+                      </Pill>
+                    </div>
+                    <p className="text-sm text-slate-700 leading-relaxed">
+                      Cette annonce est en cours de préparation. Complétez tous les
+                      champs requis avant de l'envoyer sur Vinted.
+                    </p>
+                  </div>
                 </div>
               </Card>
             )}
 
-            <Card>
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">Photos</h2>
-              <PhotoUpload
-                photos={formData.photos}
-                onPhotosChange={(photos) => setFormData({ ...formData, photos })}
-                onAnalyzeClick={handleAnalyzeWithAI}
-                analyzing={analyzingWithAI}
-                userId={user?.id || ''}
-                articleId={id}
-              />
-            </Card>
-
-            <Card>
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">Informations principales</h2>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Titre *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.title}
-                    onChange={(e) => {
-                      setFormData({ ...formData, title: e.target.value });
-                      if (validationErrors.includes('title')) {
-                        setValidationErrors(validationErrors.filter((err) => err !== 'title'));
-                      }
-                    }}
-                    className={`w-full px-3 py-2 text-sm border rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent ${
-                      validationErrors.includes('title') ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                    }`}
-                    placeholder="Ex: Robe d'été fleurie"
-                  />
-                  {validationErrors.includes('title') && (
-                    <p className="text-xs text-red-600 mt-1">Ce champ est obligatoire</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Description</label>
-                  <textarea
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    rows={4}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    placeholder="Décrivez votre article en détail..."
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Marque</label>
-                    <input
-                      type="text"
-                      value={formData.brand}
-                      onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                      placeholder="Ex: Zara"
-                    />
+            {id && articleStatus === 'scheduled' && currentArticle && (
+              <SoftCard>
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm flex-shrink-0">
+                    <Calendar className="h-5 w-5 text-amber-600" />
                   </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      Taille
-                      {!id && userProfile && (
-                        <span className="ml-1 text-xs text-gray-500 font-normal">
-                          {formData.subcategory === 'Chaussures' && userProfile.shoe_size
-                            ? `(Défaut: ${userProfile.shoe_size})`
-                            : userProfile.clothing_size
-                            ? `(Défaut: ${userProfile.clothing_size})`
-                            : ''}
-                        </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <h3 className="text-sm sm:text-base font-semibold text-amber-900">
+                        Statut : Planifié
+                      </h3>
+                      <Pill variant="warning" className="text-[11px]">
+                        Programmé
+                      </Pill>
+                    </div>
+                    <p className="text-sm text-amber-900/90 leading-relaxed">
+                      {currentArticle.scheduled_for ? (
+                        <>
+                          Publication prévue le{' '}
+                          <span className="font-semibold">
+                            {new Date(
+                              currentArticle.scheduled_for
+                            ).toLocaleDateString('fr-FR', {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </span>
+                        </>
+                      ) : (
+                        "Cet article est planifié pour une publication ultérieure."
                       )}
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.size}
-                      onChange={(e) => setFormData({ ...formData, size: e.target.value })}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                      placeholder={
-                        !id && userProfile
-                          ? formData.subcategory === 'Chaussures' && userProfile.shoe_size
-                            ? userProfile.shoe_size
-                            : userProfile.clothing_size || 'Ex: M, 38, 42'
-                          : 'Ex: M, 38, 42'
-                      }
-                    />
+                    </p>
                   </div>
                 </div>
+              </SoftCard>
+            )}
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Couleur</label>
-                    <select
-                      value={formData.color}
-                      onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    >
-                      <option value="">Sélectionnez une couleur</option>
-                      {COLORS.map((color) => (
-                        <option key={color} value={color}>
-                          {color}
-                        </option>
-                      ))}
-                    </select>
+            {id && articleStatus === 'published' && currentArticle && (
+              <Card>
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm flex-shrink-0">
+                    <Send className="h-5 w-5 text-blue-600" />
                   </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Matière</label>
-                    <select
-                      value={formData.material}
-                      onChange={(e) => setFormData({ ...formData, material: e.target.value })}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    >
-                      <option value="">Sélectionnez une matière</option>
-                      {MATERIALS.map((material) => (
-                        <option key={material} value={material}>
-                          {material}
-                        </option>
-                      ))}
-                    </select>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <h3 className="text-sm sm:text-base font-semibold text-blue-900">
+                        Statut : Publié
+                      </h3>
+                      <Pill variant="primary" className="text-[11px]">
+                        En ligne
+                      </Pill>
+                    </div>
+                    <p className="text-sm text-blue-900/90 leading-relaxed">
+                      {currentArticle.published_at ? (
+                        <>
+                          Publié le{' '}
+                          <span className="font-semibold">
+                            {new Date(
+                              currentArticle.published_at
+                            ).toLocaleDateString('fr-FR', {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </span>
+                        </>
+                      ) : (
+                        'Cette annonce est actuellement en ligne sur Vinted.'
+                      )}
+                    </p>
                   </div>
                 </div>
+              </Card>
+            )}
 
-                
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">État *</label>
-                  <select
-                    required
-                    value={formData.condition}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        condition: e.target.value as Condition,
-                      })
-                    }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  >
-                    {Object.entries(CONDITION_LABELS).map(([value, label]) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Catégorie principale *
-                  </label>
-                  <select
-                    required
-                    value={formData.main_category}
-                    onChange={(e) => {
-                      setFormData({
-                        ...formData,
-                        main_category: e.target.value,
-                        subcategory: '',
-                        item_category: '',
-                      });
-                      if (validationErrors.includes('main_category')) {
-                        setValidationErrors(validationErrors.filter((err) => err !== 'main_category'));
-                      }
-                    }}
-                    className={`w-full px-3 py-2 text-sm border rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent ${
-                      validationErrors.includes('main_category') ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                    }`}
-                  >
-                    <option value="">Sélectionnez une catégorie</option>
-                    {VINTED_CATEGORIES.map((category) => (
-                      <option key={category.name} value={category.name}>
-                        {category.name}
-                      </option>
-                    ))}
-                  </select>
-                  {validationErrors.includes('main_category') && (
-                    <p className="text-xs text-red-600 mt-1">Ce champ est obligatoire</p>
-                  )}
-                </div>
-
-                {formData.main_category && (
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      Sous-catégorie *
-                    </label>
-                    <select
-                      required
-                      value={formData.subcategory}
-                      onChange={(e) => {
-                        const newSubcategory = e.target.value;
-                        const isShoeCategory = newSubcategory === 'Chaussures';
-                        let newSize = formData.size;
-
-                        if (!id && userProfile && !formData.size) {
-                          if (isShoeCategory && userProfile.shoe_size) {
-                            newSize = userProfile.shoe_size;
-                          } else if (!isShoeCategory && userProfile.clothing_size) {
-                            newSize = userProfile.clothing_size;
-                          }
-                        }
-
-                        setFormData({
-                          ...formData,
-                          subcategory: newSubcategory,
-                          item_category: '',
-                          size: newSize,
-                        });
-                        if (validationErrors.includes('subcategory')) {
-                          setValidationErrors(validationErrors.filter((err) => err !== 'subcategory'));
-                        }
-                      }}
-                      className={`w-full px-3 py-2 text-sm border rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent ${
-                        validationErrors.includes('subcategory') ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                      }`}
-                    >
-                      <option value="">Sélectionnez une sous-catégorie</option>
-                      {selectedCategory?.subcategories.map((subcategory) => (
-                        <option key={subcategory.name} value={subcategory.name}>
-                          {subcategory.name}
-                        </option>
-                      ))}
-                    </select>
-                    {validationErrors.includes('subcategory') && (
-                      <p className="text-xs text-red-600 mt-1">Ce champ est obligatoire</p>
-                    )}
+            {id && articleStatus === 'sold' && (
+              <SoftCard>
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm flex-shrink-0">
+                    <CheckCircle className="h-5 w-5 text-emerald-600" />
                   </div>
-                )}
-
-                {formData.subcategory && selectedSubcategory && selectedSubcategory.items.length > 0 && (
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Type d'article</label>
-                    <select
-                      value={formData.item_category}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          item_category: e.target.value,
-                        })
-                      }
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    >
-                      <option value="">Sélectionnez un type (optionnel)</option>
-                      {selectedSubcategory.items.map((item) => (
-                        <option key={item} value={item}>
-                          {item}
-                        </option>
-                      ))}
-                    </select>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <h3 className="text-sm sm:text-base font-semibold text-emerald-900">
+                        Statut : Vendu
+                      </h3>
+                      <Pill variant="success" className="text-[11px]">
+                        Terminé
+                      </Pill>
+                    </div>
+                    <p className="text-sm text-emerald-900/90 leading-relaxed">
+                      Cet article a été vendu avec succès
+                      {sellerName ? ` par ${sellerName}` : ''}.
+                    </p>
                   </div>
-                )}
-              </div>
-            </Card>
+                </div>
+              </SoftCard>
+            )}
 
+            {/* Actions principales */}
             <Card>
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">Prix de vente</h2>
-
               <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      Prix de vente (€) *
-                    </label>
-                    <input
-                      type="number"
-                      required
-                      step="0.01"
-                      min="0"
-                      value={formData.price}
-                      onChange={(e) => {
-                        setFormData({
-                          ...formData,
-                          price: e.target.value,
-                        });
-                        if (validationErrors.includes('price')) {
-                          setValidationErrors(validationErrors.filter((err) => err !== 'price'));
-                        }
-                      }}
-                      className={`w-full px-3 py-2 text-sm border rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent ${
-                        validationErrors.includes('price') ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                      }`}
-                      placeholder="25.00"
-                    />
-                    {validationErrors.includes('price') && (
-                      <p className="text-xs text-red-600 mt-1">
-                        Ce champ est obligatoire et doit être supérieur à 0
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            <Card>
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">
-                Saison & période conseillée
-              </h2>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Saison</label>
-                  <select
-                    value={formData.season}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        season: e.target.value as Season,
-                      })
-                    }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  >
-                    {Object.entries(SEASON_LABELS).map(([value, label]) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Période conseillée
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.suggested_period}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        suggested_period: e.target.value,
-                      })
-                    }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    placeholder="Ex: Avril - Juin"
-                  />
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          {id && articleStatus === 'ready' && (
-            <Card className="border-emerald-200 bg-emerald-50/50">
-              <div className="flex items-start gap-3 sm:gap-4">
-                <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-2xl bg-white shadow-sm flex-shrink-0">
-                  <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-600" />
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <h3 className="text-base sm:text-lg font-semibold text-emerald-900">
-                      Statut : Prêt pour Vinted
-                    </h3>
-                    <Pill variant="success">100% complété</Pill>
-                  </div>
-                  <p className="text-sm text-emerald-800 leading-relaxed">
-                    Tous les champs requis sont remplis. Vous pouvez maintenant envoyer cette annonce sur la plateforme Vinted.
-                  </p>
-                </div>
-              </div>
-            </Card>
-          )}
-
-          {id && articleStatus === 'draft' && (
-            <div className="relative overflow-hidden rounded-xl border border-gray-300 bg-gray-50/50 backdrop-blur-sm">
-              <div className="flex items-start gap-3 sm:gap-4 px-4 sm:px-5 py-4">
-                <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white shadow-sm flex-shrink-0">
-                  <Edit className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-900">
-                      Statut : Brouillon
-                    </h3>
-                    <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-gray-700">
-                      En cours
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-700 leading-relaxed">
-                    Cette annonce est en cours de préparation. Complétez tous les champs requis avant de l'envoyer sur Vinted.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {id && articleStatus === 'scheduled' && currentArticle && (
-            <div className="relative overflow-hidden rounded-xl border border-amber-200 bg-amber-50/50 backdrop-blur-sm">
-              <div className="flex items-start gap-3 sm:gap-4 px-4 sm:px-5 py-4">
-                <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white shadow-sm flex-shrink-0">
-                  <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-amber-600" />
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <h3 className="text-base sm:text-lg font-semibold text-amber-900">
-                      Statut : Planifié
-                    </h3>
-                    <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-amber-700">
-                      Programmé
-                    </span>
-                  </div>
-                  <p className="text-sm text-amber-800 leading-relaxed">
-                    {currentArticle.scheduled_for ? (
-                      <>
-                        Publication prévue le{' '}
-                        <span className="font-semibold">
-                          {new Date(currentArticle.scheduled_for).toLocaleDateString('fr-FR', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </span>
-                      </>
-                    ) : (
-                      'Cet article est planifié pour une publication ultérieure.'
-                    )}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {id && articleStatus === 'published' && currentArticle && (
-            <div className="relative overflow-hidden rounded-xl border border-blue-200 bg-blue-50/50 backdrop-blur-sm">
-              <div className="flex items-start gap-3 sm:gap-4 px-4 sm:px-5 py-4">
-                <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white shadow-sm flex-shrink-0">
-                  <Send className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <h3 className="text-base sm:text-lg font-semibold text-blue-900">
-                      Statut : Publié
-                    </h3>
-                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-blue-700">
-                      En ligne
-                    </span>
-                  </div>
-                  <p className="text-sm text-blue-800 leading-relaxed">
-                    {currentArticle.published_at ? (
-                      <>
-                        Publié le{' '}
-                        <span className="font-semibold">
-                          {new Date(currentArticle.published_at).toLocaleDateString('fr-FR', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </span>
-                      </>
-                    ) : (
-                      'Cette annonce est actuellement en ligne sur Vinted.'
-                    )}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {id && articleStatus === 'sold' && (
-            <div className="relative overflow-hidden rounded-xl border border-green-200 bg-green-50/50 backdrop-blur-sm">
-              <div className="flex items-start gap-3 sm:gap-4 px-4 sm:px-5 py-4">
-                <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white shadow-sm flex-shrink-0">
-                  <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <h3 className="text-base sm:text-lg font-semibold text-green-900">
-                      Statut : Vendu
-                    </h3>
-                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-green-700">
-                      Terminé
-                    </span>
-                  </div>
-                  <p className="text-sm text-green-800 leading-relaxed">
-                    Cet article a été vendu avec succès{sellerName ? ` par ${sellerName}` : ''}.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="space-y-4">
-              {/* Actions principales */}
-              <div className="flex flex-col gap-3">
-                <div className="text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:block">
+                <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide hidden md:block">
                   Actions principales
                 </div>
+
                 <div className="flex flex-wrap justify-center gap-3">
+                  {/* Article vendu */}
                   {articleStatus === 'sold' && (
                     <>
-                      <Button
-                        type="button"
-                        variant="secondary"
+                      <GhostButton
                         onClick={(e) => handleSubmit(e as any, 'sold')}
-                        disabled={loading || publishing}
-                        className="flex-1 min-w-[200px] justify-center bg-white text-gray-700 hover:bg-gray-50 border-gray-300 hover:border-gray-400"
+                        className="flex-1 min-w-[200px] justify-center"
                       >
                         <Save className="w-4 h-4" />
                         <span>Enregistrer</span>
-                      </Button>
+                      </GhostButton>
 
-                      <Button
-                        type="button"
-                        variant="secondary"
+                      <GhostButton
                         onClick={handleViewSaleDetail}
-                        disabled={loading}
-                        className="flex-1 min-w-[200px] justify-center bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-300"
+                        className="flex-1 min-w-[200px] justify-center bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100"
                       >
                         <Eye className="w-4 h-4" />
                         <span>Voir la vente</span>
-                      </Button>
+                      </GhostButton>
                     </>
                   )}
 
+                  {/* Supprimer (si pas sold) */}
                   {id && articleStatus !== 'sold' && (
-                    <Button
-                      type="button"
-                      variant="secondary"
+                    <GhostButton
                       onClick={() => setDeleteModal(true)}
-                      disabled={loading || publishing}
-                      className="flex-1 min-w-[200px] justify-center bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
+                      className="flex-1 min-w-[200px] justify-center bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100"
                     >
                       <Trash2 className="w-4 h-4" />
                       <span>Supprimer</span>
-                    </Button>
+                    </GhostButton>
                   )}
 
+                  {/* Enregistrer (tous sauf sold -> utilise status actuel) */}
                   {articleStatus !== 'sold' && (
-                    <Button
-                      type="button"
-                      variant="secondary"
+                    <GhostButton
                       onClick={(e) => handleSubmit(e as any, articleStatus)}
-                      disabled={loading || publishing}
-                      className="flex-1 min-w-[200px] justify-center bg-white text-gray-700 hover:bg-gray-50 border-gray-300 hover:border-gray-400"
+                      className="flex-1 min-w-[200px] justify-center"
                     >
                       <Save className="w-4 h-4" />
                       <span>Enregistrer</span>
-                    </Button>
+                    </GhostButton>
                   )}
 
+                  {/* Passer à prêt pour Vinted */}
                   {articleStatus === 'draft' && (
-                    <Button
-                      type="button"
-                      variant="secondary"
+                    <GhostButton
                       onClick={(e) => handleSubmit(e as any, 'ready')}
-                      disabled={loading || publishing}
-                      className="flex-1 min-w-[200px] justify-center bg-white text-emerald-700 hover:bg-emerald-50 border-emerald-300 hover:border-emerald-400"
+                      className="flex-1 min-w-[200px] justify-center text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100"
                     >
                       <CheckCircle className="w-4 h-4" />
                       <span>Prêt pour Vinted</span>
-                    </Button>
+                    </GhostButton>
                   )}
 
-                  {(articleStatus === 'ready' || articleStatus === 'scheduled' || articleStatus === 'published') && (
-                    <Button
-                      type="button"
-                      variant="secondary"
+                  {/* Programmer */}
+                  {(articleStatus === 'ready' ||
+                    articleStatus === 'scheduled' ||
+                    articleStatus === 'published') && (
+                    <GhostButton
                       onClick={handleSchedule}
-                      disabled={loading || publishing}
-                      className="flex-1 min-w-[200px] justify-center bg-white text-amber-700 hover:bg-amber-50 border-amber-300 hover:border-amber-400"
+                      className="flex-1 min-w-[200px] justify-center text-amber-700 bg-amber-50 border border-amber-200 hover:bg-amber-100"
                     >
                       <Calendar className="w-4 h-4" />
                       <span>Programmer</span>
-                    </Button>
+                    </GhostButton>
                   )}
 
-                  {(articleStatus === 'ready' || articleStatus === 'scheduled' || articleStatus === 'published') && (
-                    <Button
-                      type="button"
-                      variant="secondary"
+                  {/* Marquer vendu – pas affiché en brouillon, comme tu voulais */}
+                  {(articleStatus === 'ready' ||
+                    articleStatus === 'scheduled' ||
+                    articleStatus === 'published') && (
+                    <GhostButton
                       onClick={handleMarkAsSold}
-                      disabled={loading || publishing}
-                      className="flex-1 min-w-[200px] justify-center bg-white text-green-700 hover:bg-green-50 border-green-300 hover:border-green-400"
+                      className="flex-1 min-w-[200px] justify-center text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100"
                     >
                       <DollarSign className="w-4 h-4" />
                       <span>Marquer vendu</span>
-                    </Button>
+                    </GhostButton>
                   )}
 
-                  {(articleStatus === 'ready' || articleStatus === 'scheduled') && (
-                    <Button
-                      type="button"
+                  {/* Envoyer à Vinted */}
+                  {(articleStatus === 'ready' || articleStatus === 'scheduled') && id && (
+                    <PrimaryButton
                       onClick={() => navigate(`/articles/${id}/structure`)}
-                      disabled={loading}
-                      className="flex-1 min-w-[200px] justify-center bg-emerald-600 hover:bg-emerald-700 text-white"
+                      className="flex-1 min-w-[200px] justify-center"
                     >
                       <Send className="w-4 h-4" />
-                      <span>
-                        Envoyer à Vinted
-                      </span>
-                    </Button>
+                      <span>Envoyer à Vinted</span>
+                    </PrimaryButton>
                   )}
                 </div>
               </div>
-
-            </div>
-          </div>
-        </form>
-
-        <ConfirmModal
-          isOpen={deleteModal}
-          onClose={() => setDeleteModal(false)}
-          onConfirm={handleDelete}
-          title="Supprimer l'article"
-          message="Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible."
-          confirmLabel="Supprimer"
-          variant="danger"
-        />
-
-        {currentArticle && (
-          <>
-            <ScheduleModal
-              isOpen={scheduleModal}
-              onClose={() => setScheduleModal(false)}
-              onScheduled={handleScheduleConfirm}
-              article={currentArticle}
-            />
-
-            <ArticleSoldModal
-              isOpen={soldModal}
-              onClose={() => setSoldModal(false)}
-              onConfirm={handleSoldConfirm}
-              article={currentArticle}
-            />
-
-            {saleDetailModal && currentArticle.status === 'sold' && (
-              <SaleDetailModal
-                sale={{
-                  id: currentArticle.id,
-                  title: formData.title,
-                  brand: formData.brand,
-                  price: parseFloat(formData.price) || 0,
-                  sold_price: currentArticle.sold_price || parseFloat(formData.price) || 0,
-                  sold_at: currentArticle.sold_at || new Date().toISOString(),
-                  platform: currentArticle.platform || 'Vinted',
-                  shipping_cost: currentArticle.shipping_cost || 0,
-                  fees: currentArticle.fees || 0,
-                  net_profit: currentArticle.net_profit || 0,
-                  photos: formData.photos,
-                  buyer_name: currentArticle.buyer_name,
-                  sale_notes: currentArticle.sale_notes,
-                  seller_name: sellerName || undefined,
-                }}
-                onClose={() => setSaleDetailModal(false)}
-              />
-            )}
-          </>
-        )}
-
-        {id && formData.reference_number && (
-          <LabelModal
-            isOpen={labelModal}
-            onClose={() => setLabelModal(false)}
-            article={{
-              reference_number: formData.reference_number,
-              title: formData.title,
-              brand: formData.brand,
-              size: formData.size,
-              color: formData.color,
-              price: parseFloat(formData.price) || 0,
-            }}
-            sellerName={sellerName || undefined}
-          />
-        )}
+            </Card>
+          </form>
+        </PageSection>
       </PageContainer>
+
+      {/* Modales secondaires */}
+      <ConfirmModal
+        isOpen={deleteModal}
+        onClose={() => setDeleteModal(false)}
+        onConfirm={handleDelete}
+        title="Supprimer l'article"
+        message="Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible."
+        confirmLabel="Supprimer"
+        variant="danger"
+      />
+
+      {currentArticle && (
+        <>
+          <ScheduleModal
+            isOpen={scheduleModal}
+            onClose={() => setScheduleModal(false)}
+            onScheduled={handleScheduleConfirm}
+            article={currentArticle}
+          />
+
+          <ArticleSoldModal
+            isOpen={soldModal}
+            onClose={() => setSoldModal(false)}
+            onConfirm={handleSoldConfirm}
+            article={currentArticle}
+          />
+
+          {saleDetailModal && currentArticle.status === 'sold' && (
+            <SaleDetailModal
+              sale={{
+                id: currentArticle.id,
+                title: formData.title,
+                brand: formData.brand,
+                price: parseFloat(formData.price) || 0,
+                sold_price:
+                  currentArticle.sold_price || parseFloat(formData.price) || 0,
+                sold_at: currentArticle.sold_at || new Date().toISOString(),
+                platform: currentArticle.platform || 'Vinted',
+                shipping_cost: currentArticle.shipping_cost || 0,
+                fees: currentArticle.fees || 0,
+                net_profit: currentArticle.net_profit || 0,
+                photos: formData.photos,
+                buyer_name: currentArticle.buyer_name,
+                sale_notes: currentArticle.sale_notes,
+                seller_name: sellerName || undefined,
+              }}
+              onClose={() => setSaleDetailModal(false)}
+            />
+          )}
+        </>
+      )}
+
+      {id && formData.reference_number && (
+        <LabelModal
+          isOpen={labelModal}
+          onClose={() => setLabelModal(false)}
+          article={{
+            reference_number: formData.reference_number,
+            title: formData.title,
+            brand: formData.brand,
+            size: formData.size,
+            color: formData.color,
+            price: parseFloat(formData.price) || 0,
+          }}
+          sellerName={sellerName || undefined}
+        />
+      )}
     </>
   );
 }
