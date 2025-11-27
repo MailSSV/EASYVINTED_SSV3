@@ -298,9 +298,7 @@ export function SaleDetailModal({ sale, onClose }: SaleDetailModalProps) {
                           {sale.net_profit.toFixed(2)} €
                         </p>
                         {profitRate !== null && (
-                          <p className="text-xs text-emerald-700/80 mt-0.5">
-                            ≈ {profitRate}% du prix de vente
-                          </p>
+                       
                         )}
                       </div>
                     </div>
