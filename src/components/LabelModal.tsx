@@ -34,14 +34,46 @@ export function LabelModal({ isOpen, onClose, article, sellerName, lotArticles }
       return false;
     }
 
-    const printContent = document.querySelector('.print-only');
-    if (!printContent) return false;
+    const articlesListHTML = isLot
+      ? lotArticles!.map(a => `<li class="text-sm text-gray-900">${a.title}</li>`).join('')
+      : '';
+
+    const articleContentHTML = isLot
+      ? `<ul class="list-disc list-inside space-y-1">${articlesListHTML}</ul>`
+      : `<p class="text-lg font-bold text-gray-900">${article.title}</p>`;
+
+    const brandsHTML = isLot && uniqueBrands.length > 0
+      ? `<div>
+          <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Marque${uniqueBrands.length > 1 ? 's' : ''}</p>
+          <p class="text-base text-gray-900">${uniqueBrands.join(', ')}</p>
+        </div>`
+      : article.brand
+      ? `<div>
+          <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Marque</p>
+          <p class="text-base text-gray-900">${article.brand}</p>
+        </div>`
+      : '';
+
+    const sizeHTML = article.size
+      ? `<div>
+          <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Taille</p>
+          <p class="text-base text-gray-900">${article.size}</p>
+        </div>`
+      : '';
+
+    const colorHTML = article.color
+      ? `<div>
+          <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Couleur</p>
+          <p class="text-base text-gray-900">${article.color}</p>
+        </div>`
+      : '';
 
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
         <head>
           <title>Étiquette - ${article.reference_number}</title>
+          <meta charset="UTF-8">
           <style>
             * {
               margin: 0;
@@ -53,6 +85,102 @@ export function LabelModal({ isOpen, onClose, article, sellerName, lotArticles }
               font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
               padding: 20mm;
               background: white;
+            }
+
+            .label-container {
+              border: 2px solid #d1d5db;
+              border-radius: 8px;
+              padding: 24px;
+              background: white;
+              max-width: 180mm;
+            }
+
+            .header {
+              text-align: center;
+              margin-bottom: 24px;
+              padding-bottom: 16px;
+              border-bottom: 2px solid #e5e7eb;
+            }
+
+            .header h3 {
+              font-size: 24px;
+              font-weight: bold;
+              color: #111827;
+              margin-bottom: 12px;
+            }
+
+            .reference {
+              display: inline-block;
+              border: 2px solid #111827;
+              padding: 8px 16px;
+              border-radius: 4px;
+            }
+
+            .reference-label {
+              font-size: 14px;
+              font-weight: 500;
+              color: #111827;
+            }
+
+            .reference-number {
+              font-size: 18px;
+              font-weight: bold;
+              color: #111827;
+            }
+
+            .content {
+              margin-top: 12px;
+            }
+
+            .content > div {
+              margin-bottom: 12px;
+            }
+
+            .field-label {
+              font-size: 12px;
+              font-weight: 600;
+              text-transform: uppercase;
+              color: #6b7280;
+              margin-bottom: 4px;
+            }
+
+            .field-value {
+              font-size: 16px;
+              color: #111827;
+            }
+
+            .field-value-large {
+              font-size: 18px;
+              font-weight: bold;
+              color: #111827;
+            }
+
+            .grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 16px;
+            }
+
+            .price-section {
+              padding-top: 12px;
+              margin-top: 12px;
+              border-top: 1px solid #e5e7eb;
+            }
+
+            .price {
+              font-size: 24px;
+              font-weight: bold;
+              color: #059669;
+            }
+
+            ul {
+              margin-left: 20px;
+            }
+
+            li {
+              margin-bottom: 4px;
+              font-size: 14px;
+              color: #111827;
             }
 
             @page {
@@ -68,7 +196,31 @@ export function LabelModal({ isOpen, onClose, article, sellerName, lotArticles }
           </style>
         </head>
         <body>
-          ${printContent.innerHTML}
+          <div class="label-container">
+            <div class="header">
+              <h3>EasyVinted ${sellerName ? `by ${sellerName}` : ''}</h3>
+              <div class="reference">
+                <span class="reference-label">Réf: </span>
+                <span class="reference-number">${article.reference_number}</span>
+              </div>
+            </div>
+
+            <div class="content">
+              <div>
+                <p class="field-label">Article${isLot ? 's' : ''}</p>
+                ${articleContentHTML}
+              </div>
+
+              ${brandsHTML}
+
+              ${(sizeHTML || colorHTML) ? `<div class="grid">${sizeHTML}${colorHTML}</div>` : ''}
+
+              <div class="price-section">
+                <p class="field-label">Prix de vente</p>
+                <p class="price">${article.price.toFixed(2)} €</p>
+              </div>
+            </div>
+          </div>
         </body>
       </html>
     `);
@@ -78,8 +230,7 @@ export function LabelModal({ isOpen, onClose, article, sellerName, lotArticles }
     setTimeout(() => {
       printWindow.focus();
       printWindow.print();
-      printWindow.close();
-    }, 250);
+    }, 500);
 
     return false;
   };
