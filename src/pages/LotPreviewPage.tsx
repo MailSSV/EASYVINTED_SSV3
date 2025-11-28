@@ -650,7 +650,7 @@ export default function LotPreviewPage() {
                     className="text-xs px-3 py-2 w-full sm:w-auto justify-center"
                   >
                     <Tag className="w-3.5 h-3.5" />
-                    <span>Générer</span>
+                    <span>Générer l'étiquette</span>
                   </GhostButton>
                 </div>
               </Card>
