@@ -574,7 +574,7 @@ export default function LotPreviewPage() {
                         {lot.original_total_price.toFixed(0)} €
                       </p>
                       <p className="text-[10px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1 leading-tight">
-                        Prix à l&apos;unité
+                        Addition des articles à l'unité
                       </p>
                     </div>
                   </div>
