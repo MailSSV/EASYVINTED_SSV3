@@ -567,7 +567,7 @@ export default function LotPreviewPage() {
                       <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
                         <Tag className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-600" />
                         <p className="text-[10px] sm:text-[11px] font-semibold text-slate-600 uppercase tracking-wide">
-                          Valeur
+                          Valeur totale
                         </p>
                       </div>
                       <p className="text-xl sm:text-2xl font-semibold text-slate-900">
