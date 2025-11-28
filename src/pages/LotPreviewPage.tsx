@@ -275,8 +275,14 @@ export default function LotPreviewPage() {
     );
   }
 
-  const allPhotos = articles.map((a) => a.photos?.[0]).filter(Boolean) as string[];
+  const allPhotos = articles.flatMap((a) => a.photos || []).filter(Boolean) as string[];
   const currentPhotoIndex = allPhotos.indexOf(selectedPhoto);
+
+  useEffect(() => {
+    if (allPhotos.length > 0 && !selectedPhoto) {
+      setSelectedPhoto(allPhotos[0]);
+    }
+  }, [allPhotos, selectedPhoto]);
 
   const handleNextPhoto = () => {
     if (currentPhotoIndex < allPhotos.length - 1) {
