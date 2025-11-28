@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Copy, CheckCircle, ArrowLeft, ExternalLink, SplitSquareHorizontal } from 'lucide-react';
+import { Copy, CheckCircle, ArrowLeft, ShoppingBag } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Toast } from '../components/ui/Toast';
 import { supabase } from '../lib/supabase';
@@ -210,56 +210,47 @@ export function StructureFormPage() {
           Retour au Stock
         </Button>
 
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Formulaire de publication Vinted
-        </h1>
-        <p className="text-gray-600">
-          Copiez les informations dans l'ordre pour les coller sur Vinted
-        </p>
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center">
+            <ShoppingBag className="w-6 h-6" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Formulaire de publication Vinted
+            </h1>
+            <p className="text-gray-600">
+              Copiez les informations dans l'ordre pour les coller sur Vinted
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
         <h2 className="font-semibold text-blue-900 mb-2">Mode d'emploi</h2>
         <ol className="list-decimal list-inside space-y-1 text-blue-800 text-sm">
           <li>Ouvrez Vinted dans un nouvel onglet (et identifiez vous si besoin)</li>
-          
-             <i>Recommandé : Placez l'onglet Vinted sur la barre latérale droite de votre navigateur pour l'afficher "Côte à Côte" avec celui-ci et faciliter les manips</i>
-          <li>Glissez-Déposez vos Photos dans la section "+ Ajoute des Photos" de Vinted </li>
+          <li className="ml-4 italic">
+            Recommandé : Placez l'onglet Vinted sur la barre latérale droite de votre navigateur pour l'afficher "Côte à Côte" avec celui-ci et faciliter les manips
+          </li>
+          <li>Glissez-Déposez vos Photos dans la section "+ Ajoute des Photos" de Vinted</li>
           <li>Cliquez sur le bouton Copier pour chaque champ</li>
           <li>Collez la valeur dans le champ correspondant sur Vinted</li>
-           <i>Conseil : Suivez les suggestions de valeurs proposées par Vinted</i>
-           <li>Enregistrer votre annonce Vinted ("Ajouter")</li>
-          <i> Après avoir publié l'article sur Vinted, n'oubliez pas de marquer cet article comme "Publié" afin de mieux suivre votre activité :)</i>
-          
-              </ol>
-        <div className="flex flex-col gap-2 mt-3">
-          <a
-            href="https://www.vinted.fr/items/new"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium"
-          >
-            <ExternalLink className="w-4 h-4 mr-1" />
-            Ouvrir Vinted (nouvel onglet)
-          </a>
-        </div>
+          <li>Une fois publié sur Vinted, cliquez sur "Marquer comme publié"</li>
+        </ol>
       </div>
 
       <div className="space-y-4">
         {fields.map((field, index) => (
-          <div
-            key={field.name}
-            className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-          >
+          <div key={index} className="bg-white rounded-lg border border-gray-200 p-4">
             <div className="flex items-start justify-between mb-2">
-              <div className="flex items-start space-x-3 flex-1">
-                <span className="flex-shrink-0 w-8 h-8 bg-teal-100 text-teal-700 rounded-full flex items-center justify-center font-semibold text-sm">
-                  {index + 1}
-                </span>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900">{field.name}</h3>
-                  <p className="text-sm text-gray-500 mt-1">{field.description}</p>
-                </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                  {field.name}
+                  {copiedField === field.name && (
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                  )}
+                </h3>
+                <p className="text-sm text-gray-500">{field.description}</p>
               </div>
               {field.copyable !== false && (
                 <Button
@@ -268,45 +259,34 @@ export function StructureFormPage() {
                   onClick={() => copyToClipboard(field.value, field.name)}
                   className="ml-4"
                 >
-                  {copiedField === field.name ? (
-                    <>
-                      <CheckCircle className="w-4 h-4 mr-1" />
-                      Copié
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-4 h-4 mr-1" />
-                      Copier
-                    </>
-                  )}
+                  <Copy className="w-4 h-4 mr-1" />
+                  Copier
                 </Button>
               )}
             </div>
 
             {field.showPhotos && article.photos.length > 0 && (
               <div className="mt-3 grid grid-cols-4 gap-2">
-                {article.photos.map((photo, idx) => (
-                  <div key={idx} className="relative aspect-square">
+                {article.photos.slice(0, 8).map((photo, idx) => (
+                  <div key={idx} className="aspect-square rounded-lg overflow-hidden bg-gray-100">
                     <img
                       src={photo}
                       alt={`Photo ${idx + 1}`}
-                      className="w-full h-full object-cover rounded border border-gray-200"
+                      className="w-full h-full object-cover"
                     />
-                    <span className="absolute top-1 left-1 bg-black bg-opacity-70 text-white text-xs px-2 py-0.5 rounded">
-                      {idx + 1}
-                    </span>
                   </div>
                 ))}
+                {article.photos.length > 8 && (
+                  <div className="aspect-square rounded-lg bg-gray-200 flex items-center justify-center">
+                    <span className="text-gray-600 font-medium">+{article.photos.length - 8}</span>
+                  </div>
+                )}
               </div>
             )}
 
             {!field.showPhotos && (
-              <div
-                className={`mt-2 p-3 bg-gray-50 rounded border border-gray-200 ${
-                  field.multiline ? 'whitespace-pre-wrap' : ''
-                }`}
-              >
-                <p className={`text-gray-900 ${field.copyable === false ? 'italic text-gray-500' : ''}`}>
+              <div className={`mt-2 p-3 bg-gray-50 rounded border border-gray-200 ${field.multiline ? 'whitespace-pre-wrap' : ''}`}>
+                <p className="text-gray-900 font-mono text-sm">
                   {field.value}
                 </p>
               </div>
@@ -315,25 +295,25 @@ export function StructureFormPage() {
         ))}
       </div>
 
-      <div className="mt-8 p-4 bg-green-50 border border-green-200 rounded-lg">
-        <h3 className="font-semibold text-green-900 mb-3">Une fois terminé</h3>
+      <div className="mt-8 bg-green-50 border border-green-200 rounded-lg p-6">
+        <h2 className="font-semibold text-green-900 mb-3">Publication terminée ?</h2>
         <p className="text-green-800 text-sm mb-4">
-          Après avoir publié l'article sur Vinted, n'oubliez pas de marquer cet article comme "Publié" afin de mettre à jour automatiquement votre tableau de bord EasyVinted.
+          Une fois votre article publié sur Vinted, cliquez sur le bouton ci-dessous pour le marquer comme publié dans votre stock.
         </p>
         <Button
           onClick={markAsPublished}
           disabled={markingAsPublished}
-          className="w-full sm:w-auto"
+          className="w-full bg-green-600 hover:bg-green-700 text-white"
         >
           {markingAsPublished ? (
             <>
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-              Enregistrement...
+              Mise à jour...
             </>
           ) : (
             <>
               <CheckCircle className="w-4 h-4 mr-2" />
-              Marquer cet article comme Publié
+              Marquer comme publié
             </>
           )}
         </Button>
