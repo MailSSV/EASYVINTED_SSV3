@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ChevronLeft,
@@ -275,14 +275,18 @@ export default function LotPreviewPage() {
     );
   }
 
-  const allPhotos = articles.flatMap((a) => a.photos || []).filter(Boolean) as string[];
+  const allPhotos = useMemo(
+    () => articles.flatMap((a) => a.photos || []).filter(Boolean) as string[],
+    [articles]
+  );
+
   const currentPhotoIndex = allPhotos.indexOf(selectedPhoto);
 
   useEffect(() => {
     if (allPhotos.length > 0 && !selectedPhoto) {
       setSelectedPhoto(allPhotos[0]);
     }
-  }, [allPhotos, selectedPhoto]);
+  }, [allPhotos]);
 
   const handleNextPhoto = () => {
     if (currentPhotoIndex < allPhotos.length - 1) {
