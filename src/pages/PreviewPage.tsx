@@ -471,7 +471,7 @@ export function PreviewPage() {
                   </div>
                   <div>
                     <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 truncate">
-                      Prévisualisation de l&apos;annonce
+                      Prévisualisation
                     </h1>
                     <p className="mt-0.5 text-xs sm:text-sm text-slate-500">
                       Visualisez votre annonce comme sur Vinted avant publication.
