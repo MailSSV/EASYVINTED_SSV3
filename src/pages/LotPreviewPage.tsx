@@ -369,7 +369,7 @@ export default function LotPreviewPage() {
                       Prévisualisation
                     </h1>
                     <p className="mt-0.5 text-xs sm:text-sm text-slate-500 hidden sm:block">
-                      Visualisez ce lot comme une annonce complète avant de le publier.
+                      Visualisez ce lot avant de le publier.
                     </p>
                   </div>
                 </div>
