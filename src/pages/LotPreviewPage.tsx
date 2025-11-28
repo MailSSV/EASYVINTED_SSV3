@@ -391,7 +391,7 @@ export default function LotPreviewPage() {
                     </Pill>
                   )}
                   <Pill variant="neutral" className="text-[10px] sm:text-xs px-2 py-0.5">
-                    {articles.length} art.
+                    {articles.length} articles
                   </Pill>
                 </div>
               </div>
