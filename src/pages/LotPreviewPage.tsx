@@ -348,27 +348,27 @@ export default function LotPreviewPage() {
 
       <PageContainer>
         <PageSection>
-          {/* Header Apple-like */}
-          <div className="mb-6 flex items-start justify-between gap-4">
-            <div className="flex items-start gap-3">
+          {/* Header Apple-like - Responsive */}
+          <div className="mb-5 sm:mb-6">
+            <div className="flex items-start gap-3 mb-3 sm:mb-4">
               <button
                 type="button"
                 onClick={() => navigate('/lots')}
-                className="hidden sm:inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                className="hidden sm:inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
 
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                  <div className="w-10 h-10 rounded-2xl bg-slate-900 text-white flex items-center justify-center shadow-md">
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2.5 mb-2">
+                  <div className="w-10 h-10 flex-shrink-0 rounded-2xl bg-slate-900 text-white flex items-center justify-center shadow-md">
                     <Package className="w-5 h-5" />
                   </div>
-                  <div>
-                    <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 truncate">
+                  <div className="min-w-0">
+                    <h1 className="text-lg sm:text-2xl font-semibold text-slate-900 leading-tight">
                       Prévisualisation du lot
                     </h1>
-                    <p className="mt-0.5 text-xs sm:text-sm text-slate-500">
+                    <p className="mt-0.5 text-xs sm:text-sm text-slate-500 hidden sm:block">
                       Visualisez ce lot comme une annonce complète avant de le publier.
                     </p>
                   </div>
@@ -379,7 +379,7 @@ export default function LotPreviewPage() {
                     {STATUS_LABELS[lot.status]}
                   </Pill>
                   {lot.reference_number && (
-                    <Pill variant="neutral">
+                    <Pill variant="neutral" className="text-xs">
                       Réf.
                       <span className="font-mono ml-1">{lot.reference_number}</span>
                     </Pill>
@@ -393,21 +393,21 @@ export default function LotPreviewPage() {
           </div>
 
           {/* Grille principale */}
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] mb-6">
+          <div className="grid gap-4 sm:gap-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] mb-6">
             {/* Photos du lot */}
-            <Card className="overflow-hidden">
+            <Card className="overflow-hidden p-0">
               {/* Conteneur principal adapté au mobile */}
               <div className="relative bg-slate-50">
-                <div className="w-full h-[240px] xs:h-[280px] sm:h-[320px] md:h-[360px] lg:h-[420px]">
+                <div className="w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[4/3] max-h-[300px] sm:max-h-[400px] lg:max-h-[500px]">
                   {selectedPhoto ? (
                     <img
                       src={selectedPhoto}
                       alt={lot.name}
-                      className="w-full h-full object-cover sm:object-cover"
+                      className="w-full h-full object-contain sm:object-cover bg-slate-50"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Package className="w-20 h-20 text-slate-200" />
+                      <Package className="w-16 h-16 sm:w-20 sm:h-20 text-slate-200" />
                     </div>
                   )}
                 </div>
@@ -474,27 +474,29 @@ export default function LotPreviewPage() {
                     ))}
                   </div>
 
-                  {/* Mobile scroll : compact */}
-                  <div className="sm:hidden flex gap-2 overflow-x-auto pb-1 -mx-2 px-2 snap-x snap-mandatory scrollbar-hide">
-                    {allPhotos.map((photo, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => setSelectedPhoto(photo)}
-                        className={[
-                          'flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden border-2 transition-all snap-center',
-                          selectedPhoto === photo
-                            ? 'border-emerald-500 ring-2 ring-emerald-200'
-                            : 'border-slate-200',
-                        ].join(' ')}
-                      >
-                        <img
-                          src={photo}
-                          alt=""
-                          className="w-full h-full object-cover"
-                        />
-                      </button>
-                    ))}
+                  {/* Mobile scroll : compact et responsive */}
+                  <div className="sm:hidden overflow-x-auto overflow-y-hidden -mx-3 px-3">
+                    <div className="flex gap-2 pb-2">
+                      {allPhotos.map((photo, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setSelectedPhoto(photo)}
+                          className={[
+                            'flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all',
+                            selectedPhoto === photo
+                              ? 'border-emerald-500 ring-2 ring-emerald-200'
+                              : 'border-slate-200 active:border-emerald-300',
+                          ].join(' ')}
+                        >
+                          <img
+                            src={photo}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
@@ -620,8 +622,8 @@ export default function LotPreviewPage() {
 
               {/* Étiquette colis */}
               <Card>
-                <div className="flex items-center justify-between gap-3 mb-2">
-                  <div>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div className="flex-1">
                     <div className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1">
                       Étiquette de colis
                     </div>
@@ -634,10 +636,10 @@ export default function LotPreviewPage() {
                   </div>
                   <GhostButton
                     onClick={() => setLabelModalOpen(true)}
-                    className="text-xs px-3 py-2"
+                    className="text-xs px-3 py-2 w-full sm:w-auto justify-center"
                   >
                     <Tag className="w-3.5 h-3.5" />
-                    Générer l&apos;étiquette
+                    <span className="sm:inline">Générer</span>
                   </GhostButton>
                 </div>
               </Card>
