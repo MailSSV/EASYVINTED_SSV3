@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ChevronLeft,
@@ -275,18 +275,8 @@ export default function LotPreviewPage() {
     );
   }
 
-  const allPhotos = useMemo(
-    () => articles.flatMap((a) => a.photos || []).filter(Boolean) as string[],
-    [articles]
-  );
-
+  const allPhotos = articles.map((a) => a.photos?.[0]).filter(Boolean) as string[];
   const currentPhotoIndex = allPhotos.indexOf(selectedPhoto);
-
-  useEffect(() => {
-    if (allPhotos.length > 0 && !selectedPhoto) {
-      setSelectedPhoto(allPhotos[0]);
-    }
-  }, [allPhotos]);
 
   const handleNextPhoto = () => {
     if (currentPhotoIndex < allPhotos.length - 1) {
@@ -401,7 +391,7 @@ export default function LotPreviewPage() {
                     </Pill>
                   )}
                   <Pill variant="neutral" className="text-[10px] sm:text-xs px-2 py-0.5">
-                    {articles.length} articles
+                    {articles.length} art.
                   </Pill>
                 </div>
               </div>
@@ -569,7 +559,7 @@ export default function LotPreviewPage() {
                         {articles.length}
                       </p>
                       <p className="text-[10px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1 leading-tight">
-                        Pièces incluses dans ce lot
+                        Pièces incluses
                       </p>
                     </div>
 
@@ -577,14 +567,14 @@ export default function LotPreviewPage() {
                       <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
                         <Tag className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-600" />
                         <p className="text-[10px] sm:text-[11px] font-semibold text-slate-600 uppercase tracking-wide">
-                          Valeur totale
+                          Valeur
                         </p>
                       </div>
                       <p className="text-xl sm:text-2xl font-semibold text-slate-900">
                         {lot.original_total_price.toFixed(0)} €
                       </p>
                       <p className="text-[10px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1 leading-tight">
-                        Addition des articles à l'unité
+                        Prix à l&apos;unité
                       </p>
                     </div>
                   </div>
@@ -660,7 +650,7 @@ export default function LotPreviewPage() {
                     className="text-xs px-3 py-2 w-full sm:w-auto justify-center"
                   >
                     <Tag className="w-3.5 h-3.5" />
-                    <span>Générer l'étiquette</span>
+                    <span>Générer</span>
                   </GhostButton>
                 </div>
               </Card>
@@ -713,7 +703,7 @@ export default function LotPreviewPage() {
                       className="flex-1 min-w-[140px] sm:min-w-[180px] justify-center bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 active:bg-emerald-200 text-xs sm:text-sm px-3 py-2"
                     >
                       <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                      Marquer vendu
+                      Vendu
                     </GhostButton>
                   )}
 
