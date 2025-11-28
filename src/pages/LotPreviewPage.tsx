@@ -559,7 +559,7 @@ export default function LotPreviewPage() {
                         {articles.length}
                       </p>
                       <p className="text-[10px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1 leading-tight">
-                        Pièces incluses
+                        Pièces incluses dans ce lot
                       </p>
                     </div>
 
