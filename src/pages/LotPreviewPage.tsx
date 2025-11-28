@@ -703,7 +703,7 @@ export default function LotPreviewPage() {
                       className="flex-1 min-w-[140px] sm:min-w-[180px] justify-center bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 active:bg-emerald-200 text-xs sm:text-sm px-3 py-2"
                     >
                       <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                      Vendu
+                      Marquer Vendu
                     </GhostButton>
                   )}
 
