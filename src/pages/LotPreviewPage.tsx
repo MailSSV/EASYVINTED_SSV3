@@ -707,15 +707,10 @@ export default function LotPreviewPage() {
                     </GhostButton>
                   )}
 
-                  {/* Envoyer à Vinted (placeholder) */}
+                  {/* Envoyer à Vinted */}
                   {(lot.status === 'ready' || lot.status === 'scheduled') && (
                     <PrimaryButton
-                      onClick={() =>
-                        setToast({
-                          type: 'error',
-                          text: 'Publication des lots bientôt disponible',
-                        })
-                      }
+                      onClick={() => navigate(`/lots/${id}/structure`)}
                       className="flex-1 min-w-[140px] sm:min-w-[180px] justify-center text-xs sm:text-sm px-3 py-2"
                     >
                       <Send className="w-3.5 h-3.5 sm:w-4 sm:h-4" />

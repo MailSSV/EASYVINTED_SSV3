@@ -18,6 +18,7 @@ import { StructureFormPage } from './pages/StructureFormPage';
 import { FamilyMembersPage } from './pages/FamilyMembersPage';
 import LotsPage from './pages/LotsPage';
 import LotPreviewPage from './pages/LotPreviewPage';
+import { LotStructureFormPage } from './pages/LotStructureFormPage';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
                     <Route path="/articles/:id/structure" element={<StructureFormPage />} />
                     <Route path="/lots" element={<LotsPage />} />
                     <Route path="/lots/:id/preview" element={<LotPreviewPage />} />
+                    <Route path="/lots/:id/structure" element={<LotStructureFormPage />} />
                     <Route path="/analytics" element={<AnalyticsPage />} />
                     <Route path="/sales" element={<SalesPage />} />
                     <Route path="/planner" element={<PlannerPage />} />
