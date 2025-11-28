@@ -58,6 +58,12 @@ function getStatusVariant(status: LotStatus) {
   }
 }
 
+const truncateText = (text: string, maxLength: number) => {
+  if (!text) return '';
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength).trim() + '...';
+};
+
 export default function LotPreviewPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -581,42 +587,47 @@ export default function LotPreviewPage() {
                   Articles inclus ({articles.length})
                 </h2>
                 <div className="space-y-2 sm:space-y-3 max-h-80 overflow-y-auto pr-1">
-                  {articles.map((article) => (
-                    <button
-                      key={article.id}
-                      type="button"
-                      onClick={() => navigate(`/articles/${article.id}/preview`)}
-                      className="w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/80 hover:border-emerald-300 hover:bg-emerald-50/40 active:bg-emerald-50/60 transition-colors text-left"
-                    >
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg sm:rounded-xl overflow-hidden bg-slate-100 flex-shrink-0">
-                        {article.photos?.[0] ? (
-                          <img
-                            src={article.photos[0]}
-                            alt={article.title}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <Package className="w-5 h-5 sm:w-6 sm:h-6 text-slate-300" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs sm:text-sm font-medium text-slate-900 truncate">
-                          {article.title}
-                        </p>
-                        <p className="text-[10px] sm:text-xs text-slate-500 truncate">
-                          {article.brand || 'Sans marque'}
-                          {article.size && ` • ${article.size}`}
-                        </p>
-                      </div>
-                      <div className="text-right flex-shrink-0">
-                        <p className="text-xs sm:text-sm font-semibold text-slate-900 whitespace-nowrap">
-                          {article.price.toFixed(0)} €
-                        </p>
-                      </div>
-                    </button>
-                  ))}
+                  {articles.map((article) => {
+                    const titleMaxLength = window.innerWidth < 475 ? 25 : window.innerWidth < 640 ? 35 : 50;
+                    const brandMaxLength = window.innerWidth < 475 ? 15 : 25;
+
+                    return (
+                      <button
+                        key={article.id}
+                        type="button"
+                        onClick={() => navigate(`/articles/${article.id}/preview`)}
+                        className="w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/80 hover:border-emerald-300 hover:bg-emerald-50/40 active:bg-emerald-50/60 transition-colors text-left"
+                      >
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg sm:rounded-xl overflow-hidden bg-slate-100 flex-shrink-0">
+                          {article.photos?.[0] ? (
+                            <img
+                              src={article.photos[0]}
+                              alt={article.title}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Package className="w-5 h-5 sm:w-6 sm:h-6 text-slate-300" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0 overflow-hidden">
+                          <p className="text-xs sm:text-sm font-medium text-slate-900 break-words line-clamp-1">
+                            {truncateText(article.title, titleMaxLength)}
+                          </p>
+                          <p className="text-[10px] sm:text-xs text-slate-500">
+                            {truncateText(article.brand || 'Sans marque', brandMaxLength)}
+                            {article.size && ` • ${article.size}`}
+                          </p>
+                        </div>
+                        <div className="text-right flex-shrink-0 ml-1">
+                          <p className="text-xs sm:text-sm font-semibold text-slate-900 whitespace-nowrap">
+                            {article.price.toFixed(0)} €
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </Card>
 
